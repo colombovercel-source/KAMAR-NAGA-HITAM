@@ -80,9 +80,11 @@ body {
 }
 
 .page {
-  position: relative; z-index: 3;
-  max-width: 600px; margin: 0 auto;
-  padding-bottom: 6rem;
+  position: relative; 
+  z-index: 3;
+  max-width: 600px; /* Batas lebar maksimal agar tetap rapi */
+  margin: 0 auto;
+  padding: 0 1rem 6rem 1rem; /* Tambahkan padding kiri-kanan agar box tidak menempel ke pinggir layar HP */
 }
 
 /* ══ HEADER ══ */
@@ -218,11 +220,15 @@ body {
 .slider-section { margin-top: 1rem; }
 
 .slider-wrap {
-  position: relative; overflow: hidden;
-  aspect-ratio: 16/6; max-height: 210px;
+  position: relative; 
+  overflow: hidden;
+  width: 100%;           /* Memastikan lebar 100% halaman */
+  aspect-ratio: 16/9;    /* Standar banner agar tidak terlalu gepeng */
+  border-radius: var(--r-lg); /* Agar sudutnya melengkung sama seperti card */
   background: #000;
+  margin-top: 0.5rem;    /* Jarak sedikit dari denda banner */
+  border: 1px solid var(--border2); /* Menambah garis pinggir agar senada */
 }
-
 .slider-track {
   display: flex; width: 100%; height: 100%;
   transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
@@ -313,9 +319,10 @@ body {
   -webkit-backdrop-filter: var(--blur);
   border: 1px solid var(--border2);
   border-radius: var(--r-lg);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem; /* Jarak antar kartu */
+  width: 100%; /* Pastikan kartu selebar halaman */
   overflow: hidden;
-  transition: border-color .2s, box-shadow .2s;
+  transition: all .2s;
   animation: fadeUp .35s ease both;
   position: relative;
 }
@@ -486,10 +493,18 @@ body {
 
 /* ══ MEMBERS GRID ══ */
 .members-grid {
-  display: grid; grid-template-columns: repeat(3,1fr);
-  gap: 0.5rem; padding: 0 1.4rem;
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); /* Tetap 3 kolom di laptop */
+  gap: 0.5rem; 
+  width: 100%;
 }
 
+/* Untuk tampilan HP (Layar Kecil) */
+@media(max-width:440px) {
+  .members-grid { 
+    grid-template-columns: repeat(2, 1fr); /* Jadi 2 kolom di HP agar tidak sempit */
+  }
+}
 .member-card {
   background: var(--surface);
   backdrop-filter: var(--blur);
@@ -547,10 +562,10 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border3); border-radius: 99px; }
 
 @media(max-width:440px) {
-  .header, .week-nav, .schedule { padding-left: 1rem; padding-right: 1rem; }
-  .denda-wrap { padding: 1rem 1rem 0; }
-  .members-grid { padding: 0 1rem; grid-template-columns: repeat(2,1fr); }
-  .section-title, .legend { padding-left: 1rem; }
+  .header, .week-nav, .schedule { padding-left: 0 !important;}
+  .denda-wrap { padding-left: 0 !important;}
+  .members-grid { padding-left: 0 !important;}
+  .section-title, .legend { padding-left: 0 !important;}
   .date-col { min-width: 68px; }
   .brand-title { font-size: 1rem; }
   .brand-logo { width: 40px; height: 40px; border-radius: 11px; }
