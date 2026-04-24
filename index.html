@@ -364,6 +364,7 @@ body {
 
 .date-dow {
   font-family: var(--mono);
+  color: #a0aec0;
   font-size: 0.55rem; font-weight: 600;
   letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--ink4); margin-bottom: 1px;
@@ -381,8 +382,12 @@ body {
 .date-mon { font-size: 0.6rem; color: var(--ink4); margin-top: 2px; font-weight: 500; }
 
 .card-body {
-  flex: 1; padding: 0.75rem 1rem;
-  display: flex; flex-direction: column; justify-content: center; gap: 8px;
+  flex: 1; 
+  padding: 0.75rem 1rem;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; /* Menjaga teks tetap di tengah secara vertikal */
+  gap: 8px;
 }
 
 /* persons row */
@@ -445,10 +450,14 @@ body {
   padding: 5px 12px; border-radius: 99px; width: fit-content;
 }
 
-/* no schedule */
+/* GANTI KODE INI */
 .no-sched {
-  font-size: 0.75rem; color: var(--ink4);
+  font-size: 0.85rem;      /* Sedikit diperbesar */
+  color: #ffffff;          /* Putih murni */
   font-style: italic;
+  opacity: 0.9;            /* Agar tidak terlalu menusuk mata tapi tetap sangat jelas */
+  font-weight: 500;        /* Membuat tulisan sedikit lebih tebal */
+  letter-spacing: 0.3px;
 }
 
 /* period badge */
