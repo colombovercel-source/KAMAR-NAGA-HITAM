@@ -3,11 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jadwal Piket · Kamar Naga hitam </title>
+<meta name="description" content="Jadwal Piket Kamar Naga Putih — Realtime Supabase">
+<title>Jadwal Piket · Kamar Naga Putih</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-
+/* ════════════════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════════════════ */
 :root {
   --brand:      #e8c84a;
   --brand2:     #c9a82a;
@@ -16,7 +19,7 @@
   --surface:    rgba(14,16,22,0.92);
   --surface2:   rgba(20,22,30,0.88);
   --surface3:   rgba(28,30,42,0.90);
-  --glass:      rgba(10,12,18,0.70);
+  --glass:      rgba(10,12,18,0.72);
   --border:     rgba(255,255,255,0.07);
   --border2:    rgba(255,255,255,0.11);
   --border3:    rgba(255,255,255,0.18);
@@ -38,325 +41,205 @@
   --blur: blur(20px) saturate(1.5);
 }
 
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { -webkit-tap-highlight-color:transparent; scroll-behavior:smooth; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
 
-body {
-  font-family: var(--font);
-  color: var(--ink);
-  min-height: 100vh;
-  overflow-x: hidden;
-  font-size: 15px;
-  line-height: 1.6;
-  position: relative;
+body{
+  font-family:var(--font);color:var(--ink);
+  min-height:100vh;overflow-x:hidden;
+  font-size:15px;line-height:1.6;position:relative;
 }
 
-/* BACKGROUND IMAGE */
-.bg-layer {
-  position: fixed; inset: 0; z-index: 0;
-  background-image: url('https://i.imgur.com/bfrp75y.png');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
+/* ── BACKGROUND ── */
+.bg-layer{
+  position:fixed;inset:0;z-index:0;
+  background-image:url('https://i.imgur.com/bfrp75y.png');
+  background-size:cover;background-position:center;
+  background-repeat:no-repeat;
+  filter:brightness(1.05) contrast(1.05);
+}
+.bg-overlay{
+  position:fixed;inset:0;z-index:1;
+  background:linear-gradient(160deg,rgba(5,7,14,.75) 0%,rgba(8,10,18,.68) 50%,rgba(5,7,14,.80) 100%);
+}
+.bg-glow{
+  position:fixed;top:-250px;left:50%;transform:translateX(-50%);
+  width:700px;height:500px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(232,200,74,.06) 0%,transparent 65%);
+  pointer-events:none;z-index:2;
 }
 
-.bg-layer {
-  position: fixed; inset: 0; z-index: 0;
-  background-image: url('https://i.imgur.com/bfrp75y.png');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  
-  /* Tambahkan ini agar gambar lebih cerah dan tajam */
-  filter: brightness(1.1) contrast(1.1); 
+/* ── PAGE ── */
+.page{
+  position:relative;z-index:3;
+  max-width:600px;margin:0 auto;
+  padding:0 0 6rem;
 }
 
-/* GOLD GLOW TOP */
-.bg-glow {
-  position: fixed; top: -250px; left: 50%; transform: translateX(-50%);
-  width: 700px; height: 500px; border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(232,200,74,0.06) 0%, transparent 65%);
-  pointer-events: none; z-index: 2;
+/* ── HEADER ── */
+.header{
+  background:var(--glass);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-bottom:1px solid var(--border2);
+  padding:1rem 1.4rem .9rem;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 1px 0 var(--border),0 4px 24px rgba(0,0,0,.3);
+}
+.header-top{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;margin-bottom:.8rem;
+}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-logo{
+  width:48px;height:48px;border-radius:14px;
+  overflow:hidden;flex-shrink:0;
+  border:1.5px solid rgba(232,200,74,.3);
+  box-shadow:0 0 20px var(--brand-glow),0 0 40px rgba(232,200,74,.08);
+  background:rgba(0,0,0,.4);
+}
+.brand-logo img{width:100%;height:100%;object-fit:cover;display:block;}
+.brand-info{display:flex;flex-direction:column;gap:5px;}
+.room-tag{
+  font-family:var(--mono);
+  font-size:.72rem;font-weight:800;
+  letter-spacing:2px;text-transform:uppercase;
+  color:#0a0b0f;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  border:1px solid var(--brand);
+  padding:3px 10px;border-radius:5px;
+  display:inline-block;width:fit-content;
+  box-shadow:0 0 12px var(--brand-glow);
+}
+.brand-title{font-size:1.15rem;font-weight:800;color:var(--ink);letter-spacing:-.3px;line-height:1.2;}
+.header-clock{text-align:right;flex-shrink:0;}
+.live-date{font-size:.65rem;font-weight:500;color:var(--ink3);white-space:nowrap;display:block;}
+.live-time{
+  font-family:var(--mono);font-size:1rem;font-weight:600;
+  color:var(--ink);display:block;text-align:right;letter-spacing:1px;
 }
 
-.page {
-  position: relative; 
-  z-index: 3;
-  max-width: 600px; /* Batas lebar maksimal agar tetap rapi */
-  margin: 0 auto;
-  padding: 0 1rem 6rem 1rem; /* Tambahkan padding kiri-kanan agar box tidak menempel ke pinggir layar HP */
+/* Today strip */
+.today-strip{
+  display:flex;align-items:center;gap:8px;
+  padding:.55rem .85rem;border-radius:var(--r);
+  font-size:.78rem;font-weight:600;border:1px solid;
+}
+.today-strip.on-duty{background:var(--ok-dim);border-color:var(--ok-b);color:var(--ok);}
+.today-strip.holiday{background:var(--danger-dim);border-color:var(--danger-b);color:var(--danger);}
+.today-strip.loading{background:var(--surface2);border-color:var(--border2);color:var(--ink3);}
+.strip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+.on-duty .strip-dot{background:var(--ok);}
+.holiday .strip-dot{background:var(--danger);animation:none;}
+.loading .strip-dot{background:var(--ink3);animation:none;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.5)}}
+
+/* ── DENDA BANNER ── */
+.denda-wrap{padding:1rem 1.4rem 0;}
+.denda-banner{
+  background:linear-gradient(135deg,rgba(30,20,0,.92),rgba(45,30,0,.92));
+  border:1px solid rgba(232,200,74,.3);
+  border-radius:var(--r-lg);padding:.9rem 1.1rem;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 4px 24px rgba(232,200,74,.10);
+  backdrop-filter:blur(10px);animation:fadeUp .5s ease;
+}
+.denda-left{display:flex;align-items:center;gap:10px;flex:1;}
+.denda-icon-wrap{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--brand-dim);border:1px solid rgba(232,200,74,.25);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;overflow:hidden;
+}
+.denda-icon-wrap img{width:100%;height:100%;object-fit:contain;}
+.denda-tag{font-family:var(--mono);font-size:.52rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(232,200,74,.55);margin-bottom:2px;}
+.denda-msg{font-size:.88rem;font-weight:800;color:var(--brand);line-height:1.3;text-shadow:0 0 20px var(--brand-glow);}
+.denda-pill{
+  font-family:var(--mono);font-size:.88rem;font-weight:700;
+  color:#0a0b0f;background:linear-gradient(135deg,var(--brand),var(--brand2));
+  padding:6px 14px;border-radius:8px;flex-shrink:0;white-space:nowrap;
+  box-shadow:0 2px 12px var(--brand-glow);
 }
 
-/* ══ HEADER ══ */
-.header {
-  background: var(--glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border-bottom: 1px solid var(--border2);
-  padding: 1rem 1.4rem 0.9rem;
-  position: sticky; top: 0; z-index: 200;
-  box-shadow: 0 1px 0 var(--border), 0 4px 24px rgba(0,0,0,0.3);
+/* ── SLIDER ── */
+.slider-section{padding:0 1.4rem;margin-top:1rem;}
+.slider-wrap{
+  position:relative;overflow:hidden;width:100%;
+  aspect-ratio:16/9;border-radius:var(--r-lg);
+  background:#000;border:1px solid var(--border2);
 }
-
-.header-top {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; margin-bottom: 0.8rem;
+.slider-track{display:flex;width:100%;height:100%;transition:transform .45s cubic-bezier(.4,0,.2,1);}
+.slide{min-width:100%;height:100%;overflow:hidden;}
+.slide img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none;}
+.slider-btn{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:10;
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
+  color:white;font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
 }
+.slider-btn:hover{background:rgba(0,0,0,.8);border-color:rgba(255,255,255,.5);}
+.slider-btn.prev{left:10px;}.slider-btn.next{right:10px;}
+.slider-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:10;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:all .25s;border:none;padding:0;}
+.dot.active{background:white;width:18px;border-radius:3px;}
+.slide-counter{position:absolute;top:8px;right:10px;z-index:10;font-family:var(--mono);font-size:.62rem;background:rgba(0,0,0,.6);color:rgba(255,255,255,.85);padding:2px 8px;border-radius:99px;backdrop-filter:blur(6px);}
+.slider-bar{height:2px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:2px;}
+.slider-bar-fill{height:100%;background:var(--brand);width:0%;transition:width .05s linear;}
 
-.brand { display: flex; align-items: center; gap: 12px; }
-
-.brand-logo {
-  width: 48px; height: 48px; border-radius: 14px;
-  overflow: hidden; flex-shrink: 0;
-  border: 1.5px solid rgba(232,200,74,0.25);
-  box-shadow: 0 0 20px var(--brand-glow), 0 0 40px rgba(232,200,74,0.08);
-  background: rgba(0,0,0,0.4);
+/* ── WEEK NAV ── */
+.week-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1.4rem;
+  background:var(--glass);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-bottom:1px solid var(--border);
+  margin-top:.75rem;
 }
-.brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-.brand-info { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 5px; /* Menambah jarak antara tag kamar dan judul jadwal */
+.week-label{font-size:.72rem;font-weight:600;color:var(--ink2);font-family:var(--mono);}
+.week-ctrl{display:flex;align-items:center;gap:6px;}
+.btn-week{
+  width:28px;height:28px;border:1px solid var(--border3);border-radius:8px;
+  background:var(--surface2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink3);font-size:.85rem;transition:all .15s;
 }
-
-.room-tag {
-  font-family: var(--mono);
-  font-size: 0.85rem;       /* Diperbesar dari 0.55rem */
-  font-weight: 800;         /* Dibuat lebih tebal/bold */
-  letter-spacing: 3px;      /* Jarak antar huruf diperlebar agar dominan */
-  text-transform: uppercase;
-  color: #ffffff;           /* Diubah menjadi putih terang agar lebih mencolok */
-  background: var(--brand); /* Latar belakang menggunakan warna emas (brand) */
-  border: 1px solid var(--brand);
-  padding: 4px 12px;        /* Padding ditambah agar box lebih besar */
-  border-radius: 6px;
-  display: inline-block;
-  width: fit-content;
-  margin-bottom: 5px;       /* Jarak ke tulisan "Jadwal Piket" */
-  box-shadow: 0 0 15px var(--brand-glow); /* Memberikan efek cahaya/glow */
+.btn-week:hover{background:var(--surface3);color:var(--ink);border-color:var(--brand);}
+.btn-today{
+  padding:0 11px;height:28px;
+  border:1px solid rgba(232,200,74,.3);
+  border-radius:8px;background:var(--brand-dim);
+  color:var(--brand);font-family:var(--font);
+  font-size:.68rem;font-weight:700;cursor:pointer;transition:all .15s;
 }
+.btn-today:hover{background:var(--brand);color:#0a0b0f;border-color:var(--brand);}
 
-.brand-title {
-  font-size: 1.15rem; font-weight: 800;
-  color: var(--ink); letter-spacing: -0.3px;
-  line-height: 1.2;
+/* ── SCHEDULE CARDS ── */
+.schedule{padding:1rem 1.4rem;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.day-card{
+  background:var(--surface);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--border2);
+  border-radius:var(--r-lg);margin-bottom:.65rem;
+  overflow:hidden;transition:all .2s;
+  animation:fadeUp .35s ease both;position:relative;
 }
+.day-card:hover{border-color:var(--border3);box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.day-card.is-today{border-color:rgba(34,197,94,.4);box-shadow:0 0 0 1px rgba(34,197,94,.15),0 4px 20px rgba(0,0,0,.4);}
+.day-card.is-sunday{border-color:rgba(239,68,68,.28);}
+.day-card.done-card{background:rgba(10,25,15,.90);}
 
-.header-clock { text-align: right; flex-shrink: 0; }
-
-.live-date {
-  font-size: 0.65rem; font-weight: 500;
-  color: var(--ink3); white-space: nowrap; display: block;
+.day-card::before{
+  content:'';position:absolute;left:0;top:8px;bottom:8px;
+  width:3px;border-radius:0 2px 2px 0;
 }
+.day-card.upcoming::before{background:var(--border3);}
+.day-card.live::before{background:var(--ok);box-shadow:0 0 8px var(--ok);}
+.day-card.done-card::before{background:rgba(34,197,94,.45);}
+.day-card.is-sunday::before{background:var(--danger);opacity:.4;}
 
-.live-time {
-  font-family: var(--mono);
-  font-size: 1rem; font-weight: 600;
-  color: var(--ink); display: block; text-align: right;
-  letter-spacing: 1px;
-}
-
-.today-strip {
-  display: flex; align-items: center; gap: 8px;
-  padding: 0.55rem 0.85rem; border-radius: var(--r);
-  font-size: 0.78rem; font-weight: 600; border: 1px solid;
-}
-.today-strip.on-duty { background: var(--ok-dim);     border-color: var(--ok-b);     color: var(--ok);     }
-.today-strip.holiday { background: var(--danger-dim); border-color: var(--danger-b); color: var(--danger); }
-.today-strip.loading { background: var(--surface2);   border-color: var(--border2);  color: var(--ink3);   }
-
-.strip-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-  animation: pulse 2s ease-in-out infinite;
-}
-.on-duty .strip-dot { background: var(--ok); }
-.holiday .strip-dot { background: var(--danger); animation: none; }
-.loading .strip-dot { background: var(--ink3); animation: none; }
-
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.5)} }
-
-/* ══ DENDA ══ */
-.denda-wrap { padding: 1rem 1.4rem 0; }
-
-.denda-banner {
-  background: linear-gradient(135deg, rgba(30,20,0,0.9), rgba(45,30,0,0.9));
-  border: 1px solid rgba(232,200,74,0.28);
-  border-radius: var(--r-lg);
-  padding: 0.9rem 1.1rem;
-  display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 4px 24px rgba(232,200,74,0.08);
-  backdrop-filter: blur(10px);
-  animation: fadeUp 0.5s ease;
-}
-
-.denda-left { display: flex; align-items: center; gap: 10px; flex: 1; }
-
-.denda-icon-wrap {
-  width: 38px; height: 38px; border-radius: 10px;
-  background: var(--brand-dim);
-  border: 1px solid rgba(232,200,74,0.22);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; overflow: hidden;
-}
-.denda-icon-wrap img { width: 100%; height: 100%; object-fit: contain; }
-
-.denda-info { flex: 1; }
-
-.denda-tag {
-  font-family: var(--mono);
-  font-size: 0.52rem; font-weight: 600;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: rgba(232,200,74,0.5); margin-bottom: 2px;
-}
-
-.denda-msg {
-  font-size: 0.85rem; font-weight: 800;
-  color: var(--brand); line-height: 1.3;
-  text-shadow: 0 0 20px var(--brand-glow);
-}
-
-.denda-pill {
-  font-family: var(--mono);
-  font-size: 0.88rem; font-weight: 700;
-  color: #0a0b0f;
-  background: linear-gradient(135deg, var(--brand), var(--brand2));
-  padding: 6px 14px; border-radius: 8px;
-  flex-shrink: 0; white-space: nowrap;
-  box-shadow: 0 2px 12px var(--brand-glow);
-}
-
-/* ══ SLIDER ══ */
-.slider-section { margin-top: 1rem; }
-
-.slider-wrap {
-  position: relative; 
-  overflow: hidden;
-  width: 100%;           /* Memastikan lebar 100% halaman */
-  aspect-ratio: 16/9;    /* Standar banner agar tidak terlalu gepeng */
-  border-radius: var(--r-lg); /* Agar sudutnya melengkung sama seperti card */
-  background: #000;
-  margin-top: 0.5rem;    /* Jarak sedikit dari denda banner */
-  border: 1px solid var(--border2); /* Menambah garis pinggir agar senada */
-}
-.slider-track {
-  display: flex; width: 100%; height: 100%;
-  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
-}
-
-.slide { min-width: 100%; height: 100%; overflow: hidden; }
-.slide img {
-  width: 100%; height: 100%; object-fit: cover;
-  object-position: center; display: block;
-  user-select: none; -webkit-user-drag: none;
-}
-
-.slider-btn {
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
-  width: 34px; height: 34px; border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
-  color: white; font-size: 14px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all .2s;
-}
-.slider-btn:hover { background: rgba(0,0,0,0.8); border-color: rgba(255,255,255,0.5); }
-.slider-btn.prev { left: 10px; }
-.slider-btn.next { right: 10px; }
-
-.slider-dots {
-  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 5px; z-index: 10;
-}
-.dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,0.35); cursor: pointer;
-  transition: all .25s; border: none; padding: 0;
-}
-.dot.active { background: white; width: 18px; border-radius: 3px; }
-
-.slide-counter {
-  position: absolute; top: 8px; right: 10px; z-index: 10;
-  font-family: var(--mono); font-size: 0.62rem;
-  background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.85);
-  padding: 2px 8px; border-radius: 99px; backdrop-filter: blur(6px);
-}
-
-.slider-bar { height: 2px; background: rgba(255,255,255,0.06); overflow: hidden; }
-.slider-bar-fill { height: 100%; background: var(--brand); width: 0%; transition: width 0.05s linear; }
-
-/* ══ WEEK NAV ══ */
-.week-nav {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.75rem 1.4rem;
-  background: var(--glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border-bottom: 1px solid var(--border);
-}
-
-.week-label {
-  font-size: 0.72rem; font-weight: 600; color: var(--ink2);
-  font-family: var(--mono);
-}
-
-.week-ctrl { display: flex; align-items: center; gap: 6px; }
-
-.btn-week {
-  width: 28px; height: 28px;
-  border: 1px solid var(--border3); border-radius: 8px;
-  background: var(--surface2); cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--ink3); font-size: 0.85rem; transition: all .15s;
-}
-.btn-week:hover { background: var(--surface3); color: var(--ink); border-color: var(--brand); }
-
-.btn-today {
-  padding: 0 11px; height: 28px;
-  border: 1px solid rgba(232,200,74,0.3);
-  border-radius: 8px; background: var(--brand-dim);
-  color: var(--brand); font-family: var(--font);
-  font-size: 0.68rem; font-weight: 700; cursor: pointer; transition: all .15s;
-}
-.btn-today:hover { background: var(--brand); color: #0a0b0f; border-color: var(--brand); }
-
-/* ══ SCHEDULE ══ */
-.schedule { padding: 1rem 1.4rem; }
-
-.day-card {
-  background: var(--surface);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--border2);
-  border-radius: var(--r-lg);
-  margin-bottom: 0.75rem; /* Jarak antar kartu */
-  width: 100%; /* Pastikan kartu selebar halaman */
-  overflow: hidden;
-  transition: all .2s;
-  animation: fadeUp .35s ease both;
-  position: relative;
-}
-.day-card:hover { border-color: var(--border3); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-
-.day-card.is-today {
-  border-color: rgba(34,197,94,0.4);
-  box-shadow: 0 0 0 1px rgba(34,197,94,0.15), 0 4px 20px rgba(0,0,0,0.4);
-}
-.day-card.is-sunday { border-color: rgba(239,68,68,0.28); }
-.day-card.done-card { background: rgba(10,25,15,0.85); }
-
-/* left accent */
-.day-card::before {
-  content: ''; position: absolute;
-  left: 0; top: 8px; bottom: 8px;
-  width: 3px; border-radius: 0 2px 2px 0;
-}
-.day-card.upcoming::before  { background: var(--border3); }
-.day-card.live::before      { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
-.day-card.done-card::before { background: rgba(34,197,94,0.45); }
-.day-card.is-sunday::before { background: var(--danger); opacity: .4; }
-
-/* stagger */
 .day-card:nth-child(1){animation-delay:.03s}
 .day-card:nth-child(2){animation-delay:.07s}
 .day-card:nth-child(3){animation-delay:.11s}
@@ -365,239 +248,192 @@ body {
 .day-card:nth-child(6){animation-delay:.23s}
 .day-card:nth-child(7){animation-delay:.27s}
 
-@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-
-.day-row { display: flex; align-items: stretch; }
-
-.date-col {
-  padding: 0.85rem 0.8rem;
-  min-width: 76px; flex-shrink: 0;
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; justify-content: center;
-  background: rgba(0,0,0,0.2);
+.day-row{display:flex;align-items:stretch;}
+.date-col{
+  padding:.85rem .8rem;min-width:76px;flex-shrink:0;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;justify-content:center;
+  background:rgba(0,0,0,.2);
 }
-.is-today  .date-col { background: rgba(34,197,94,0.07);  border-right-color: rgba(34,197,94,0.2); }
-.is-sunday .date-col { background: rgba(239,68,68,0.06);  border-right-color: rgba(239,68,68,0.18); }
+.is-today  .date-col{background:rgba(34,197,94,.07); border-right-color:rgba(34,197,94,.2);}
+.is-sunday .date-col{background:rgba(239,68,68,.06); border-right-color:rgba(239,68,68,.18);}
+.date-dow{font-family:var(--mono);font-size:.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:1px;}
+.is-today  .date-dow{color:var(--ok);}
+.is-sunday .date-dow{color:var(--danger);}
+.date-num{font-size:1.5rem;font-weight:800;line-height:1;letter-spacing:-1.5px;color:#fff;}
+.is-today  .date-num{color:var(--ok);}
+.is-sunday .date-num{color:var(--danger);}
+.date-mon{font-size:.6rem;color:rgba(255,255,255,.7);margin-top:2px;font-weight:500;}
 
-.date-dow {
-  font-family: var(--mono);
-  color: #ffffff !important; /* Putih terang */
-  opacity: 0.9;
-  font-size: 0.55rem; font-weight: 600;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--ink4); margin-bottom: 1px;
+.card-body{flex:1;padding:.75rem 1rem;display:flex;flex-direction:column;justify-content:center;gap:8px;}
+
+/* persons */
+.persons-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;}
+.persons-list{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.person-chip{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border2);border-radius:99px;
+  padding:4px 12px 4px 4px;transition:border-color .15s;
 }
-.is-today  .date-dow { color: var(--ok); }
-.is-sunday .date-dow { color: var(--danger); }
-
-.date-num {
-  font-size: 1.5rem; font-weight: 800;
-  line-height: 1; letter-spacing: -1.5px; color: var(--ink);
-  color: #ffffff !important; /* Angka tanggal jadi putih */
+.person-chip:hover{border-color:rgba(232,200,74,.25);}
+.avatar-sm{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.58rem;font-weight:800;flex-shrink:0;overflow:hidden;
+  border:1.5px solid rgba(232,200,74,.3);background:rgba(0,0,0,.4);
 }
-.is-today  .date-num { color: var(--ok); }
-.is-sunday .date-num { color: var(--danger); }
-
-.date-mon { font-size: 0.6rem; color: #ffffff !important; /* Putih terang */
-  opacity: 0.9; margin-top: 2px; font-weight: 500; }
-
-.card-body {
-  flex: 1; 
-  padding: 0.75rem 1rem;
-  display: flex; 
-  flex-direction: column; 
-  justify-content: center; /* Menjaga teks tetap di tengah secara vertikal */
-  gap: 8px;
-}
-
-/* persons row */
-.persons-row {
-  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
-}
-
-.persons-list { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-.person-chip {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border2);
-  border-radius: 99px;
-  padding: 4px 12px 4px 4px;
-  transition: border-color .15s;
-}
-.person-chip:hover { border-color: rgba(232,200,74,0.25); }
-
-.avatar-sm {
-  width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.58rem; font-weight: 800;
-  flex-shrink: 0; overflow: hidden;
-  border: 1.5px solid rgba(232,200,74,0.25);
-  background: rgba(0,0,0,0.4);
-}
-.avatar-sm img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
-.avatar-sm.done-av { border-color: var(--ok-b); }
-
-.person-nm {
-  font-size: 0.8rem; font-weight: 700;
-  color: var(--ink); white-space: nowrap;
-}
+.avatar-sm img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%;}
+.avatar-sm.done-av{border-color:var(--ok-b);}
+.person-nm{font-size:.8rem;font-weight:700;color:var(--ink);white-space:nowrap;}
 
 /* done toggle */
-.done-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.done-lbl {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #ffffff !important; /* Teks 'Tandai' atau 'Selesai' jadi putih */
+.done-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.done-lbl{font-size:.65rem;font-weight:600;color:#fff;}
+.done-toggle{
+  appearance:none;-webkit-appearance:none;
+  width:20px;height:20px;border:1.5px solid var(--border3);border-radius:6px;
+  cursor:pointer;background:transparent;position:relative;transition:all .15s;flex-shrink:0;
 }
-.done-toggle {
-  appearance: none; -webkit-appearance: none;
-  width: 20px; height: 20px;
-  border: 1.5px solid var(--border3); border-radius: 6px;
-  cursor: pointer; background: transparent; position: relative;
-  transition: all .15s; flex-shrink: 0;
-}
-.done-toggle:checked { background: var(--ok); border-color: var(--ok); }
-.done-toggle:checked::after {
-  content: ''; position: absolute;
-  left: 4px; top: 1px; width: 7px; height: 11px;
-  border: 2px solid white; border-top: none; border-left: none;
-  transform: rotate(45deg);
+.done-toggle:checked{background:var(--ok);border-color:var(--ok);}
+.done-toggle:checked::after{
+  content:'';position:absolute;left:4px;top:1px;width:7px;height:11px;
+  border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg);
 }
 
-/* holiday pill */
-.holiday-pill {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 0.78rem; font-weight: 600; color: var(--danger);
-  background: var(--danger-dim); border: 1px solid var(--danger-b);
-  padding: 5px 12px; border-radius: 99px; width: fit-content;
+.holiday-pill{
+  display:flex;align-items:center;gap:6px;
+  font-size:.78rem;font-weight:600;color:var(--danger);
+  background:var(--danger-dim);border:1px solid var(--danger-b);
+  padding:5px 12px;border-radius:99px;width:fit-content;
+}
+.no-sched{font-size:.82rem;color:rgba(255,255,255,.75);font-style:italic;font-weight:500;}
+
+/* ── FOTO SECTION ── */
+.proof-section{
+  display:flex;flex-direction:column;gap:8px;
+  background:rgba(255,255,255,.03);
+  border:1px dashed var(--border3);
+  border-radius:var(--r);padding:8px 10px;
+  margin-top:2px;
 }
 
-/* GANTI KODE INI */
-.no-sched {
-  font-size: 0.85rem;      /* Sedikit diperbesar */
-  color: #ffffff;          /* Putih murni */
-  font-style: italic;
-  opacity: 0.9;            /* Agar tidak terlalu menusuk mata tapi tetap sangat jelas */
-  font-weight: 500;        /* Membuat tulisan sedikit lebih tebal */
-  letter-spacing: 0.3px;
+/* foto grid — multiple photos */
+.photos-grid{
+  display:flex;flex-wrap:wrap;gap:6px;
 }
+.proof-thumb{
+  width:56px;height:56px;border-radius:8px;
+  object-fit:cover;cursor:pointer;flex-shrink:0;
+  border:1.5px solid rgba(232,200,74,.3);
+  transition:transform .2s,box-shadow .2s;
+}
+.proof-thumb:hover{transform:scale(1.08);box-shadow:0 4px 16px rgba(0,0,0,.5);}
 
-/* period badge */
-.period-badge {
-  font-family: var(--mono);
-  font-size: 0.55rem; font-weight: 600;
-  color: var(--brand);
-  background: var(--brand-dim);
-  border: 1px solid rgba(232,200,74,0.15);
-  padding: 2px 8px; border-radius: 4px;
-  letter-spacing: 0.5px;
-  align-self: flex-start;
+.proof-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.upload-label{
+  display:flex;align-items:center;gap:6px;
+  background:var(--brand-dim);color:var(--brand);
+  border:1px solid rgba(232,200,74,.25);
+  border-radius:8px;padding:6px 12px;
+  font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;
 }
+.upload-label:hover{background:var(--brand);color:#0a0b0f;}
+.upload-label input{display:none;}
 
-/* ══ SECTION TITLE ══ */
-.section-title {
-  font-size: 0.58rem; font-weight: 800;
-  letter-spacing: 3px; text-transform: uppercase;
-  color: var(--ink4); padding: 0 1.4rem;
-  margin-bottom: 0.75rem; margin-top: 1.75rem;
-  display: flex; align-items: center; gap: 10px;
+.uploading-badge{
+  display:none;align-items:center;gap:6px;
+  font-size:.68rem;color:var(--brand);font-weight:600;
 }
-.section-title::after {
-  content: ''; flex: 1; height: 1px; background: var(--border2);
-}
+.uploading-badge.show{display:flex;}
+.spin{width:14px;height:14px;border:2px solid rgba(232,200,74,.3);border-top-color:var(--brand);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ══ MEMBERS GRID ══ */
-.members-grid {
-  display: grid; 
-  grid-template-columns: repeat(3, 1fr); /* Tetap 3 kolom di laptop */
-  gap: 0.5rem; 
-  width: 100%;
-}
+.upload-count{font-size:.65rem;color:var(--ink4);font-style:italic;}
 
-/* Untuk tampilan HP (Layar Kecil) */
-@media(max-width:440px) {
-  .members-grid { 
-    grid-template-columns: repeat(2, 1fr); /* Jadi 2 kolom di HP agar tidak sempit */
-  }
+/* ── LIGHTBOX ── */
+.lightbox{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.92);
+  align-items:center;justify-content:center;cursor:zoom-out;
 }
-.member-card {
-  background: var(--surface);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--border2);
-  border-radius: var(--r-lg);
-  padding: 0.85rem 0.8rem;
-  display: flex; flex-direction: column; gap: 0.45rem;
-  transition: border-color .2s, box-shadow .2s;
-  animation: fadeUp .4s ease both;
+.lightbox.show{display:flex;animation:fadeUp .2s ease;}
+.lightbox img{max-width:92vw;max-height:88vh;border-radius:var(--r-lg);box-shadow:0 20px 60px rgba(0,0,0,.8);object-fit:contain;}
+.lightbox-close{
+  position:absolute;top:16px;right:18px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:white;font-size:1.1rem;
+  width:36px;height:36px;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;z-index:10;
 }
-.member-card:hover { border-color: rgba(232,200,74,0.2); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+.lightbox-close:hover{background:rgba(255,255,255,.25);}
 
-.member-av {
-  width: 44px; height: 44px; border-radius: 12px;
-  overflow: hidden;
-  border: 1.5px solid rgba(232,200,74,0.2);
-  background: rgba(0,0,0,0.4);
-  box-shadow: 0 0 12px rgba(232,200,74,0.08);
+/* ── SECTION TITLE ── */
+.section-title{
+  font-size:.58rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;
+  color:var(--ink4);padding:0 1.4rem;
+  margin-bottom:.75rem;margin-top:1.75rem;
+  display:flex;align-items:center;gap:10px;
 }
-.member-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.section-title::after{content:'';flex:1;height:1px;background:var(--border2);}
 
-.member-name { font-size: 0.78rem; font-weight: 700; color: var(--ink); line-height: 1.3; }
-.member-count {
-  font-size: 0.65rem;
-  color: #ffffff !important; /* Mengubah teks 'Selesai:' jadi putih */
+/* ── MEMBERS ── */
+.members-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;padding:0 1.4rem;}
+.member-card{
+  background:var(--surface);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--border2);border-radius:var(--r-lg);
+  padding:.85rem .8rem;display:flex;flex-direction:column;gap:.45rem;
+  transition:border-color .2s,box-shadow .2s;animation:fadeUp .4s ease both;
 }
-
-.member-count strong {
-  color: var(--brand); /* Angka tetap kuning emas agar kontras */
-  font-weight: 700;
+.member-card:hover{border-color:rgba(232,200,74,.22);box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.member-av{
+  width:44px;height:44px;border-radius:12px;overflow:hidden;
+  border:1.5px solid rgba(232,200,74,.22);background:rgba(0,0,0,.4);
 }
+.member-av img{width:100%;height:100%;object-fit:cover;display:block;}
+.member-name{font-size:.78rem;font-weight:700;color:var(--ink);line-height:1.3;}
+.member-count{font-size:.65rem;color:#fff;}
+.member-count strong{color:var(--brand);font-weight:700;}
 
-/* ══ LEGEND ══ */
-.legend {
-  display: flex; gap: .85rem; flex-wrap: wrap;
-  padding: 0 1.4rem; margin-top: 1.5rem;
+/* ── LEGEND ── */
+.legend{display:flex;gap:.85rem;flex-wrap:wrap;padding:0 1.4rem;margin-top:1.5rem;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.67rem;color:var(--ink3);font-weight:500;}
+.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:1.5rem;left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--surface3);color:var(--ink);
+  font-size:.78rem;font-weight:600;
+  padding:.6rem 1.3rem;border-radius:50px;
+  opacity:0;transition:all .28s ease;
+  pointer-events:none;white-space:nowrap;z-index:999;
+  box-shadow:0 12px 40px rgba(0,0,0,.5);
+  border:1px solid var(--border3);backdrop-filter:blur(12px);
 }
-.legend-item {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 0.67rem; color: var(--ink3); font-weight: 500;
-}
-.legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ══ TOAST ══ */
-.toast {
-  position: fixed; bottom: 1.5rem; left: 50%;
-  transform: translateX(-50%) translateY(16px);
-  background: var(--surface3); color: var(--ink);
-  font-size: 0.78rem; font-weight: 600;
-  padding: 0.6rem 1.3rem; border-radius: 50px;
-  opacity: 0; transition: all .28s ease;
-  pointer-events: none; white-space: nowrap; z-index: 999;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-  border: 1px solid var(--border3);
-  backdrop-filter: blur(12px);
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border3);border-radius:99px;}
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border3); border-radius: 99px; }
-
-@media(max-width:440px) {
-  .header, .week-nav, .schedule { padding-left: 0 !important;}
-  .denda-wrap { padding-left: 0 !important;}
-  .members-grid { padding-left: 0 !important;}
-  .section-title, .legend { padding-left: 0 !important;}
-  .date-col { min-width: 68px; }
-  .brand-title { font-size: 1rem; }
-  .brand-logo { width: 40px; height: 40px; border-radius: 11px; }
+@media(max-width:440px){
+  .header,.week-nav,.schedule{padding-left:1rem;padding-right:1rem;}
+  .denda-wrap{padding-left:1rem;padding-right:1rem;}
+  .members-grid{padding-left:1rem;padding-right:1rem;grid-template-columns:repeat(2,1fr);}
+  .section-title,.legend{padding-left:1rem;}
+  .slider-section{padding-left:1rem;padding-right:1rem;}
+  .date-col{min-width:68px;}
+  .brand-title{font-size:1rem;}
+  .brand-logo{width:40px;height:40px;border-radius:11px;}
 }
 </style>
 </head>
 <body>
 
-<!-- BACKGROUND LAYERS -->
 <div class="bg-layer"></div>
 <div class="bg-overlay"></div>
 <div class="bg-glow"></div>
@@ -609,10 +445,10 @@ body {
     <div class="header-top">
       <div class="brand">
         <div class="brand-logo">
-          <img src="https://i.imgur.com/mF88miV.png" alt="Naga Hitam">
+          <img src="https://i.imgur.com/mF88miV.png" alt="Naga Putih">
         </div>
         <div class="brand-info">
-          <span class="room-tag">Kamar Naga Hitam</span>
+          <span class="room-tag">Kamar Naga Putih</span>
           <div class="brand-title">Jadwal Piket 🏠</div>
         </div>
       </div>
@@ -684,263 +520,437 @@ body {
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:var(--ok)"></div>Hari ini</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Libur Minggu</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(34,197,94,0.5)"></div>Selesai</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(34,197,94,.5)"></div>Selesai</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>Denda 5K LKR</div>
   </div>
 
 </div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Bukti">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ══════════════════════════════════════════════════
-   JADWAL — 5 HARI SEKALI, mulai 25 Apr 2025
-   Sistem berulang otomatis setiap 30 hari (6 giliran × 5 hari)
-══════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════
+   1. KONFIGURASI SUPABASE
+   ▸ Ganti URL dan KEY dengan milik project kamu
+════════════════════════════════════════════════════ */
+const SUPABASE_URL = 'https://lzjmyildurannngskrcyo.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6am15aWxkdXJhbm5nc2tyY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzU1NjUsImV4cCI6MjA4NjgxMTU2NX0.ybyZTOLYGMOjM_SucsfpsVU3WaL8qVY4m-1XYdK2J7Q';
 
+const db     = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const TABLE  = 'KAMAR-NAGA-PUTIH';
+const BUCKET = 'foto-piket';
+
+/*
+  ════════════════════════════════════════════════════
+  SQL — Jalankan di Supabase SQL Editor:
+
+  -- 1. Drop & buat ulang tabel (jika sudah ada, skip langkah ini)
+  DROP TABLE IF EXISTS "KAMAR-NAGA-PUTIH";
+
+  CREATE TABLE "KAMAR-NAGA-PUTIH" (
+    date_key    text PRIMARY KEY,
+    is_done     boolean DEFAULT false,
+    photo_url   text    DEFAULT '[]',   -- JSON array URL foto
+    "created_At" timestamptz DEFAULT now()
+  );
+
+  -- 2. Aktifkan Realtime (wajib)
+  ALTER TABLE "KAMAR-NAGA-PUTIH" REPLICA IDENTITY FULL;
+
+  -- 3. Row Level Security — izinkan akses publik (sesuai setting kamu)
+  ALTER TABLE "KAMAR-NAGA-PUTIH" DISABLE ROW LEVEL SECURITY;
+
+  -- 4. Storage bucket "foto-piket" → set PUBLIC di dashboard
+  ════════════════════════════════════════════════════
+*/
+
+/* ════════════════════════════════════════════════════
+   2. DATA MASTER JADWAL
+   Sistem berulang otomatis setiap 5 hari dari ANCHOR
+════════════════════════════════════════════════════ */
 const GROUPS = [
-  {
-    persons: ['Jufri', 'Ardi'],
-    photos:  ['https://i.imgur.com/YPuXfjB.png', 'https://i.imgur.com/YPuXfjB.png'],
-  },
-  {
-    persons: ['Reonaldo', 'Agus'],
-    photos:  ['https://i.imgur.com/sDDUjZQ.png', 'https://i.imgur.com/sDDUjZQ.png'],
-  },
-  {
-    persons: ['Farizi', 'Yope Musang'],
-    photos:  ['https://i.imgur.com/JADPNwJ.png', 'https://i.imgur.com/JADPNwJ.png'],
-  },
-  {
-    persons: ['Hasan', 'Geo'],
-    photos:  ['https://i.imgur.com/em5Nyuy.png', 'https://i.imgur.com/em5Nyuy.png'],
-  },
-  {
-    persons: ['Aksan', 'Chandra'],
-    photos:  ['https://i.imgur.com/sDDUjZQ.png', 'https://i.imgur.com/sDDUjZQ.png'],
-  },
-  {
-    persons: ['Imanuel', 'Dandi'],
-    photos:  ['https://i.imgur.com/JADPNwJ.png', 'https://i.imgur.com/JADPNwJ.png'],
-  },
+  { persons:['Jufri',   'Ardi'],       photos:['https://i.imgur.com/YPuXfjB.png','https://i.imgur.com/YPuXfjB.png'] },
+  { persons:['Reonaldo','Agus'],        photos:['https://i.imgur.com/sDDUjZQ.png','https://i.imgur.com/sDDUjZQ.png'] },
+  { persons:['Farizi',  'Yope Musang'], photos:['https://i.imgur.com/JADPNwJ.png','https://i.imgur.com/JADPNwJ.png'] },
+  { persons:['Hasan',   'Geo'],         photos:['https://i.imgur.com/em5Nyuy.png','https://i.imgur.com/em5Nyuy.png'] },
+  { persons:['Aksan',   'Chandra'],     photos:['https://i.imgur.com/sDDUjZQ.png','https://i.imgur.com/sDDUjZQ.png'] },
+  { persons:['Imanuel', 'Dandi'],       photos:['https://i.imgur.com/JADPNwJ.png','https://i.imgur.com/JADPNwJ.png'] },
 ];
 
-/* Anchor: tanggal 25 April 2026 = grup index 0 */
-const ANCHOR = new Date('2026-04-25');
-ANCHOR.setHours(0,0,0,0);
+const ANCHOR     = new Date('2026-04-25'); ANCHOR.setHours(0,0,0,0);
 const CYCLE_DAYS = 5;
-const CYCLE_TOTAL = GROUPS.length * CYCLE_DAYS; /* 30 hari */
+const ALL_MEMBERS = GROUPS.flatMap(g => g.persons.map((p,i) => ({ name:p, photo:g.photos[i] })));
 
-/* Hitung grup untuk tanggal tertentu */
+/* ════════════════════════════════════════════════════
+   3. STATE
+════════════════════════════════════════════════════ */
+const today    = new Date(); today.setHours(0,0,0,0);
+const todayKey = fmtDate(today);
+let weekOffset = 0;
+let doneMap    = {}; // { "YYYY-MM-DD": { is_done:bool, photos:string[] } }
+
+const DAY_S = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const DAY_F = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const MON_S = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const MON_F = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+/* ════════════════════════════════════════════════════
+   4. HELPERS
+════════════════════════════════════════════════════ */
+function fmtDate(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+}
+
 function getGroupForDate(date) {
-  const d = new Date(date); d.setHours(0,0,0,0);
+  const d    = new Date(date); d.setHours(0,0,0,0);
   const diff = Math.round((d - ANCHOR) / 86400000);
-  if (diff < 0) return null; /* sebelum jadwal dimulai */
-  /* hanya hari pertama setiap periode (kelipatan 5) */
-  if (diff % CYCLE_DAYS !== 0) return null;
-  const groupIdx = Math.floor(diff / CYCLE_DAYS) % GROUPS.length;
-  return GROUPS[groupIdx];
+  if (diff < 0 || diff % CYCLE_DAYS !== 0) return null;
+  return GROUPS[Math.floor(diff / CYCLE_DAYS) % GROUPS.length];
 }
 
-/* semua anggota */
-const ALL_MEMBERS = GROUPS.flatMap(g => g.persons.map((p,i)=>({name:p,photo:g.photos[i]})));
+/** Parse photo_url kolom → always returns string[] */
+function parsePhotos(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try { const p = JSON.parse(raw); return Array.isArray(p) ? p : (p ? [p] : []); }
+  catch { return raw ? [raw] : []; }
+}
 
-/* ──────────────────────────────────────────
-   SLIDER (2 detik)
-────────────────────────────────────────── */
-(function(){
-  const TOTAL=7, INTERVAL=2000;
-  const track=document.getElementById('sliderTrack');
-  const dots=document.getElementById('sDots');
-  const ctr=document.getElementById('sCtr');
-  const bar=document.getElementById('sBar');
-  let cur=0,timer=null,raf=null,t0=null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 2600);
+}
 
-  for(let i=0;i<TOTAL;i++){
-    const d=document.createElement('button');
-    d.className='dot'+(i===0?' active':'');
-    d.onclick=()=>goTo(i,true);
-    dots.appendChild(d);
+function refreshUI() { renderStrip(); renderSchedule(); renderMembers(); }
+
+/* ════════════════════════════════════════════════════
+   5. SUPABASE — LOAD
+════════════════════════════════════════════════════ */
+async function loadData() {
+  try {
+    const { data, error } = await db.from(TABLE).select('date_key, is_done, photo_url');
+    if (error) throw error;
+    doneMap = {};
+    (data || []).forEach(row => {
+      doneMap[row.date_key] = {
+        is_done: row.is_done || false,
+        photos:  parsePhotos(row.photo_url),
+      };
+    });
+  } catch (err) {
+    console.warn('Load error:', err.message);
+  } finally {
+    refreshUI();
   }
+}
 
-  function ui(){
-    track.style.transform=`translateX(-${cur*100}%)`;
-    ctr.textContent=`${cur+1} / ${TOTAL}`;
-    dots.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+/* ════════════════════════════════════════════════════
+   6. SUPABASE — SAVE STATUS CENTANG
+════════════════════════════════════════════════════ */
+async function saveStatus(dateKey, isDone) {
+  try {
+    const current = doneMap[dateKey] || { is_done: false, photos: [] };
+    const { error } = await db.from(TABLE).upsert(
+      { date_key: dateKey, is_done: isDone, photo_url: JSON.stringify(current.photos) },
+      { onConflict: 'date_key' }
+    );
+    if (error) throw error;
+  } catch (err) {
+    console.error('Save status error:', err.message);
+    showToast('❌ Gagal sinkron ke database');
   }
+}
 
-  function goTo(i,m){ cur=(i+TOTAL)%TOTAL; ui(); if(m)reset(); }
+/* ════════════════════════════════════════════════════
+   7. SUPABASE — UPLOAD BEBERAPA FOTO
+════════════════════════════════════════════════════ */
+async function uploadPhotos(dateKey, files) {
+  if (!files || files.length === 0) return;
 
-  function prog(){
-    cancelAnimationFrame(raf);
-    bar.style.transition='none'; bar.style.width='0%';
-    t0=performance.now();
-    function step(now){
-      const p=Math.min(((now-t0)/INTERVAL)*100,100);
-      bar.style.width=p+'%';
-      if(p<100) raf=requestAnimationFrame(step);
+  /* tampilkan spinner */
+  const spinner = document.getElementById(`spinner-${dateKey}`);
+  const countEl = document.getElementById(`photocount-${dateKey}`);
+  if (spinner) spinner.classList.add('show');
+
+  showToast(`⏳ Mengupload ${files.length} foto...`);
+
+  const uploaded = [];
+  const errors   = [];
+
+  for (const file of files) {
+    try {
+      const ext      = file.name.split('.').pop() || 'jpg';
+      const fileName = `${dateKey}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
+
+      const { error: upErr } = await db.storage
+        .from(BUCKET).upload(fileName, file, { upsert: false, contentType: file.type });
+
+      if (upErr) throw upErr;
+
+      const { data: urlData } = db.storage.from(BUCKET).getPublicUrl(fileName);
+      uploaded.push(urlData.publicUrl);
+    } catch (err) {
+      errors.push(file.name);
+      console.error('Upload error:', file.name, err.message);
     }
-    raf=requestAnimationFrame(step);
   }
 
-  function start(){ clearInterval(timer); prog(); timer=setInterval(()=>{ cur=(cur+1)%TOTAL; ui(); prog(); },INTERVAL); }
-  function reset(){ clearInterval(timer); cancelAnimationFrame(raf); start(); }
-
-  document.getElementById('sPrev').onclick=()=>goTo(cur-1,true);
-  document.getElementById('sNext').onclick=()=>goTo(cur+1,true);
-
-  let tx=null;
-  const w=document.getElementById('sliderWrap');
-  w.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
-  w.addEventListener('touchend',e=>{
-    if(tx===null)return;
-    const d=tx-e.changedTouches[0].clientX;
-    if(Math.abs(d)>40)goTo(d>0?cur+1:cur-1,true);
-    tx=null;
-  });
-  w.onmouseenter=()=>{clearInterval(timer);cancelAnimationFrame(raf);};
-  w.onmouseleave=start;
-  ui(); start();
-})();
-
-/* ──────────────────────────────────────────
-   HELPERS
-────────────────────────────────────────── */
-const today=new Date(); today.setHours(0,0,0,0);
-let weekOffset=0;
-
-const DAY_S=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-const DAY_F=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-const MON_S=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-const MON_F=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-
-function fmtDate(d){
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-
-const todayKey=fmtDate(today);
-
-/* localStorage */
-const STORE='naga_hitam_v2';
-let doneMap={};
-function loadLocal(){ try{ doneMap=JSON.parse(localStorage.getItem(STORE))||{}; }catch{ doneMap={}; } }
-function saveLocal(){ localStorage.setItem(STORE,JSON.stringify(doneMap)); }
-loadLocal();
-
-/* ──────────────────────────────────────────
-   CLOCK
-────────────────────────────────────────── */
-function clock(){
-  const n=new Date();
-  document.getElementById('live-date').textContent=
-    DAY_F[n.getDay()]+', '+n.getDate()+' '+MON_F[n.getMonth()]+' '+n.getFullYear();
-  document.getElementById('live-time').textContent=
-    String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
-}
-setInterval(clock,1000); clock();
-
-/* ──────────────────────────────────────────
-   STRIP
-────────────────────────────────────────── */
-function renderStrip(){
-  const strip=document.getElementById('today-strip');
-  const txt=document.getElementById('strip-text');
-  strip.className='today-strip';
-
-  if(today.getDay()===0){
-    strip.classList.add('holiday');
-    txt.textContent='Hari ini Minggu — Libur piket! 🎉';
+  if (uploaded.length === 0) {
+    if (spinner) spinner.classList.remove('show');
+    showToast('❌ Semua foto gagal diupload');
     return;
   }
 
-  const grp=getGroupForDate(today);
-  const done=!!doneMap[todayKey];
-  strip.classList.add('on-duty');
+  /* gabung foto lama + baru */
+  if (!doneMap[dateKey]) doneMap[dateKey] = { is_done: false, photos: [] };
+  const allPhotos = [...doneMap[dateKey].photos, ...uploaded];
+  doneMap[dateKey].photos  = allPhotos;
+  doneMap[dateKey].is_done = true;
 
-  if(grp){
-    txt.innerHTML=done
+  try {
+    const { error: dbErr } = await db.from(TABLE).upsert(
+      { date_key: dateKey, is_done: true, photo_url: JSON.stringify(allPhotos) },
+      { onConflict: 'date_key' }
+    );
+    if (dbErr) throw dbErr;
+  } catch (err) {
+    console.error('DB save error:', err.message);
+  }
+
+  if (spinner) spinner.classList.remove('show');
+
+  if (errors.length > 0) {
+    showToast(`📸 ${uploaded.length} foto tersimpan, ${errors.length} gagal`);
+  } else {
+    showToast(`📸 ${uploaded.length} foto bukti tersimpan!`);
+  }
+
+  refreshUI();
+}
+
+/* ════════════════════════════════════════════════════
+   8. REALTIME — sinkron semua perangkat otomatis
+════════════════════════════════════════════════════ */
+function listenRealtime() {
+  db.channel('naga-putih-rt')
+    .on('postgres_changes', { event: '*', schema: 'public', table: TABLE }, payload => {
+      const row = payload.new || {};
+      if (!row.date_key) return;
+      doneMap[row.date_key] = {
+        is_done: row.is_done || false,
+        photos:  parsePhotos(row.photo_url),
+      };
+      refreshUI();
+    })
+    .subscribe();
+}
+
+/* ════════════════════════════════════════════════════
+   9. LIGHTBOX
+════════════════════════════════════════════════════ */
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = src;
+  lb.classList.add('show');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+/* ════════════════════════════════════════════════════
+   10. SLIDER
+════════════════════════════════════════════════════ */
+(function initSlider() {
+  const TOTAL = 7, INTERVAL = 2500;
+  const track = document.getElementById('sliderTrack');
+  const dots  = document.getElementById('sDots');
+  const ctr   = document.getElementById('sCtr');
+  const bar   = document.getElementById('sBar');
+  if (!track || !dots) return;
+
+  let cur = 0, timer = null, raf = null, t0 = null;
+
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i, true);
+    dots.appendChild(d);
+  }
+
+  function updateUI() {
+    track.style.transform = `translateX(-${cur * 100}%)`;
+    ctr.textContent = `${cur+1} / ${TOTAL}`;
+    dots.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i === cur));
+  }
+
+  function goTo(i, manual) { cur = (i + TOTAL) % TOTAL; updateUI(); if (manual) reset(); }
+
+  function startProg() {
+    cancelAnimationFrame(raf);
+    if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
+    t0 = performance.now();
+    (function step(now) {
+      const p = Math.min(((now - t0) / INTERVAL) * 100, 100);
+      if (bar) bar.style.width = p + '%';
+      if (p < 100) raf = requestAnimationFrame(step);
+    })(performance.now());
+  }
+
+  function start() {
+    clearInterval(timer); startProg();
+    timer = setInterval(() => { cur = (cur+1)%TOTAL; updateUI(); startProg(); }, INTERVAL);
+  }
+
+  function reset() { clearInterval(timer); cancelAnimationFrame(raf); start(); }
+
+  document.getElementById('sPrev').onclick = () => goTo(cur-1, true);
+  document.getElementById('sNext').onclick = () => goTo(cur+1, true);
+
+  let tx = null;
+  const wrap = document.getElementById('sliderWrap');
+  wrap.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive:true });
+  wrap.addEventListener('touchend',   e => {
+    if (tx === null) return;
+    const diff = tx - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) goTo(diff > 0 ? cur+1 : cur-1, true);
+    tx = null;
+  });
+  wrap.onmouseenter = () => { clearInterval(timer); cancelAnimationFrame(raf); };
+  wrap.onmouseleave = start;
+
+  updateUI(); start();
+})();
+
+/* ════════════════════════════════════════════════════
+   11. RENDER — STRIP HEADER
+════════════════════════════════════════════════════ */
+function renderStrip() {
+  const strip = document.getElementById('today-strip');
+  const txt   = document.getElementById('strip-text');
+  if (!strip || !txt) return;
+  strip.className = 'today-strip';
+  if (today.getDay() === 0) {
+    strip.classList.add('holiday');
+    txt.textContent = 'Hari ini Minggu — Libur piket! 🎉';
+    return;
+  }
+  const grp  = getGroupForDate(today);
+  const data = doneMap[todayKey];
+  strip.classList.add('on-duty');
+  if (grp) {
+    txt.innerHTML = (data && data.is_done)
       ? `✅ Piket <strong>${grp.persons.join(' & ')}</strong> sudah selesai!`
       : `🧹 Giliran: <strong>${grp.persons.join(' & ')}</strong> — Semangat!`;
   } else {
-    /* cari jadwal terdekat berikutnya */
-    let next=null;
-    for(let i=1;i<=35;i++){
-      const dd=new Date(today); dd.setDate(today.getDate()+i);
-      const g=getGroupForDate(dd);
-      if(g){ next={date:dd,group:g}; break; }
-    }
-    txt.innerHTML=next
-      ? `📅 Piket berikutnya: <strong>${next.group.persons.join(' & ')}</strong> (${next.date.getDate()} ${MON_S[next.date.getMonth()]})`
-      : `📅 Tidak ada jadwal hari ini`;
+    txt.textContent = '📅 Tidak ada jadwal piket hari ini';
   }
 }
 
-/* ──────────────────────────────────────────
-   WEEK DATES
-────────────────────────────────────────── */
-function getWeekDates(){
-  const dow=today.getDay()===0?6:today.getDay()-1;
-  const mon=new Date(today);
-  mon.setDate(today.getDate()-dow+weekOffset*7);
-  return Array.from({length:7},(_,i)=>{
-    const d=new Date(mon); d.setDate(mon.getDate()+i); return d;
+/* ════════════════════════════════════════════════════
+   12. RENDER — JADWAL MINGGUAN
+════════════════════════════════════════════════════ */
+function renderSchedule() {
+  const grid = document.getElementById('sched');
+  if (!grid) return;
+
+  const dow    = today.getDay() === 0 ? 6 : today.getDay() - 1;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - dow + weekOffset * 7);
+
+  const dates = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday); d.setDate(monday.getDate() + i); return d;
   });
-}
 
-/* ──────────────────────────────────────────
-   RENDER SCHEDULE
-────────────────────────────────────────── */
-function renderSchedule(){
-  const grid=document.getElementById('sched');
-  const dates=getWeekDates();
-  const mon=dates[0],sun=dates[6];
+  const sun = dates[6];
+  document.getElementById('week-label').textContent =
+    dates[0].getDate() + ' ' + MON_S[dates[0].getMonth()] + ' – ' +
+    sun.getDate() + ' ' + MON_S[sun.getMonth()] + ' ' + sun.getFullYear();
 
-  document.getElementById('week-label').textContent=
-    mon.getDate()+' '+MON_S[mon.getMonth()]+' – '+
-    sun.getDate()+' '+MON_S[sun.getMonth()]+' '+sun.getFullYear();
+  let html = '';
 
-  let html='';
+  dates.forEach((date, idx) => {
+    const dkey    = fmtDate(date);
+    const isSun   = date.getDay() === 0;
+    const isToday = dkey === todayKey;
+    const rowData = doneMap[dkey] || { is_done: false, photos: [] };
+    const done    = rowData.is_done;
+    const photos  = rowData.photos || [];
+    const grp     = getGroupForDate(date);
 
-  dates.forEach((date,idx)=>{
-    const dkey=fmtDate(date);
-    const isSun=date.getDay()===0;
-    const isToday=dkey===todayKey;
-    const done=!!doneMap[dkey];
-    const grp=getGroupForDate(date);
+    let cls = 'day-card' +
+      (isToday ? ' is-today live' : done ? ' done-card' : ' upcoming') +
+      (isSun ? ' is-sunday' : '');
 
-    let cls='day-card';
-    if(isToday) cls+=' is-today live';
-    else if(done) cls+=' done-card';
-    else cls+=' upcoming';
-    if(isSun) cls+=' is-sunday';
+    let body = '';
 
-    let body='';
+    if (isSun) {
+      body = `<div class="holiday-pill">🔴 Libur — Minggu</div>`;
 
-    if(isSun){
-      body=`<div class="holiday-pill">🔴 Libur — Minggu</div>`;
-    } else if(grp){
-      const chips=grp.persons.map((p,i)=>`
+    } else if (grp) {
+      const chips = grp.persons.map((p,i) => `
         <div class="person-chip">
-          <div class="avatar-sm ${done?'done-av':''}">
+          <div class="avatar-sm ${done ? 'done-av' : ''}">
             <img src="${grp.photos[i]}" alt="${p}" onerror="this.style.display='none'">
           </div>
           <span class="person-nm">${p}</span>
         </div>`).join('');
 
-      body=`
+      /* Foto grid */
+      const photosHtml = photos.length
+        ? `<div class="photos-grid">
+            ${photos.map(url => `
+              <img src="${url}" class="proof-thumb"
+                   onclick="openLightbox('${url}')"
+                   title="Klik untuk lihat">`
+            ).join('')}
+           </div>`
+        : '';
+
+      body = `
         <div class="persons-row">
           <div class="persons-list">${chips}</div>
           <div class="done-wrap">
-            <label class="done-lbl" for="chk-${dkey}">${done?'✓ Selesai':'Tandai'}</label>
-            <input class="done-toggle" type="checkbox" id="chk-${dkey}" data-dk="${dkey}" ${done?'checked':''}>
+            <label class="done-lbl" for="chk-${dkey}">
+              ${done ? '✓ Selesai' : 'Tandai'}
+            </label>
+            <input class="done-toggle" type="checkbox"
+              id="chk-${dkey}" data-dk="${dkey}" ${done ? 'checked' : ''}>
           </div>
         </div>
-        <div class="period-badge">PERIODE 5 HARI</div>`;
+        <div class="proof-section">
+          ${photosHtml}
+          <div class="proof-actions">
+            <label class="upload-label">
+              📸 ${photos.length > 0 ? `Tambah Foto (${photos.length})` : 'Upload Bukti'}
+              <input type="file" accept="image/*" multiple data-dk="${dkey}">
+            </label>
+            <div class="uploading-badge" id="spinner-${dkey}">
+              <div class="spin"></div> Mengupload...
+            </div>
+            ${photos.length > 0 ? `<span class="upload-count">${photos.length} foto tersimpan</span>` : ''}
+          </div>
+        </div>`;
+
     } else {
-      body=`<div class="no-sched">Tidak ada jadwal piket hari ini</div>`;
+      body = `<div class="no-sched">Tidak ada jadwal piket hari ini</div>`;
     }
 
-    html+=`
-      <div class="${cls}" style="animation-delay:${idx*.04}s">
+    html += `
+      <div class="${cls}" style="animation-delay:${idx * .05}s">
         <div class="day-row">
           <div class="date-col">
             <div class="date-dow">${DAY_S[date.getDay()]}</div>
@@ -952,40 +962,50 @@ function renderSchedule(){
       </div>`;
   });
 
-  grid.innerHTML=html;
+  grid.innerHTML = html;
 
-  grid.querySelectorAll('.done-toggle').forEach(chk=>{
-    chk.addEventListener('change',function(){
-      const dk=this.dataset.dk;
-      if(this.checked) doneMap[dk]=true;
-      else delete doneMap[dk];
-      saveLocal();
-      renderSchedule();
-      renderStrip();
-      renderMembers();
-      showToast(this.checked?'✅ Piket ditandai selesai!':'↩ Tanda dibatalkan');
-    });
+  /* Bind checkbox */
+  grid.querySelectorAll('.done-toggle').forEach(chk => {
+    chk.onchange = async function () {
+      const dk  = this.dataset.dk;
+      const val = this.checked;
+      if (!doneMap[dk]) doneMap[dk] = { is_done: false, photos: [] };
+      doneMap[dk].is_done = val;
+      if (!val) doneMap[dk].photos = [];
+      refreshUI();
+      await saveStatus(dk, val);
+      showToast(val ? '✅ Tersimpan ke database!' : '↩ Tanda dibatalkan');
+    };
+  });
+
+  /* Bind file upload — support multiple files */
+  grid.querySelectorAll('input[type="file"][data-dk]').forEach(input => {
+    input.onchange = function () {
+      if (this.files && this.files.length > 0) {
+        uploadPhotos(this.dataset.dk, Array.from(this.files));
+        this.value = ''; // reset agar bisa upload lagi
+      }
+    };
   });
 }
 
-/* ──────────────────────────────────────────
-   RENDER MEMBERS
-────────────────────────────────────────── */
-function renderMembers(){
-  const grid=document.getElementById('members');
-  let html='';
-
-  ALL_MEMBERS.forEach((m,i)=>{
-    let count=0;
-    Object.keys(doneMap).forEach(dkey=>{
-      if(doneMap[dkey]){
-        const g=getGroupForDate(new Date(dkey+'T00:00:00'));
-        if(g&&g.persons.includes(m.name)) count++;
+/* ════════════════════════════════════════════════════
+   13. RENDER — ANGGOTA KAMAR
+════════════════════════════════════════════════════ */
+function renderMembers() {
+  const grid = document.getElementById('members');
+  if (!grid) return;
+  let html = '';
+  ALL_MEMBERS.forEach((m, i) => {
+    let count = 0;
+    Object.keys(doneMap).forEach(dk => {
+      if (doneMap[dk]?.is_done) {
+        const g = getGroupForDate(new Date(dk + 'T00:00:00'));
+        if (g && g.persons.includes(m.name)) count++;
       }
     });
-
-    html+=`
-      <div class="member-card" style="animation-delay:${i*.04}s">
+    html += `
+      <div class="member-card" style="animation-delay:${i*.05}s">
         <div class="member-av">
           <img src="${m.photo}" alt="${m.name}" onerror="this.parentElement.style.background='var(--brand-dim)'">
         </div>
@@ -993,32 +1013,31 @@ function renderMembers(){
         <div class="member-count">Selesai: <strong>${count}×</strong></div>
       </div>`;
   });
-
-  grid.innerHTML=html;
+  grid.innerHTML = html;
 }
 
-/* ──────────────────────────────────────────
-   TOAST
-────────────────────────────────────────── */
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
+/* ════════════════════════════════════════════════════
+   14. JAM & NAVIGASI
+════════════════════════════════════════════════════ */
+function updateClock() {
+  const n = new Date();
+  const dEl = document.getElementById('live-date');
+  const tEl = document.getElementById('live-time');
+  if (dEl) dEl.textContent = DAY_F[n.getDay()] + ', ' + n.getDate() + ' ' + MON_F[n.getMonth()] + ' ' + n.getFullYear();
+  if (tEl) tEl.textContent = String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0') + ':' + String(n.getSeconds()).padStart(2,'0');
 }
 
-/* ──────────────────────────────────────────
-   WEEK NAV
-────────────────────────────────────────── */
-document.getElementById('btn-prev').onclick=()=>{ weekOffset--; renderSchedule(); };
-document.getElementById('btn-next').onclick=()=>{ weekOffset++; renderSchedule(); };
-document.getElementById('btn-today').onclick=()=>{ weekOffset=0; renderSchedule(); showToast('↩ Kembali ke minggu ini'); };
+document.getElementById('btn-prev').onclick  = () => { weekOffset--; renderSchedule(); };
+document.getElementById('btn-next').onclick  = () => { weekOffset++; renderSchedule(); };
+document.getElementById('btn-today').onclick = () => { weekOffset = 0; renderSchedule(); showToast('↩ Kembali ke minggu ini'); };
 
-/* ──────────────────────────────────────────
-   INIT
-────────────────────────────────────────── */
-renderStrip();
-renderSchedule();
-renderMembers();
+/* ════════════════════════════════════════════════════
+   15. INIT
+════════════════════════════════════════════════════ */
+setInterval(updateClock, 1000);
+updateClock();
+loadData();
+listenRealtime();
 </script>
 </body>
 </html>
