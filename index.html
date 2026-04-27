@@ -3,14 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Jadwal Piket Kamar Naga Putih — Realtime Supabase">
+<meta name="description" content="Jadwal Piket — Realtime Supabase Multi-Tenant">
 <title>Jadwal Piket · Kamar Naga Putih</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ════════════════════════════════════════════════
-   DESIGN TOKENS
-════════════════════════════════════════════════ */
 :root {
   --brand:      #e8c84a;
   --brand2:     #c9a82a;
@@ -43,87 +40,28 @@
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.6;position:relative;}
 
-body{
-  font-family:var(--font);color:var(--ink);
-  min-height:100vh;overflow-x:hidden;
-  font-size:15px;line-height:1.6;position:relative;
-}
+.bg-layer{position:fixed;inset:0;z-index:0;background-image:url('https://i.imgur.com/bfrp75y.png');background-size:cover;background-position:center;background-repeat:no-repeat;filter:brightness(1.05) contrast(1.05);}
+.bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(160deg,rgba(5,7,14,.75) 0%,rgba(8,10,18,.68) 50%,rgba(5,7,14,.80) 100%);}
+.bg-glow{position:fixed;top:-250px;left:50%;transform:translateX(-50%);width:700px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(232,200,74,.06) 0%,transparent 65%);pointer-events:none;z-index:2;}
 
-/* ── BACKGROUND ── */
-.bg-layer{
-  position:fixed;inset:0;z-index:0;
-  background-image:url('https://i.imgur.com/bfrp75y.png');
-  background-size:cover;background-position:center;
-  background-repeat:no-repeat;
-  filter:brightness(1.05) contrast(1.05);
-}
-.bg-overlay{
-  position:fixed;inset:0;z-index:1;
-  background:linear-gradient(160deg,rgba(5,7,14,.75) 0%,rgba(8,10,18,.68) 50%,rgba(5,7,14,.80) 100%);
-}
-.bg-glow{
-  position:fixed;top:-250px;left:50%;transform:translateX(-50%);
-  width:700px;height:500px;border-radius:50%;
-  background:radial-gradient(ellipse,rgba(232,200,74,.06) 0%,transparent 65%);
-  pointer-events:none;z-index:2;
-}
+.page{position:relative;z-index:3;max-width:600px;margin:0 auto;padding:0 0 6rem;}
 
-/* ── PAGE ── */
-.page{
-  position:relative;z-index:3;
-  max-width:600px;margin:0 auto;
-  padding:0 0 6rem;
-}
-
-/* ── HEADER ── */
-.header{
-  background:var(--glass);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border-bottom:1px solid var(--border2);
-  padding:1rem 1.4rem .9rem;
-  position:sticky;top:0;z-index:200;
-  box-shadow:0 1px 0 var(--border),0 4px 24px rgba(0,0,0,.3);
-}
-.header-top{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:1rem;margin-bottom:.8rem;
-}
+/* HEADER */
+.header{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-bottom:1px solid var(--border2);padding:1rem 1.4rem .9rem;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 var(--border),0 4px 24px rgba(0,0,0,.3);}
+.header-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.8rem;}
 .brand{display:flex;align-items:center;gap:12px;}
-.brand-logo{
-  width:48px;height:48px;border-radius:14px;
-  overflow:hidden;flex-shrink:0;
-  border:1.5px solid rgba(232,200,74,.3);
-  box-shadow:0 0 20px var(--brand-glow),0 0 40px rgba(232,200,74,.08);
-  background:rgba(0,0,0,.4);
-}
+.brand-logo{width:48px;height:48px;border-radius:14px;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(232,200,74,.3);box-shadow:0 0 20px var(--brand-glow),0 0 40px rgba(232,200,74,.08);background:rgba(0,0,0,.4);}
 .brand-logo img{width:100%;height:100%;object-fit:cover;display:block;}
 .brand-info{display:flex;flex-direction:column;gap:5px;}
-.room-tag{
-  font-family:var(--mono);
-  font-size:.72rem;font-weight:800;
-  letter-spacing:2px;text-transform:uppercase;
-  color:#0a0b0f;
-  background:linear-gradient(135deg,var(--brand),var(--brand2));
-  border:1px solid var(--brand);
-  padding:3px 10px;border-radius:5px;
-  display:inline-block;width:fit-content;
-  box-shadow:0 0 12px var(--brand-glow);
-}
+.room-tag{font-family:var(--mono);font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#0a0b0f;background:linear-gradient(135deg,var(--brand),var(--brand2));border:1px solid var(--brand);padding:3px 10px;border-radius:5px;display:inline-block;width:fit-content;box-shadow:0 0 12px var(--brand-glow);}
 .brand-title{font-size:1.15rem;font-weight:800;color:var(--ink);letter-spacing:-.3px;line-height:1.2;}
 .header-clock{text-align:right;flex-shrink:0;}
 .live-date{font-size:.65rem;font-weight:500;color:var(--ink3);white-space:nowrap;display:block;}
-.live-time{
-  font-family:var(--mono);font-size:1rem;font-weight:600;
-  color:var(--ink);display:block;text-align:right;letter-spacing:1px;
-}
+.live-time{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--ink);display:block;text-align:right;letter-spacing:1px;}
 
-/* Today strip */
-.today-strip{
-  display:flex;align-items:center;gap:8px;
-  padding:.55rem .85rem;border-radius:var(--r);
-  font-size:.78rem;font-weight:600;border:1px solid;
-}
+.today-strip{display:flex;align-items:center;gap:8px;padding:.55rem .85rem;border-radius:var(--r);font-size:.78rem;font-weight:600;border:1px solid;}
 .today-strip.on-duty{background:var(--ok-dim);border-color:var(--ok-b);color:var(--ok);}
 .today-strip.holiday{background:var(--danger-dim);border-color:var(--danger-b);color:var(--danger);}
 .today-strip.loading{background:var(--surface2);border-color:var(--border2);color:var(--ink3);}
@@ -133,51 +71,23 @@ body{
 .loading .strip-dot{background:var(--ink3);animation:none;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.5)}}
 
-/* ── DENDA BANNER ── */
+/* DENDA */
 .denda-wrap{padding:1rem 1.4rem 0;}
-.denda-banner{
-  background:linear-gradient(135deg,rgba(30,20,0,.92),rgba(45,30,0,.92));
-  border:1px solid rgba(232,200,74,.3);
-  border-radius:var(--r-lg);padding:.9rem 1.1rem;
-  display:flex;align-items:center;gap:12px;
-  box-shadow:0 4px 24px rgba(232,200,74,.10);
-  backdrop-filter:blur(10px);animation:fadeUp .5s ease;
-}
+.denda-banner{background:linear-gradient(135deg,rgba(30,20,0,.92),rgba(45,30,0,.92));border:1px solid rgba(232,200,74,.3);border-radius:var(--r-lg);padding:.9rem 1.1rem;display:flex;align-items:center;gap:12px;box-shadow:0 4px 24px rgba(232,200,74,.10);backdrop-filter:blur(10px);animation:fadeUp .5s ease;}
 .denda-left{display:flex;align-items:center;gap:10px;flex:1;}
-.denda-icon-wrap{
-  width:38px;height:38px;border-radius:10px;
-  background:var(--brand-dim);border:1px solid rgba(232,200,74,.25);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;overflow:hidden;
-}
+.denda-icon-wrap{width:38px;height:38px;border-radius:10px;background:var(--brand-dim);border:1px solid rgba(232,200,74,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
 .denda-icon-wrap img{width:100%;height:100%;object-fit:contain;}
 .denda-tag{font-family:var(--mono);font-size:.52rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(232,200,74,.55);margin-bottom:2px;}
 .denda-msg{font-size:.88rem;font-weight:800;color:var(--brand);line-height:1.3;text-shadow:0 0 20px var(--brand-glow);}
-.denda-pill{
-  font-family:var(--mono);font-size:.88rem;font-weight:700;
-  color:#0a0b0f;background:linear-gradient(135deg,var(--brand),var(--brand2));
-  padding:6px 14px;border-radius:8px;flex-shrink:0;white-space:nowrap;
-  box-shadow:0 2px 12px var(--brand-glow);
-}
+.denda-pill{font-family:var(--mono);font-size:.88rem;font-weight:700;color:#0a0b0f;background:linear-gradient(135deg,var(--brand),var(--brand2));padding:6px 14px;border-radius:8px;flex-shrink:0;white-space:nowrap;box-shadow:0 2px 12px var(--brand-glow);}
 
-/* ── SLIDER ── */
+/* SLIDER */
 .slider-section{padding:0 1.4rem;margin-top:1rem;}
-.slider-wrap{
-  position:relative;overflow:hidden;width:100%;
-  aspect-ratio:16/9;border-radius:var(--r-lg);
-  background:#000;border:1px solid var(--border2);
-}
+.slider-wrap{position:relative;overflow:hidden;width:100%;aspect-ratio:16/9;border-radius:var(--r-lg);background:#000;border:1px solid var(--border2);}
 .slider-track{display:flex;width:100%;height:100%;transition:transform .45s cubic-bezier(.4,0,.2,1);}
 .slide{min-width:100%;height:100%;overflow:hidden;}
 .slide img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none;}
-.slider-btn{
-  position:absolute;top:50%;transform:translateY(-50%);z-index:10;
-  width:34px;height:34px;border-radius:50%;
-  border:1px solid rgba(255,255,255,.2);
-  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
-  color:white;font-size:14px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:all .2s;
-}
+.slider-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.5);backdrop-filter:blur(8px);color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .slider-btn:hover{background:rgba(0,0,0,.8);border-color:rgba(255,255,255,.5);}
 .slider-btn.prev{left:10px;}.slider-btn.next{right:10px;}
 .slider-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:10;}
@@ -187,76 +97,35 @@ body{
 .slider-bar{height:2px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:2px;}
 .slider-bar-fill{height:100%;background:var(--brand);width:0%;transition:width .05s linear;}
 
-/* ── WEEK NAV ── */
-.week-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:.75rem 1.4rem;
-  background:var(--glass);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border-bottom:1px solid var(--border);
-  margin-top:.75rem;
-}
+/* WEEK NAV */
+.week-nav{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.4rem;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-bottom:1px solid var(--border);margin-top:.75rem;}
 .week-label{font-size:.72rem;font-weight:600;color:var(--ink2);font-family:var(--mono);}
 .week-ctrl{display:flex;align-items:center;gap:6px;}
-.btn-week{
-  width:28px;height:28px;border:1px solid var(--border3);border-radius:8px;
-  background:var(--surface2);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--ink3);font-size:.85rem;transition:all .15s;
-}
+.btn-week{width:28px;height:28px;border:1px solid var(--border3);border-radius:8px;background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:.85rem;transition:all .15s;}
 .btn-week:hover{background:var(--surface3);color:var(--ink);border-color:var(--brand);}
-.btn-today{
-  padding:0 11px;height:28px;
-  border:1px solid rgba(232,200,74,.3);
-  border-radius:8px;background:var(--brand-dim);
-  color:var(--brand);font-family:var(--font);
-  font-size:.68rem;font-weight:700;cursor:pointer;transition:all .15s;
-}
+.btn-today{padding:0 11px;height:28px;border:1px solid rgba(232,200,74,.3);border-radius:8px;background:var(--brand-dim);color:var(--brand);font-family:var(--font);font-size:.68rem;font-weight:700;cursor:pointer;transition:all .15s;}
 .btn-today:hover{background:var(--brand);color:#0a0b0f;border-color:var(--brand);}
 
-/* ── SCHEDULE CARDS ── */
+/* CARDS */
 .schedule{padding:1rem 1.4rem;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.day-card{
-  background:var(--surface);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border:1px solid var(--border2);
-  border-radius:var(--r-lg);margin-bottom:.65rem;
-  overflow:hidden;transition:all .2s;
-  animation:fadeUp .35s ease both;position:relative;
-}
+.day-card{background:var(--surface);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--border2);border-radius:var(--r-lg);margin-bottom:.65rem;overflow:hidden;transition:all .2s;animation:fadeUp .35s ease both;position:relative;}
 .day-card:hover{border-color:var(--border3);box-shadow:0 4px 20px rgba(0,0,0,.4);}
 .day-card.is-today{border-color:rgba(34,197,94,.4);box-shadow:0 0 0 1px rgba(34,197,94,.15),0 4px 20px rgba(0,0,0,.4);}
 .day-card.is-sunday{border-color:rgba(239,68,68,.28);}
 .day-card.done-card{background:rgba(10,25,15,.90);}
-
-.day-card::before{
-  content:'';position:absolute;left:0;top:8px;bottom:8px;
-  width:3px;border-radius:0 2px 2px 0;
-}
+.day-card::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;}
 .day-card.upcoming::before{background:var(--border3);}
 .day-card.live::before{background:var(--ok);box-shadow:0 0 8px var(--ok);}
 .day-card.done-card::before{background:rgba(34,197,94,.45);}
 .day-card.is-sunday::before{background:var(--danger);opacity:.4;}
-
-.day-card:nth-child(1){animation-delay:.03s}
-.day-card:nth-child(2){animation-delay:.07s}
-.day-card:nth-child(3){animation-delay:.11s}
-.day-card:nth-child(4){animation-delay:.15s}
-.day-card:nth-child(5){animation-delay:.19s}
-.day-card:nth-child(6){animation-delay:.23s}
-.day-card:nth-child(7){animation-delay:.27s}
+.day-card:nth-child(1){animation-delay:.03s}.day-card:nth-child(2){animation-delay:.07s}.day-card:nth-child(3){animation-delay:.11s}.day-card:nth-child(4){animation-delay:.15s}.day-card:nth-child(5){animation-delay:.19s}.day-card:nth-child(6){animation-delay:.23s}.day-card:nth-child(7){animation-delay:.27s}
 
 .day-row{display:flex;align-items:stretch;}
-.date-col{
-  padding:.85rem .8rem;min-width:76px;flex-shrink:0;
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;justify-content:center;
-  background:rgba(0,0,0,.2);
-}
-.is-today  .date-col{background:rgba(34,197,94,.07); border-right-color:rgba(34,197,94,.2);}
-.is-sunday .date-col{background:rgba(239,68,68,.06); border-right-color:rgba(239,68,68,.18);}
+.date-col{padding:.85rem .8rem;min-width:76px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;background:rgba(0,0,0,.2);}
+.is-today  .date-col{background:rgba(34,197,94,.07);border-right-color:rgba(34,197,94,.2);}
+.is-sunday .date-col{background:rgba(239,68,68,.06);border-right-color:rgba(239,68,68,.18);}
 .date-dow{font-family:var(--mono);font-size:.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:1px;}
 .is-today  .date-dow{color:var(--ok);}
 .is-sunday .date-dow{color:var(--danger);}
@@ -264,171 +133,74 @@ body{
 .is-today  .date-num{color:var(--ok);}
 .is-sunday .date-num{color:var(--danger);}
 .date-mon{font-size:.6rem;color:rgba(255,255,255,.7);margin-top:2px;font-weight:500;}
-
 .card-body{flex:1;padding:.75rem 1rem;display:flex;flex-direction:column;justify-content:center;gap:8px;}
 
-/* persons */
 .persons-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;}
 .persons-list{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.person-chip{
-  display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,.04);
-  border:1px solid var(--border2);border-radius:99px;
-  padding:4px 12px 4px 4px;transition:border-color .15s;
-}
+.person-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:99px;padding:4px 12px 4px 4px;transition:border-color .15s;}
 .person-chip:hover{border-color:rgba(232,200,74,.25);}
-.avatar-sm{
-  width:28px;height:28px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.58rem;font-weight:800;flex-shrink:0;overflow:hidden;
-  border:1.5px solid rgba(232,200,74,.3);background:rgba(0,0,0,.4);
-}
+.avatar-sm{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:800;flex-shrink:0;overflow:hidden;border:1.5px solid rgba(232,200,74,.3);background:rgba(0,0,0,.4);}
 .avatar-sm img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%;}
 .avatar-sm.done-av{border-color:var(--ok-b);}
 .person-nm{font-size:.8rem;font-weight:700;color:var(--ink);white-space:nowrap;}
 
-/* done toggle */
 .done-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .done-lbl{font-size:.65rem;font-weight:600;color:#fff;}
-.done-toggle{
-  appearance:none;-webkit-appearance:none;
-  width:20px;height:20px;border:1.5px solid var(--border3);border-radius:6px;
-  cursor:pointer;background:transparent;position:relative;transition:all .15s;flex-shrink:0;
-}
+.done-toggle{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:1.5px solid var(--border3);border-radius:6px;cursor:pointer;background:transparent;position:relative;transition:all .15s;flex-shrink:0;}
 .done-toggle:checked{background:var(--ok);border-color:var(--ok);}
-.done-toggle:checked::after{
-  content:'';position:absolute;left:4px;top:1px;width:7px;height:11px;
-  border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg);
-}
+.done-toggle:checked::after{content:'';position:absolute;left:4px;top:1px;width:7px;height:11px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg);}
 
-.holiday-pill{
-  display:flex;align-items:center;gap:6px;
-  font-size:.78rem;font-weight:600;color:var(--danger);
-  background:var(--danger-dim);border:1px solid var(--danger-b);
-  padding:5px 12px;border-radius:99px;width:fit-content;
-}
+.holiday-pill{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;color:var(--danger);background:var(--danger-dim);border:1px solid var(--danger-b);padding:5px 12px;border-radius:99px;width:fit-content;}
 .no-sched{font-size:.82rem;color:rgba(255,255,255,.75);font-style:italic;font-weight:500;}
 
-/* ── FOTO SECTION ── */
-.proof-section{
-  display:flex;flex-direction:column;gap:8px;
-  background:rgba(255,255,255,.03);
-  border:1px dashed var(--border3);
-  border-radius:var(--r);padding:8px 10px;
-  margin-top:2px;
-}
-
-/* foto grid — multiple photos */
-.photos-grid{
-  display:flex;flex-wrap:wrap;gap:6px;
-}
-.proof-thumb{
-  width:56px;height:56px;border-radius:8px;
-  object-fit:cover;cursor:pointer;flex-shrink:0;
-  border:1.5px solid rgba(232,200,74,.3);
-  transition:transform .2s,box-shadow .2s;
-}
+/* FOTO */
+.proof-section{display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,.03);border:1px dashed var(--border3);border-radius:var(--r);padding:8px 10px;margin-top:2px;}
+.photos-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.proof-thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;cursor:pointer;flex-shrink:0;border:1.5px solid rgba(232,200,74,.3);transition:transform .2s,box-shadow .2s;}
 .proof-thumb:hover{transform:scale(1.08);box-shadow:0 4px 16px rgba(0,0,0,.5);}
-
 .proof-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.upload-label{
-  display:flex;align-items:center;gap:6px;
-  background:var(--brand-dim);color:var(--brand);
-  border:1px solid rgba(232,200,74,.25);
-  border-radius:8px;padding:6px 12px;
-  font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;
-}
+.upload-label{display:flex;align-items:center;gap:6px;background:var(--brand-dim);color:var(--brand);border:1px solid rgba(232,200,74,.25);border-radius:8px;padding:6px 12px;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
 .upload-label:hover{background:var(--brand);color:#0a0b0f;}
 .upload-label input{display:none;}
-
-.uploading-badge{
-  display:none;align-items:center;gap:6px;
-  font-size:.68rem;color:var(--brand);font-weight:600;
-}
+.uploading-badge{display:none;align-items:center;gap:6px;font-size:.68rem;color:var(--brand);font-weight:600;}
 .uploading-badge.show{display:flex;}
 .spin{width:14px;height:14px;border:2px solid rgba(232,200,74,.3);border-top-color:var(--brand);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .upload-count{font-size:.65rem;color:var(--ink4);font-style:italic;}
 
-/* ── LIGHTBOX ── */
-.lightbox{
-  display:none;position:fixed;inset:0;z-index:9999;
-  background:rgba(0,0,0,.92);
-  align-items:center;justify-content:center;cursor:zoom-out;
-}
+/* LIGHTBOX */
+.lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);align-items:center;justify-content:center;cursor:zoom-out;}
 .lightbox.show{display:flex;animation:fadeUp .2s ease;}
 .lightbox img{max-width:92vw;max-height:88vh;border-radius:var(--r-lg);box-shadow:0 20px 60px rgba(0,0,0,.8);object-fit:contain;}
-.lightbox-close{
-  position:absolute;top:16px;right:18px;
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
-  color:white;font-size:1.1rem;
-  width:36px;height:36px;border-radius:50%;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:background .15s;z-index:10;
-}
+.lightbox-close{position:absolute;top:16px;right:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:white;font-size:1.1rem;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;z-index:10;}
 .lightbox-close:hover{background:rgba(255,255,255,.25);}
 
-/* ── SECTION TITLE ── */
-.section-title{
-  font-size:.58rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;
-  color:var(--ink4);padding:0 1.4rem;
-  margin-bottom:.75rem;margin-top:1.75rem;
-  display:flex;align-items:center;gap:10px;
-}
+/* SECTION / MEMBERS */
+.section-title{font-size:.58rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--ink4);padding:0 1.4rem;margin-bottom:.75rem;margin-top:1.75rem;display:flex;align-items:center;gap:10px;}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border2);}
-
-/* ── MEMBERS ── */
 .members-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;padding:0 1.4rem;}
-.member-card{
-  background:var(--surface);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border:1px solid var(--border2);border-radius:var(--r-lg);
-  padding:.85rem .8rem;display:flex;flex-direction:column;gap:.45rem;
-  transition:border-color .2s,box-shadow .2s;animation:fadeUp .4s ease both;
-}
+.member-card{background:var(--surface);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--border2);border-radius:var(--r-lg);padding:.85rem .8rem;display:flex;flex-direction:column;gap:.45rem;transition:border-color .2s,box-shadow .2s;animation:fadeUp .4s ease both;}
 .member-card:hover{border-color:rgba(232,200,74,.22);box-shadow:0 4px 16px rgba(0,0,0,.3);}
-.member-av{
-  width:44px;height:44px;border-radius:12px;overflow:hidden;
-  border:1.5px solid rgba(232,200,74,.22);background:rgba(0,0,0,.4);
-}
+.member-av{width:44px;height:44px;border-radius:12px;overflow:hidden;border:1.5px solid rgba(232,200,74,.22);background:rgba(0,0,0,.4);}
 .member-av img{width:100%;height:100%;object-fit:cover;display:block;}
 .member-name{font-size:.78rem;font-weight:700;color:var(--ink);line-height:1.3;}
 .member-count{font-size:.65rem;color:#fff;}
 .member-count strong{color:var(--brand);font-weight:700;}
 
-/* ── LEGEND ── */
 .legend{display:flex;gap:.85rem;flex-wrap:wrap;padding:0 1.4rem;margin-top:1.5rem;}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:.67rem;color:var(--ink3);font-weight:500;}
 .legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:1.5rem;left:50%;
-  transform:translateX(-50%) translateY(16px);
-  background:var(--surface3);color:var(--ink);
-  font-size:.78rem;font-weight:600;
-  padding:.6rem 1.3rem;border-radius:50px;
-  opacity:0;transition:all .28s ease;
-  pointer-events:none;white-space:nowrap;z-index:999;
-  box-shadow:0 12px 40px rgba(0,0,0,.5);
-  border:1px solid var(--border3);backdrop-filter:blur(12px);
-}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface3);color:var(--ink);font-size:.78rem;font-weight:600;padding:.6rem 1.3rem;border-radius:50px;opacity:0;transition:all .28s ease;pointer-events:none;white-space:nowrap;z-index:999;box-shadow:0 12px 40px rgba(0,0,0,.5);border:1px solid var(--border3);backdrop-filter:blur(12px);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border3);border-radius:99px;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border3);border-radius:99px;}
 
 @media(max-width:440px){
-  .header,.week-nav,.schedule{padding-left:1rem;padding-right:1rem;}
-  .denda-wrap{padding-left:1rem;padding-right:1rem;}
+  .header,.week-nav,.schedule,.denda-wrap{padding-left:1rem;padding-right:1rem;}
   .members-grid{padding-left:1rem;padding-right:1rem;grid-template-columns:repeat(2,1fr);}
-  .section-title,.legend{padding-left:1rem;}
-  .slider-section{padding-left:1rem;padding-right:1rem;}
-  .date-col{min-width:68px;}
-  .brand-title{font-size:1rem;}
-  .brand-logo{width:40px;height:40px;border-radius:11px;}
+  .section-title,.legend,.slider-section{padding-left:1rem;padding-right:1rem;}
+  .date-col{min-width:68px;}.brand-title{font-size:1rem;}.brand-logo{width:40px;height:40px;border-radius:11px;}
 }
 </style>
 </head>
@@ -440,16 +212,16 @@ body{
 
 <div class="page">
 
-  <!-- HEADER -->
   <header class="header">
     <div class="header-top">
       <div class="brand">
         <div class="brand-logo">
-          <img src="https://i.imgur.com/mF88miV.png" alt="Naga Putih">
+          <img src="https://i.imgur.com/mF88miV.png" alt="Logo">
         </div>
         <div class="brand-info">
-          <span class="room-tag">Kamar Naga Putih</span>
-          <div class="brand-title">Jadwal Piket 🏠</div>
+          <!-- room-tag dan brand-title diisi otomatis dari ROOM_ID -->
+          <span class="room-tag" id="ui-room-tag">—</span>
+          <div class="brand-title" id="ui-brand-title">Jadwal Piket 🏠</div>
         </div>
       </div>
       <div class="header-clock">
@@ -463,12 +235,11 @@ body{
     </div>
   </header>
 
-  <!-- DENDA -->
   <div class="denda-wrap">
     <div class="denda-banner">
       <div class="denda-left">
         <div class="denda-icon-wrap">
-          <img src="https://i.imgur.com/mF88miV.png" alt="naga">
+          <img src="https://i.imgur.com/mF88miV.png" alt="logo">
         </div>
         <div class="denda-info">
           <div class="denda-tag">Peraturan Kamar</div>
@@ -479,7 +250,6 @@ body{
     </div>
   </div>
 
-  <!-- SLIDER -->
   <div class="slider-section">
     <div class="slider-wrap" id="sliderWrap">
       <div class="slider-track" id="sliderTrack">
@@ -499,7 +269,6 @@ body{
     <div class="slider-bar"><div class="slider-bar-fill" id="sBar"></div></div>
   </div>
 
-  <!-- WEEK NAV -->
   <div class="week-nav">
     <span class="week-label" id="week-label">—</span>
     <div class="week-ctrl">
@@ -509,14 +278,11 @@ body{
     </div>
   </div>
 
-  <!-- SCHEDULE -->
   <div class="schedule" id="sched"></div>
 
-  <!-- MEMBERS -->
   <div class="section-title">Anggota Kamar</div>
   <div class="members-grid" id="members"></div>
 
-  <!-- LEGEND -->
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:var(--ok)"></div>Hari ini</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Libur Minggu</div>
@@ -526,55 +292,66 @@ body{
 
 </div>
 
-<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <img id="lightbox-img" src="" alt="Bukti">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ════════════════════════════════════════════════════
-   1. KONFIGURASI SUPABASE
-   ▸ Ganti URL dan KEY dengan milik project kamu
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   ██████████████████████████████████████████████████████████████
+   BAGIAN KONFIGURASI — EDIT DI SINI SAJA
+   ██████████████████████████████████████████████████████████████
+
+   ROOM_ID   : ID unik kamar ini. Ganti untuk tiap deployment.
+               Contoh: 'naga-putih', 'naga-hitam', 'kamar-03'
+
+   ROOM_LABEL: Nama tampilan yang muncul di header.
+
+   ANCHOR    : Tanggal mulai siklus jadwal (format YYYY-MM-DD).
+
+   SQL MIGRATION — Jalankan sekali di Supabase SQL Editor:
+   ──────────────────────────────────────────────────────────────
+
+   -- LANGKAH 1: Tambah kolom room_id
+   ALTER TABLE "KAMAR-NAGA-PUTIH"
+     ADD COLUMN IF NOT EXISTS room_id text NOT NULL DEFAULT 'naga-putih';
+
+   -- LANGKAH 2: Drop primary key lama
+   ALTER TABLE "KAMAR-NAGA-PUTIH"
+     DROP CONSTRAINT IF EXISTS "KAMAR-NAGA-PUTIH_pkey";
+
+   -- LANGKAH 3: Buat composite primary key baru
+   ALTER TABLE "KAMAR-NAGA-PUTIH"
+     ADD CONSTRAINT "KAMAR-NAGA-PUTIH_pkey"
+     PRIMARY KEY (date_key, room_id);
+
+   -- LANGKAH 4: Aktifkan Realtime
+   ALTER TABLE "KAMAR-NAGA-PUTIH" REPLICA IDENTITY FULL;
+
+   -- LANGKAH 5: Matikan RLS (atau buat policy sesuai kebutuhan)
+   ALTER TABLE "KAMAR-NAGA-PUTIH" DISABLE ROW LEVEL SECURITY;
+
+   -- LANGKAH 6: Storage bucket "foto-piket" → set PUBLIC di dashboard
+   ──────────────────────────────────────────────────────────────
+   Untuk kamar baru: cukup deploy file ini dengan ROOM_ID berbeda.
+   Tidak perlu tabel baru — satu tabel untuk semua kamar.
+   ████████████████████████████████████████████████████████████ */
+
 const SUPABASE_URL = 'https://lzjmyildurannngskrcyo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6am15aWxkdXJhbm5nc2tyY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzU1NjUsImV4cCI6MjA4NjgxMTU2NX0.ybyZTOLYGMOjM_SucsfpsVU3WaL8qVY4m-1XYdK2J7Q';
 
-const db     = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const TABLE  = 'KAMAR-NAGA-PUTIH';
-const BUCKET = 'foto-piket';
+/* ── GANTI DUA BARIS INI UNTUK TIAP KAMAR ── */
+const ROOM_ID    = 'naga-putih';           // ID unik — tidak boleh sama antar kamar
+const ROOM_LABEL = 'Kamar Naga Putih';     // Nama tampil di header
 
-/*
-  ════════════════════════════════════════════════════
-  SQL — Jalankan di Supabase SQL Editor:
+/* ── JADWAL ── */
+const ANCHOR     = new Date('2026-04-25'); ANCHOR.setHours(0,0,0,0);
+const CYCLE_DAYS = 5;
 
-  -- 1. Drop & buat ulang tabel (jika sudah ada, skip langkah ini)
-  DROP TABLE IF EXISTS "KAMAR-NAGA-PUTIH";
-
-  CREATE TABLE "KAMAR-NAGA-PUTIH" (
-    date_key    text PRIMARY KEY,
-    is_done     boolean DEFAULT false,
-    photo_url   text    DEFAULT '[]',   -- JSON array URL foto
-    "created_At" timestamptz DEFAULT now()
-  );
-
-  -- 2. Aktifkan Realtime (wajib)
-  ALTER TABLE "KAMAR-NAGA-PUTIH" REPLICA IDENTITY FULL;
-
-  -- 3. Row Level Security — izinkan akses publik (sesuai setting kamu)
-  ALTER TABLE "KAMAR-NAGA-PUTIH" DISABLE ROW LEVEL SECURITY;
-
-  -- 4. Storage bucket "foto-piket" → set PUBLIC di dashboard
-  ════════════════════════════════════════════════════
-*/
-
-/* ════════════════════════════════════════════════════
-   2. DATA MASTER JADWAL
-   Sistem berulang otomatis setiap 5 hari dari ANCHOR
-════════════════════════════════════════════════════ */
+/* ── DATA ANGGOTA & ROTASI ── */
 const GROUPS = [
   { persons:['Jufri',   'Ardi'],       photos:['https://i.imgur.com/YPuXfjB.png','https://i.imgur.com/YPuXfjB.png'] },
   { persons:['Reonaldo','Agus'],        photos:['https://i.imgur.com/sDDUjZQ.png','https://i.imgur.com/sDDUjZQ.png'] },
@@ -584,13 +361,15 @@ const GROUPS = [
   { persons:['Imanuel', 'Dandi'],       photos:['https://i.imgur.com/JADPNwJ.png','https://i.imgur.com/JADPNwJ.png'] },
 ];
 
-const ANCHOR     = new Date('2026-04-25'); ANCHOR.setHours(0,0,0,0);
-const CYCLE_DAYS = 5;
+/* ════════════════════════════════════════════════════════════════
+   JANGAN UBAH DI BAWAH GARIS INI
+════════════════════════════════════════════════════════════════ */
+const TABLE      = 'KAMAR-NAGA-PUTIH';
+const BUCKET     = 'foto-piket';
+const db         = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ALL_MEMBERS = GROUPS.flatMap(g => g.persons.map((p,i) => ({ name:p, photo:g.photos[i] })));
 
-/* ════════════════════════════════════════════════════
-   3. STATE
-════════════════════════════════════════════════════ */
+/* ── STATE ── */
 const today    = new Date(); today.setHours(0,0,0,0);
 const todayKey = fmtDate(today);
 let weekOffset = 0;
@@ -601,9 +380,18 @@ const DAY_F = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 const MON_S = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 const MON_F = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
-/* ════════════════════════════════════════════════════
-   4. HELPERS
-════════════════════════════════════════════════════ */
+/* ── INJECT ROOM LABEL KE UI ── */
+(function applyRoomLabel() {
+  const tag   = document.getElementById('ui-room-tag');
+  const title = document.getElementById('ui-brand-title');
+  if (tag)   tag.textContent   = ROOM_LABEL;
+  if (title) title.textContent = 'Jadwal Piket 🏠';
+  document.title = `Jadwal Piket · ${ROOM_LABEL}`;
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════════════════════ */
 function fmtDate(d) {
   return d.getFullYear() + '-' +
     String(d.getMonth()+1).padStart(2,'0') + '-' +
@@ -617,7 +405,6 @@ function getGroupForDate(date) {
   return GROUPS[Math.floor(diff / CYCLE_DAYS) % GROUPS.length];
 }
 
-/** Parse photo_url kolom → always returns string[] */
 function parsePhotos(raw) {
   if (!raw) return [];
   if (Array.isArray(raw)) return raw;
@@ -636,13 +423,18 @@ function showToast(msg) {
 
 function refreshUI() { renderStrip(); renderSchedule(); renderMembers(); }
 
-/* ════════════════════════════════════════════════════
-   5. SUPABASE — LOAD
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   SUPABASE — LOAD (filter by room_id)
+════════════════════════════════════════════════════════════════ */
 async function loadData() {
   try {
-    const { data, error } = await db.from(TABLE).select('date_key, is_done, photo_url');
+    const { data, error } = await db
+      .from(TABLE)
+      .select('date_key, is_done, photo_url')
+      .eq('room_id', ROOM_ID);          /* ← filter multi-tenant */
+
     if (error) throw error;
+
     doneMap = {};
     (data || []).forEach(row => {
       doneMap[row.date_key] = {
@@ -651,52 +443,57 @@ async function loadData() {
       };
     });
   } catch (err) {
-    console.warn('Load error:', err.message);
+    console.warn('loadData error:', err.message);
   } finally {
     refreshUI();
   }
 }
 
-/* ════════════════════════════════════════════════════
-   6. SUPABASE — SAVE STATUS CENTANG
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   SUPABASE — SAVE STATUS (composite key: date_key + room_id)
+════════════════════════════════════════════════════════════════ */
 async function saveStatus(dateKey, isDone) {
   try {
     const current = doneMap[dateKey] || { is_done: false, photos: [] };
-    const { error } = await db.from(TABLE).upsert(
-      { date_key: dateKey, is_done: isDone, photo_url: JSON.stringify(current.photos) },
-      { onConflict: 'date_key' }
-    );
+    const { error } = await db
+      .from(TABLE)
+      .upsert(
+        {
+          date_key:  dateKey,
+          room_id:   ROOM_ID,            /* ← sertakan room_id */
+          is_done:   isDone,
+          photo_url: JSON.stringify(current.photos),
+        },
+        { onConflict: 'date_key,room_id' }  /* ← composite conflict key */
+      );
     if (error) throw error;
   } catch (err) {
-    console.error('Save status error:', err.message);
+    console.error('saveStatus error:', err.message);
     showToast('❌ Gagal sinkron ke database');
   }
 }
 
-/* ════════════════════════════════════════════════════
-   7. SUPABASE — UPLOAD BEBERAPA FOTO
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   SUPABASE — UPLOAD FOTO (path: ROOM_ID/filename)
+════════════════════════════════════════════════════════════════ */
 async function uploadPhotos(dateKey, files) {
   if (!files || files.length === 0) return;
 
-  /* tampilkan spinner */
   const spinner = document.getElementById(`spinner-${dateKey}`);
-  const countEl = document.getElementById(`photocount-${dateKey}`);
   if (spinner) spinner.classList.add('show');
-
   showToast(`⏳ Mengupload ${files.length} foto...`);
 
-  const uploaded = [];
-  const errors   = [];
+  const uploaded = [], errors = [];
 
   for (const file of files) {
     try {
       const ext      = file.name.split('.').pop() || 'jpg';
-      const fileName = `${dateKey}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
+      /* ── path isolasi per kamar: ROOM_ID/filename ── */
+      const fileName = `${ROOM_ID}/${dateKey}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
 
       const { error: upErr } = await db.storage
-        .from(BUCKET).upload(fileName, file, { upsert: false, contentType: file.type });
+        .from(BUCKET)
+        .upload(fileName, file, { upsert: false, contentType: file.type });
 
       if (upErr) throw upErr;
 
@@ -704,76 +501,87 @@ async function uploadPhotos(dateKey, files) {
       uploaded.push(urlData.publicUrl);
     } catch (err) {
       errors.push(file.name);
-      console.error('Upload error:', file.name, err.message);
+      console.error('upload error:', file.name, err.message);
     }
   }
 
+  if (spinner) spinner.classList.remove('show');
+
   if (uploaded.length === 0) {
-    if (spinner) spinner.classList.remove('show');
     showToast('❌ Semua foto gagal diupload');
     return;
   }
 
-  /* gabung foto lama + baru */
   if (!doneMap[dateKey]) doneMap[dateKey] = { is_done: false, photos: [] };
   const allPhotos = [...doneMap[dateKey].photos, ...uploaded];
   doneMap[dateKey].photos  = allPhotos;
   doneMap[dateKey].is_done = true;
 
   try {
-    const { error: dbErr } = await db.from(TABLE).upsert(
-      { date_key: dateKey, is_done: true, photo_url: JSON.stringify(allPhotos) },
-      { onConflict: 'date_key' }
-    );
+    const { error: dbErr } = await db
+      .from(TABLE)
+      .upsert(
+        {
+          date_key:  dateKey,
+          room_id:   ROOM_ID,            /* ← sertakan room_id */
+          is_done:   true,
+          photo_url: JSON.stringify(allPhotos),
+        },
+        { onConflict: 'date_key,room_id' }  /* ← composite conflict key */
+      );
     if (dbErr) throw dbErr;
   } catch (err) {
     console.error('DB save error:', err.message);
   }
 
-  if (spinner) spinner.classList.remove('show');
-
-  if (errors.length > 0) {
-    showToast(`📸 ${uploaded.length} foto tersimpan, ${errors.length} gagal`);
-  } else {
-    showToast(`📸 ${uploaded.length} foto bukti tersimpan!`);
-  }
-
+  showToast(errors.length > 0
+    ? `📸 ${uploaded.length} foto tersimpan, ${errors.length} gagal`
+    : `📸 ${uploaded.length} foto tersimpan!`
+  );
   refreshUI();
 }
 
-/* ════════════════════════════════════════════════════
-   8. REALTIME — sinkron semua perangkat otomatis
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   REALTIME — filter hanya room_id milik kamar ini
+════════════════════════════════════════════════════════════════ */
 function listenRealtime() {
-  db.channel('naga-putih-rt')
-    .on('postgres_changes', { event: '*', schema: 'public', table: TABLE }, payload => {
-      const row = payload.new || {};
-      if (!row.date_key) return;
-      doneMap[row.date_key] = {
-        is_done: row.is_done || false,
-        photos:  parsePhotos(row.photo_url),
-      };
-      refreshUI();
-    })
+  db.channel(`piket-rt-${ROOM_ID}`)   /* channel name unik per kamar */
+    .on(
+      'postgres_changes',
+      {
+        event:  '*',
+        schema: 'public',
+        table:  TABLE,
+        filter: `room_id=eq.${ROOM_ID}`,   /* ← filter realtime */
+      },
+      payload => {
+        const row = payload.new || {};
+        if (!row.date_key || row.room_id !== ROOM_ID) return;
+        doneMap[row.date_key] = {
+          is_done: row.is_done || false,
+          photos:  parsePhotos(row.photo_url),
+        };
+        refreshUI();
+      }
+    )
     .subscribe();
 }
 
-/* ════════════════════════════════════════════════════
-   9. LIGHTBOX
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   LIGHTBOX
+════════════════════════════════════════════════════════════════ */
 function openLightbox(src) {
-  const lb = document.getElementById('lightbox');
   document.getElementById('lightbox-img').src = src;
-  lb.classList.add('show');
+  document.getElementById('lightbox').classList.add('show');
 }
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('show');
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-/* ════════════════════════════════════════════════════
-   10. SLIDER
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   SLIDER
+════════════════════════════════════════════════════════════════ */
 (function initSlider() {
   const TOTAL = 7, INTERVAL = 2500;
   const track = document.getElementById('sliderTrack');
@@ -792,29 +600,22 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
   }
 
   function updateUI() {
-    track.style.transform = `translateX(-${cur * 100}%)`;
+    track.style.transform = `translateX(-${cur*100}%)`;
     ctr.textContent = `${cur+1} / ${TOTAL}`;
     dots.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i === cur));
   }
-
-  function goTo(i, manual) { cur = (i + TOTAL) % TOTAL; updateUI(); if (manual) reset(); }
-
+  function goTo(i, manual) { cur = (i+TOTAL)%TOTAL; updateUI(); if (manual) reset(); }
   function startProg() {
     cancelAnimationFrame(raf);
-    if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
+    if (bar) { bar.style.transition='none'; bar.style.width='0%'; }
     t0 = performance.now();
     (function step(now) {
-      const p = Math.min(((now - t0) / INTERVAL) * 100, 100);
-      if (bar) bar.style.width = p + '%';
+      const p = Math.min(((now-t0)/INTERVAL)*100, 100);
+      if (bar) bar.style.width = p+'%';
       if (p < 100) raf = requestAnimationFrame(step);
     })(performance.now());
   }
-
-  function start() {
-    clearInterval(timer); startProg();
-    timer = setInterval(() => { cur = (cur+1)%TOTAL; updateUI(); startProg(); }, INTERVAL);
-  }
-
+  function start() { clearInterval(timer); startProg(); timer = setInterval(() => { cur=(cur+1)%TOTAL; updateUI(); startProg(); }, INTERVAL); }
   function reset() { clearInterval(timer); cancelAnimationFrame(raf); start(); }
 
   document.getElementById('sPrev').onclick = () => goTo(cur-1, true);
@@ -831,13 +632,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
   });
   wrap.onmouseenter = () => { clearInterval(timer); cancelAnimationFrame(raf); };
   wrap.onmouseleave = start;
-
   updateUI(); start();
 })();
 
-/* ════════════════════════════════════════════════════
-   11. RENDER — STRIP HEADER
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   RENDER — STRIP
+════════════════════════════════════════════════════════════════ */
 function renderStrip() {
   const strip = document.getElementById('today-strip');
   const txt   = document.getElementById('strip-text');
@@ -860,9 +660,9 @@ function renderStrip() {
   }
 }
 
-/* ════════════════════════════════════════════════════
-   12. RENDER — JADWAL MINGGUAN
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   RENDER — JADWAL MINGGUAN
+════════════════════════════════════════════════════════════════ */
 function renderSchedule() {
   const grid = document.getElementById('sched');
   if (!grid) return;
@@ -870,23 +670,20 @@ function renderSchedule() {
   const dow    = today.getDay() === 0 ? 6 : today.getDay() - 1;
   const monday = new Date(today);
   monday.setDate(today.getDate() - dow + weekOffset * 7);
-
   const dates = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday); d.setDate(monday.getDate() + i); return d;
+    const d = new Date(monday); d.setDate(monday.getDate()+i); return d;
   });
-
   const sun = dates[6];
   document.getElementById('week-label').textContent =
     dates[0].getDate() + ' ' + MON_S[dates[0].getMonth()] + ' – ' +
     sun.getDate() + ' ' + MON_S[sun.getMonth()] + ' ' + sun.getFullYear();
 
   let html = '';
-
   dates.forEach((date, idx) => {
     const dkey    = fmtDate(date);
     const isSun   = date.getDay() === 0;
     const isToday = dkey === todayKey;
-    const rowData = doneMap[dkey] || { is_done: false, photos: [] };
+    const rowData = doneMap[dkey] || { is_done:false, photos:[] };
     const done    = rowData.is_done;
     const photos  = rowData.photos || [];
     const grp     = getGroupForDate(date);
@@ -896,10 +693,8 @@ function renderSchedule() {
       (isSun ? ' is-sunday' : '');
 
     let body = '';
-
     if (isSun) {
       body = `<div class="holiday-pill">🔴 Libur — Minggu</div>`;
-
     } else if (grp) {
       const chips = grp.persons.map((p,i) => `
         <div class="person-chip">
@@ -909,26 +704,18 @@ function renderSchedule() {
           <span class="person-nm">${p}</span>
         </div>`).join('');
 
-      /* Foto grid */
       const photosHtml = photos.length
-        ? `<div class="photos-grid">
-            ${photos.map(url => `
-              <img src="${url}" class="proof-thumb"
-                   onclick="openLightbox('${url}')"
-                   title="Klik untuk lihat">`
-            ).join('')}
-           </div>`
+        ? `<div class="photos-grid">${photos.map(url =>
+            `<img src="${url}" class="proof-thumb" onclick="openLightbox('${url}')" title="Klik lihat bukti">`
+          ).join('')}</div>`
         : '';
 
       body = `
         <div class="persons-row">
           <div class="persons-list">${chips}</div>
           <div class="done-wrap">
-            <label class="done-lbl" for="chk-${dkey}">
-              ${done ? '✓ Selesai' : 'Tandai'}
-            </label>
-            <input class="done-toggle" type="checkbox"
-              id="chk-${dkey}" data-dk="${dkey}" ${done ? 'checked' : ''}>
+            <label class="done-lbl" for="chk-${dkey}">${done ? '✓ Selesai' : 'Tandai'}</label>
+            <input class="done-toggle" type="checkbox" id="chk-${dkey}" data-dk="${dkey}" ${done ? 'checked' : ''}>
           </div>
         </div>
         <div class="proof-section">
@@ -944,13 +731,12 @@ function renderSchedule() {
             ${photos.length > 0 ? `<span class="upload-count">${photos.length} foto tersimpan</span>` : ''}
           </div>
         </div>`;
-
     } else {
       body = `<div class="no-sched">Tidak ada jadwal piket hari ini</div>`;
     }
 
     html += `
-      <div class="${cls}" style="animation-delay:${idx * .05}s">
+      <div class="${cls}" style="animation-delay:${idx*.05}s">
         <div class="day-row">
           <div class="date-col">
             <div class="date-dow">${DAY_S[date.getDay()]}</div>
@@ -964,34 +750,31 @@ function renderSchedule() {
 
   grid.innerHTML = html;
 
-  /* Bind checkbox */
   grid.querySelectorAll('.done-toggle').forEach(chk => {
     chk.onchange = async function () {
-      const dk  = this.dataset.dk;
-      const val = this.checked;
-      if (!doneMap[dk]) doneMap[dk] = { is_done: false, photos: [] };
+      const dk = this.dataset.dk, val = this.checked;
+      if (!doneMap[dk]) doneMap[dk] = { is_done:false, photos:[] };
       doneMap[dk].is_done = val;
       if (!val) doneMap[dk].photos = [];
       refreshUI();
       await saveStatus(dk, val);
-      showToast(val ? '✅ Tersimpan ke database!' : '↩ Tanda dibatalkan');
+      showToast(val ? '✅ Tersimpan!' : '↩ Dibatalkan');
     };
   });
 
-  /* Bind file upload — support multiple files */
   grid.querySelectorAll('input[type="file"][data-dk]').forEach(input => {
     input.onchange = function () {
       if (this.files && this.files.length > 0) {
         uploadPhotos(this.dataset.dk, Array.from(this.files));
-        this.value = ''; // reset agar bisa upload lagi
+        this.value = '';
       }
     };
   });
 }
 
-/* ════════════════════════════════════════════════════
-   13. RENDER — ANGGOTA KAMAR
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   RENDER — ANGGOTA
+════════════════════════════════════════════════════════════════ */
 function renderMembers() {
   const grid = document.getElementById('members');
   if (!grid) return;
@@ -1016,9 +799,9 @@ function renderMembers() {
   grid.innerHTML = html;
 }
 
-/* ════════════════════════════════════════════════════
-   14. JAM & NAVIGASI
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   JAM & NAVIGASI
+════════════════════════════════════════════════════════════════ */
 function updateClock() {
   const n = new Date();
   const dEl = document.getElementById('live-date');
@@ -1031,9 +814,9 @@ document.getElementById('btn-prev').onclick  = () => { weekOffset--; renderSched
 document.getElementById('btn-next').onclick  = () => { weekOffset++; renderSchedule(); };
 document.getElementById('btn-today').onclick = () => { weekOffset = 0; renderSchedule(); showToast('↩ Kembali ke minggu ini'); };
 
-/* ════════════════════════════════════════════════════
-   15. INIT
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════════════ */
 setInterval(updateClock, 1000);
 updateClock();
 loadData();
