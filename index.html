@@ -548,17 +548,21 @@ function listenRealtime() {
     .on(
       'postgres_changes',
       {
-        event:  '*',
-        schema: 'public',
-        table:  TABLE,
-        filter: `room_id=eq.${ROOM_ID}`,   /* ← filter realtime */
-      },
-      payload => {
-        const row = payload.new || {};
-        if (!row.date_key || row.room_id !== ROOM_ID) return;
+        {
+    event: '*',
+    schema: 'public',
+    table: TABLE
+},
+payload => {
+    console.log('Ada Sinyal Masuk dari Database:', payload); // Biar kelihatan di F12
+    
+    const row = payload.new || {};
+
+    // Kita cek manual saja di sini daripada pakai filter Supabase yang sensitif
+    if (row.room_id === ROOM_ID) {
         doneMap[row.date_key] = {
-          is_done: row.is_done || false,
-          photos:  parsePhotos(row.photo_url),
+            is_done: row.is_done || false,
+            photos: parsePhotos(row.photo_url),
         };
         refreshUI();
       }
