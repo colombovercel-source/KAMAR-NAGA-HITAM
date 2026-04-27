@@ -8,6 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ══════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════ */
 :root {
   --brand:      #e8c84a;
   --brand2:     #c9a82a;
@@ -42,13 +45,260 @@
 html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
 body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.6;position:relative;}
 
+/* ══════════════════════════════════════════
+   HALAMAN LOGIN GERBANG
+══════════════════════════════════════════ */
+#login-gate {
+  position: fixed; inset: 0; z-index: 9000;
+  display: flex; align-items: center; justify-content: center;
+  background: #060810;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+#login-gate.hide {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.04);
+}
+
+/* Background gambar di belakang login */
+#login-gate::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url('https://i.imgur.com/bfrp75y.png');
+  background-size: cover; background-position: center;
+  filter: brightness(0.25) blur(4px);
+  z-index: 0;
+}
+
+/* Gold glow orb di login */
+#login-gate::after {
+  content: '';
+  position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 500px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(232,200,74,0.08) 0%, transparent 65%);
+  pointer-events: none; z-index: 1;
+}
+
+/* Partikel bintang di background login */
+.login-particles {
+  position: absolute; inset: 0; z-index: 1; overflow: hidden;
+}
+.particle {
+  position: absolute; border-radius: 50%;
+  background: rgba(232,200,74,0.4);
+  animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+  0%   { opacity: 0; transform: translateY(0) scale(0); }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.5; }
+  100% { opacity: 0; transform: translateY(-100vh) scale(1); }
+}
+
+/* Kartu login */
+.login-card {
+  position: relative; z-index: 2;
+  background: rgba(12,14,22,0.85);
+  backdrop-filter: blur(30px) saturate(1.6);
+  -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  border: 1px solid rgba(232,200,74,0.18);
+  border-radius: 28px;
+  padding: 2.5rem 2rem;
+  width: 100%; max-width: 400px;
+  margin: 1rem;
+  box-shadow:
+    0 0 0 1px rgba(232,200,74,0.06),
+    0 25px 60px rgba(0,0,0,0.7),
+    0 0 80px rgba(232,200,74,0.04);
+  animation: cardIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Logo area */
+.login-logo {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 2rem; gap: 14px;
+}
+
+.login-logo-img {
+  width: 72px; height: 72px; border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(232,200,74,0.3);
+  box-shadow: 0 0 30px rgba(232,200,74,0.25), 0 0 60px rgba(232,200,74,0.08);
+  animation: glow 3s ease-in-out infinite;
+}
+.login-logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+@keyframes glow {
+  0%,100% { box-shadow: 0 0 30px rgba(232,200,74,0.25), 0 0 60px rgba(232,200,74,0.08); }
+  50%     { box-shadow: 0 0 45px rgba(232,200,74,0.45), 0 0 80px rgba(232,200,74,0.15); }
+}
+
+.login-logo-tag {
+  font-family: var(--mono);
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: #0a0b0f;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  padding: 4px 14px; border-radius: 6px;
+  box-shadow: 0 0 16px var(--brand-glow);
+}
+
+.login-title {
+  font-size: 1.4rem; font-weight: 800;
+  color: var(--ink); letter-spacing: -0.4px;
+  text-align: center;
+}
+
+.login-sub {
+  font-size: 0.78rem; color: var(--ink4);
+  text-align: center; margin-top: -8px;
+  line-height: 1.5;
+}
+
+/* Input grup */
+.login-form { display: flex; flex-direction: column; gap: 14px; margin-top: 1.5rem; }
+
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+
+.input-label {
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--ink4);
+}
+
+.input-wrap {
+  position: relative; display: flex; align-items: center;
+}
+
+.input-icon {
+  position: absolute; left: 14px;
+  font-size: 15px; pointer-events: none;
+  color: var(--ink4);
+  transition: color 0.2s;
+}
+
+.login-input {
+  width: 100%;
+  padding: 13px 14px 13px 42px;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid var(--border3);
+  border-radius: 12px;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+}
+.login-input::placeholder { color: var(--ink4); }
+.login-input:focus {
+  border-color: rgba(232,200,74,0.5);
+  background: rgba(232,200,74,0.04);
+  box-shadow: 0 0 0 3px rgba(232,200,74,0.08);
+}
+.login-input:focus + .input-icon,
+.input-wrap:focus-within .input-icon { color: var(--brand); }
+
+/* Toggle show/hide password */
+.toggle-pw {
+  position: absolute; right: 12px;
+  background: none; border: none; cursor: pointer;
+  color: var(--ink4); font-size: 16px;
+  transition: color 0.2s; padding: 4px;
+}
+.toggle-pw:hover { color: var(--brand); }
+
+/* Error message */
+.login-error {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--danger-dim);
+  border: 1px solid var(--danger-b);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--danger);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.login-error.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Tombol login */
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  color: #0a0b0f;
+  border: none; border-radius: 12px;
+  font-family: var(--font);
+  font-size: 0.95rem; font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(232,200,74,0.3);
+  position: relative; overflow: hidden;
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+.login-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,200,74,0.4); }
+.login-btn:hover::after { opacity: 1; }
+.login-btn:active { transform: translateY(0); }
+
+.login-btn.loading {
+  pointer-events: none; opacity: 0.8;
+}
+
+/* Footer login */
+.login-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.65rem;
+  color: var(--ink4);
+  letter-spacing: 0.5px;
+}
+.login-footer span { color: var(--brand); font-weight: 700; }
+
+/* ══════════════════════════════════════════
+   KONTEN UTAMA — TERSEMBUNYI SEBELUM LOGIN
+══════════════════════════════════════════ */
+#app-container {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+#app-container.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ══════════════════════════════════════════
+   BACKGROUND
+══════════════════════════════════════════ */
 .bg-layer{position:fixed;inset:0;z-index:0;background-image:url('https://i.imgur.com/bfrp75y.png');background-size:cover;background-position:center;background-repeat:no-repeat;filter:brightness(1.05) contrast(1.05);}
 .bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(160deg,rgba(5,7,14,.75) 0%,rgba(8,10,18,.68) 50%,rgba(5,7,14,.80) 100%);}
 .bg-glow{position:fixed;top:-250px;left:50%;transform:translateX(-50%);width:700px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(232,200,74,.06) 0%,transparent 65%);pointer-events:none;z-index:2;}
 
 .page{position:relative;z-index:3;max-width:600px;margin:0 auto;padding:0 0 6rem;}
 
-/* HEADER */
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
 .header{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-bottom:1px solid var(--border2);padding:1rem 1.4rem .9rem;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 var(--border),0 4px 24px rgba(0,0,0,.3);}
 .header-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.8rem;}
 .brand{display:flex;align-items:center;gap:12px;}
@@ -61,6 +311,30 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 .live-date{font-size:.65rem;font-weight:500;color:var(--ink3);white-space:nowrap;display:block;}
 .live-time{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--ink);display:block;text-align:right;letter-spacing:1px;}
 
+/* User badge di header */
+.user-badge {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--brand-dim);
+  border: 1px solid rgba(232,200,74,0.2);
+  border-radius: 99px;
+  padding: 5px 12px 5px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+.user-badge:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); }
+.user-badge:hover .user-name { color: var(--danger); }
+.user-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: #0a0b0f;
+  flex-shrink: 0;
+}
+.user-name { font-size: 0.7rem; font-weight: 700; color: var(--brand); white-space: nowrap; }
+.user-logout { font-size: 11px; color: var(--ink4); transition: color 0.2s; }
+.user-badge:hover .user-logout { color: var(--danger); }
+
 .today-strip{display:flex;align-items:center;gap:8px;padding:.55rem .85rem;border-radius:var(--r);font-size:.78rem;font-weight:600;border:1px solid;}
 .today-strip.on-duty{background:var(--ok-dim);border-color:var(--ok-b);color:var(--ok);}
 .today-strip.holiday{background:var(--danger-dim);border-color:var(--danger-b);color:var(--danger);}
@@ -71,7 +345,9 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 .loading .strip-dot{background:var(--ink3);animation:none;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.5)}}
 
-/* DENDA */
+/* ══════════════════════════════════════════
+   DENDA
+══════════════════════════════════════════ */
 .denda-wrap{padding:1rem 1.4rem 0;}
 .denda-banner{background:linear-gradient(135deg,rgba(30,20,0,.92),rgba(45,30,0,.92));border:1px solid rgba(232,200,74,.3);border-radius:var(--r-lg);padding:.9rem 1.1rem;display:flex;align-items:center;gap:12px;box-shadow:0 4px 24px rgba(232,200,74,.10);backdrop-filter:blur(10px);animation:fadeUp .5s ease;}
 .denda-left{display:flex;align-items:center;gap:10px;flex:1;}
@@ -81,7 +357,9 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 .denda-msg{font-size:.88rem;font-weight:800;color:var(--brand);line-height:1.3;text-shadow:0 0 20px var(--brand-glow);}
 .denda-pill{font-family:var(--mono);font-size:.88rem;font-weight:700;color:#0a0b0f;background:linear-gradient(135deg,var(--brand),var(--brand2));padding:6px 14px;border-radius:8px;flex-shrink:0;white-space:nowrap;box-shadow:0 2px 12px var(--brand-glow);}
 
-/* SLIDER */
+/* ══════════════════════════════════════════
+   SLIDER
+══════════════════════════════════════════ */
 .slider-section{padding:0 1.4rem;margin-top:1rem;}
 .slider-wrap{position:relative;overflow:hidden;width:100%;aspect-ratio:16/9;border-radius:var(--r-lg);background:#000;border:1px solid var(--border2);}
 .slider-track{display:flex;width:100%;height:100%;transition:transform .45s cubic-bezier(.4,0,.2,1);}
@@ -97,7 +375,9 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 .slider-bar{height:2px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:2px;}
 .slider-bar-fill{height:100%;background:var(--brand);width:0%;transition:width .05s linear;}
 
-/* WEEK NAV */
+/* ══════════════════════════════════════════
+   WEEK NAV
+══════════════════════════════════════════ */
 .week-nav{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.4rem;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-bottom:1px solid var(--border);margin-top:.75rem;}
 .week-label{font-size:.72rem;font-weight:600;color:var(--ink2);font-family:var(--mono);}
 .week-ctrl{display:flex;align-items:center;gap:6px;}
@@ -106,7 +386,9 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 .btn-today{padding:0 11px;height:28px;border:1px solid rgba(232,200,74,.3);border-radius:8px;background:var(--brand-dim);color:var(--brand);font-family:var(--font);font-size:.68rem;font-weight:700;cursor:pointer;transition:all .15s;}
 .btn-today:hover{background:var(--brand);color:#0a0b0f;border-color:var(--brand);}
 
-/* CARDS */
+/* ══════════════════════════════════════════
+   KARTU JADWAL
+══════════════════════════════════════════ */
 .schedule{padding:1rem 1.4rem;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
@@ -191,7 +473,7 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 .legend-item{display:flex;align-items:center;gap:5px;font-size:.67rem;color:var(--ink3);font-weight:500;}
 .legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface3);color:var(--ink);font-size:.78rem;font-weight:600;padding:.6rem 1.3rem;border-radius:50px;opacity:0;transition:all .28s ease;pointer-events:none;white-space:nowrap;z-index:999;box-shadow:0 12px 40px rgba(0,0,0,.5);border:1px solid var(--border3);backdrop-filter:blur(12px);}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface3);color:var(--ink);font-size:.78rem;font-weight:600;padding:.6rem 1.3rem;border-radius:50px;opacity:0;transition:all .28s ease;pointer-events:none;white-space:nowrap;z-index:9998;box-shadow:0 12px 40px rgba(0,0,0,.5);border:1px solid var(--border3);backdrop-filter:blur(12px);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border3);border-radius:99px;}
@@ -201,156 +483,271 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
   .members-grid{padding-left:1rem;padding-right:1rem;grid-template-columns:repeat(2,1fr);}
   .section-title,.legend,.slider-section{padding-left:1rem;padding-right:1rem;}
   .date-col{min-width:68px;}.brand-title{font-size:1rem;}.brand-logo{width:40px;height:40px;border-radius:11px;}
+  .login-card{padding:2rem 1.4rem;}
 }
 </style>
 </head>
 <body>
 
-<div class="bg-layer"></div>
-<div class="bg-overlay"></div>
-<div class="bg-glow"></div>
+<!-- ══════════════════════════════════════════
+     HALAMAN LOGIN GERBANG
+══════════════════════════════════════════ -->
+<div id="login-gate">
+  <!-- Partikel background -->
+  <div class="login-particles" id="particles"></div>
 
-<div class="page">
-
-  <header class="header">
-    <div class="header-top">
-      <div class="brand">
-        <div class="brand-logo">
-          <img src="https://i.imgur.com/mF88miV.png" alt="Logo">
-        </div>
-        <div class="brand-info">
-          <!-- room-tag dan brand-title diisi otomatis dari ROOM_ID -->
-          <span class="room-tag" id="ui-room-tag">—</span>
-          <div class="brand-title" id="ui-brand-title">Jadwal Piket 🏠</div>
-        </div>
+  <!-- Kartu login -->
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-img">
+        <img src="https://i.imgur.com/mF88miV.png" alt="Logo Naga">
       </div>
-      <div class="header-clock">
-        <span class="live-date" id="live-date">—</span>
-        <span class="live-time" id="live-time">—</span>
-      </div>
+      <span class="login-logo-tag">Kamar Naga Putih</span>
     </div>
-    <div class="today-strip loading" id="today-strip">
-      <div class="strip-dot"></div>
-      <span id="strip-text">Memuat jadwal...</span>
-    </div>
-  </header>
 
-  <div class="denda-wrap">
-    <div class="denda-banner">
-      <div class="denda-left">
-        <div class="denda-icon-wrap">
-          <img src="https://i.imgur.com/mF88miV.png" alt="logo">
-        </div>
-        <div class="denda-info">
-          <div class="denda-tag">Peraturan Kamar</div>
-          <div class="denda-msg">TIDAK MAU PIKET = KENA DENDA!</div>
+    <div class="login-title">Selamat Datang 🐉</div>
+    <div class="login-sub">Masukkan nama dan password untuk mengakses jadwal piket kamar</div>
+
+    <div class="login-form">
+      <!-- Input Nama -->
+      <div class="input-group">
+        <label class="input-label">Nama Kamu</label>
+        <div class="input-wrap">
+          <span class="input-icon">👤</span>
+          <input
+            type="text"
+            id="login-name"
+            class="login-input"
+            placeholder="Masukkan namamu..."
+            autocomplete="name"
+            maxlength="30"
+          >
         </div>
       </div>
-      <div class="denda-pill">5.000 LKR</div>
+
+      <!-- Input Password -->
+      <div class="input-group">
+        <label class="input-label">Password Kamar</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔐</span>
+          <input
+            type="password"
+            id="login-pw"
+            class="login-input"
+            placeholder="Password kamar..."
+            autocomplete="current-password"
+          >
+          <button class="toggle-pw" id="toggle-pw" type="button" title="Tampilkan password">👁️</button>
+        </div>
+      </div>
+
+      <!-- Pesan error -->
+      <div class="login-error" id="login-error">
+        <span>⚠️</span>
+        <span id="error-msg">Password salah! Coba lagi.</span>
+      </div>
+
+      <!-- Tombol masuk -->
+      <button class="login-btn" id="login-btn" type="button">
+        Masuk ke Kamar 🐉
+      </button>
+    </div>
+
+    <div class="login-footer">
+      Protected by <span>Naga Putih Security</span> · v2.0
     </div>
   </div>
+</div>
 
-  <div class="slider-section">
-    <div class="slider-wrap" id="sliderWrap">
-      <div class="slider-track" id="sliderTrack">
-        <div class="slide"><img src="https://i.imgur.com/GXI413m.png" alt="1" draggable="false"></div>
-        <div class="slide"><img src="https://i.imgur.com/KcYNWOi.png" alt="2" draggable="false"></div>
-        <div class="slide"><img src="https://i.imgur.com/DNYgS7O.png" alt="3" draggable="false"></div>
-        <div class="slide"><img src="https://i.imgur.com/jS1tNw5.png" alt="4" draggable="false"></div>
-        <div class="slide"><img src="https://i.imgur.com/BpOwqOt.png" alt="5" draggable="false"></div>
-        <div class="slide"><img src="https://i.imgur.com/4C9ji7Z.png" alt="6" draggable="false"></div>
-        <div class="slide"><img src="https://i.imgur.com/L9PJLoa.png" alt="7" draggable="false"></div>
+<!-- ══════════════════════════════════════════
+     KONTEN UTAMA (TERSEMBUNYI SEBELUM LOGIN)
+══════════════════════════════════════════ -->
+<div id="app-container">
+
+  <div class="bg-layer"></div>
+  <div class="bg-overlay"></div>
+  <div class="bg-glow"></div>
+
+  <div class="page">
+
+    <header class="header">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-logo">
+            <img src="https://i.imgur.com/mF88miV.png" alt="Logo">
+          </div>
+          <div class="brand-info">
+            <span class="room-tag" id="ui-room-tag">—</span>
+            <div class="brand-title" id="ui-brand-title">Jadwal Piket 🏠</div>
+          </div>
+        </div>
+        <div class="header-clock" style="display:flex;align-items:center;gap:0;">
+          <div style="text-align:right;">
+            <span class="live-date" id="live-date">—</span>
+            <span class="live-time" id="live-time">—</span>
+          </div>
+          <!-- User badge + logout -->
+          <div class="user-badge" id="user-badge" onclick="doLogout()" title="Klik untuk keluar">
+            <div class="user-avatar" id="user-avatar">?</div>
+            <span class="user-name" id="user-name-display">—</span>
+            <span class="user-logout">✕</span>
+          </div>
+        </div>
       </div>
-      <button class="slider-btn prev" id="sPrev">&#8592;</button>
-      <button class="slider-btn next" id="sNext">&#8594;</button>
-      <div class="slide-counter" id="sCtr">1 / 7</div>
-      <div class="slider-dots" id="sDots"></div>
+      <div class="today-strip loading" id="today-strip">
+        <div class="strip-dot"></div>
+        <span id="strip-text">Memuat jadwal...</span>
+      </div>
+    </header>
+
+    <div class="denda-wrap">
+      <div class="denda-banner">
+        <div class="denda-left">
+          <div class="denda-icon-wrap">
+            <img src="https://i.imgur.com/mF88miV.png" alt="logo">
+          </div>
+          <div class="denda-info">
+            <div class="denda-tag">Peraturan Kamar</div>
+            <div class="denda-msg">TIDAK MAU PIKET = KENA DENDA!</div>
+          </div>
+        </div>
+        <div class="denda-pill">5.000 LKR</div>
+      </div>
     </div>
-    <div class="slider-bar"><div class="slider-bar-fill" id="sBar"></div></div>
+
+    <div class="slider-section">
+      <div class="slider-wrap" id="sliderWrap">
+        <div class="slider-track" id="sliderTrack">
+          <div class="slide"><img src="https://i.imgur.com/GXI413m.png" alt="1" draggable="false"></div>
+          <div class="slide"><img src="https://i.imgur.com/KcYNWOi.png" alt="2" draggable="false"></div>
+          <div class="slide"><img src="https://i.imgur.com/DNYgS7O.png" alt="3" draggable="false"></div>
+          <div class="slide"><img src="https://i.imgur.com/jS1tNw5.png" alt="4" draggable="false"></div>
+          <div class="slide"><img src="https://i.imgur.com/BpOwqOt.png" alt="5" draggable="false"></div>
+          <div class="slide"><img src="https://i.imgur.com/4C9ji7Z.png" alt="6" draggable="false"></div>
+          <div class="slide"><img src="https://i.imgur.com/L9PJLoa.png" alt="7" draggable="false"></div>
+        </div>
+        <button class="slider-btn prev" id="sPrev">&#8592;</button>
+        <button class="slider-btn next" id="sNext">&#8594;</button>
+        <div class="slide-counter" id="sCtr">1 / 7</div>
+        <div class="slider-dots" id="sDots"></div>
+      </div>
+      <div class="slider-bar"><div class="slider-bar-fill" id="sBar"></div></div>
+    </div>
+
+    <div class="week-nav">
+      <span class="week-label" id="week-label">—</span>
+      <div class="week-ctrl">
+        <button class="btn-week" id="btn-prev">&#8592;</button>
+        <button class="btn-today" id="btn-today">Hari ini</button>
+        <button class="btn-week" id="btn-next">&#8594;</button>
+      </div>
+    </div>
+
+    <div class="schedule" id="sched"></div>
+
+    <div class="section-title">Anggota Kamar</div>
+    <div class="members-grid" id="members"></div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--ok)"></div>Hari ini</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Libur Minggu</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(34,197,94,.5)"></div>Selesai</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>Denda 5K LKR</div>
+    </div>
+
   </div>
 
-  <div class="week-nav">
-    <span class="week-label" id="week-label">—</span>
-    <div class="week-ctrl">
-      <button class="btn-week" id="btn-prev">&#8592;</button>
-      <button class="btn-today" id="btn-today">Hari ini</button>
-      <button class="btn-week" id="btn-next">&#8594;</button>
-    </div>
-  </div>
-
-  <div class="schedule" id="sched"></div>
-
-  <div class="section-title">Anggota Kamar</div>
-  <div class="members-grid" id="members"></div>
-
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--ok)"></div>Hari ini</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Libur Minggu</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(34,197,94,.5)"></div>Selesai</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>Denda 5K LKR</div>
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="Bukti">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
   </div>
 
 </div>
 
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <img id="lightbox-img" src="" alt="Bukti">
-  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-</div>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ════════════════════════════════════════════════════════════════
-   ██████████████████████████████████████████████████████████████
-   BAGIAN KONFIGURASI — EDIT DI SINI SAJA
-   ██████████████████████████████████████████████████████████████
+   KONFIGURASI — EDIT DI SINI SAJA
+   ────────────────────────────────────────────────────────────────
 
-   ROOM_ID   : ID unik kamar ini. Ganti untuk tiap deployment.
-               Contoh: 'naga-putih', 'naga-hitam', 'kamar-03'
+   SQL MIGRATION — Jalankan di Supabase SQL Editor:
 
-   ROOM_LABEL: Nama tampilan yang muncul di header.
+   -- 1. Buat tabel jika belum ada
+   CREATE TABLE IF NOT EXISTS "KAMAR-NAGA-PUTIH" (
+     date_key  TEXT        NOT NULL,
+     room_id   TEXT        NOT NULL DEFAULT 'naga-putih',
+     is_done   BOOLEAN     NOT NULL DEFAULT FALSE,
+     photo_url TEXT,
+     PRIMARY KEY (date_key, room_id)
+   );
 
-   ANCHOR    : Tanggal mulai siklus jadwal (format YYYY-MM-DD).
-
-   SQL MIGRATION — Jalankan sekali di Supabase SQL Editor:
-   ──────────────────────────────────────────────────────────────
-
-   -- LANGKAH 1: Tambah kolom room_id
-   ALTER TABLE "KAMAR-NAGA-PUTIH"
-     ADD COLUMN IF NOT EXISTS room_id text NOT NULL DEFAULT 'naga-putih';
-
-   -- LANGKAH 2: Drop primary key lama
-   ALTER TABLE "KAMAR-NAGA-PUTIH"
-     DROP CONSTRAINT IF EXISTS "KAMAR-NAGA-PUTIH_pkey";
-
-   -- LANGKAH 3: Buat composite primary key baru
-   ALTER TABLE "KAMAR-NAGA-PUTIH"
-     ADD CONSTRAINT "KAMAR-NAGA-PUTIH_pkey"
-     PRIMARY KEY (date_key, room_id);
-
-   -- LANGKAH 4: Aktifkan Realtime
+   -- 2. Aktifkan Realtime
    ALTER TABLE "KAMAR-NAGA-PUTIH" REPLICA IDENTITY FULL;
 
-   -- LANGKAH 5: Matikan RLS (atau buat policy sesuai kebutuhan)
+   -- 3. Matikan RLS (atau buat policy sesuai kebutuhan)
    ALTER TABLE "KAMAR-NAGA-PUTIH" DISABLE ROW LEVEL SECURITY;
 
-   -- LANGKAH 6: Storage bucket "foto-piket" → set PUBLIC di dashboard
-   ──────────────────────────────────────────────────────────────
-   Untuk kamar baru: cukup deploy file ini dengan ROOM_ID berbeda.
-   Tidak perlu tabel baru — satu tabel untuk semua kamar.
-   ████████████████████████████████████████████████████████████ */
+   -- 4. Storage bucket "foto-piket" → set PUBLIC di dashboard
+════════════════════════════════════════════════════════════════ */
 
-const SUPABASE_URL = 'https://lzjmyilduranngskrcyo.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6am15aWxkdXJhbm5nc2tyY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzU1NjUsImV4cCI6MjA4NjgxMTU2NX0.ybyZTOLYGMOjM_SucsfpsVU3WaL8qVY4m-1XYdK2J7Q';
-/* ── GANTI DUA BARIS INI UNTUK TIAP KAMAR ── */
-const ROOM_ID    = 'naga-putih';           // ID unik — tidak boleh sama antar kamar
-const ROOM_LABEL = 'Kamar Naga HITAM';     // Nama tampil di header
+// Pastikan URL-nya hanya memiliki dua huruf 'n'
+const SUPABASE_URL = 'https://lzjmyilduranngskrcyo.supabase.co'; 
+
+// Gunakan Anon Key yang kamu miliki (yang diawali eyJhbGci...)
+const SUPABASE_KEY = 'MASUKKAN_ANON_KEY_KAMU_DI_SINI'; 
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Sesuaikan dengan nama tabel dan bucket kita
+const TABLE = 'KAMAR-NAGA-PUTIH';
+const ROOM_ID = 'naga-putih';
+const BUCKET = 'foto-piket';
+
+/* ── PASSWORD KAMAR ── */
+const PASS_RAHASIA = "JAGAKEBERSIHAN";
+
+// 1. Fungsi Cek Login saat web dibuka
+function checkAuth() {
+    const isAuth = localStorage.getItem('naga_putih_auth');
+    if (isAuth === 'true') {
+        // Jika sudah login, sembunyikan gerbang login dan tampilkan konten
+        document.getElementById('login-gate').classList.add('hide');
+        document.getElementById('app-container').classList.add('visible');
+        
+        // Panggil fungsi utama aplikasi kamu (misal: fetchData)
+        if (typeof initApp === "function") initApp(); 
+    }
+}
+
+// 2. Logika Klik Tombol Login
+document.getElementById('login-btn').addEventListener('click', () => {
+    const nameInput = document.getElementById('login-name').value;
+    const passInput = document.getElementById('login-pw').value;
+    const errorEl = document.getElementById('login-error');
+
+    if (passInput === PASS_RAHASIA && nameInput.trim() !== "") {
+        // Simpan status login di browser
+        localStorage.setItem('naga_putih_auth', 'true');
+        localStorage.setItem('naga_putih_user', nameInput);
+        
+        // Refresh halaman agar masuk ke menu utama
+        location.reload();
+    } else {
+        // Tampilkan pesan error jika salah
+        errorEl.classList.add('show');
+        setTimeout(() => errorEl.classList.remove('show'), 3000);
+    }
+});
+
+// Jalankan pengecekan auth setiap kali halaman dimuat
+checkAuth();
 
 /* ── JADWAL ── */
 const ANCHOR     = new Date('2026-04-25'); ANCHOR.setHours(0,0,0,0);
 const CYCLE_DAYS = 5;
 
-/* ── DATA ANGGOTA & ROTASI ── */
 const GROUPS = [
   { persons:['Jufri',   'Ardi'],       photos:['https://i.imgur.com/YPuXfjB.png','https://i.imgur.com/YPuXfjB.png'] },
   { persons:['Reonaldo','Agus'],        photos:['https://i.imgur.com/sDDUjZQ.png','https://i.imgur.com/sDDUjZQ.png'] },
@@ -363,23 +760,167 @@ const GROUPS = [
 /* ════════════════════════════════════════════════════════════════
    JANGAN UBAH DI BAWAH GARIS INI
 ════════════════════════════════════════════════════════════════ */
-const TABLE      = 'KAMAR-NAGA-PUTIH';
-const BUCKET     = 'foto-piket';
-const db         = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const TABLE       = 'KAMAR-NAGA-PUTIH';
+const BUCKET      = 'foto-piket';
+const SESSION_KEY = `piket_session_${ROOM_ID}`;
+
+const db          = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ALL_MEMBERS = GROUPS.flatMap(g => g.persons.map((p,i) => ({ name:p, photo:g.photos[i] })));
 
-/* ── STATE ── */
 const today    = new Date(); today.setHours(0,0,0,0);
 const todayKey = fmtDate(today);
 let weekOffset = 0;
-let doneMap    = {}; // { "YYYY-MM-DD": { is_done:bool, photos:string[] } }
+let doneMap    = {};
+let currentUser = '';
 
 const DAY_S = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
 const DAY_F = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 const MON_S = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 const MON_F = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
-/* ── INJECT ROOM LABEL KE UI ── */
+/* ════════════════════════════════════════════════════════════════
+   SISTEM LOGIN GERBANG
+════════════════════════════════════════════════════════════════ */
+
+/** Buat partikel mengambang di background login */
+function createParticles() {
+  const container = document.getElementById('particles');
+  if (!container) return;
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 2;
+    p.style.cssText = `
+      width: ${size}px; height: ${size}px;
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100 + 100}%;
+      animation-duration: ${Math.random() * 15 + 10}s;
+      animation-delay: ${Math.random() * 8}s;
+      opacity: ${Math.random() * 0.6 + 0.2};
+    `;
+    container.appendChild(p);
+  }
+}
+
+/** Tampilkan error login */
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  const msgEl = document.getElementById('error-msg');
+  msgEl.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+
+  /* Shake animasi pada card */
+  const card = document.querySelector('.login-card');
+  card.style.animation = 'none';
+  card.style.transform = 'translateX(-8px)';
+  setTimeout(() => { card.style.transform = 'translateX(8px)'; }, 80);
+  setTimeout(() => { card.style.transform = 'translateX(-5px)'; }, 160);
+  setTimeout(() => { card.style.transform = 'translateX(5px)'; }, 240);
+  setTimeout(() => { card.style.transform = 'translateX(0)'; card.style.transition = 'transform 0.2s'; }, 320);
+}
+
+/** Proses login */
+function doLogin() {
+  const nameInput = document.getElementById('login-name');
+  const pwInput   = document.getElementById('login-pw');
+  const btn       = document.getElementById('login-btn');
+
+  const name = nameInput.value.trim();
+  const pw   = pwInput.value.trim();
+
+  if (!name) {
+    showLoginError('Nama tidak boleh kosong!');
+    nameInput.focus();
+    return;
+  }
+
+  if (name.length < 2) {
+    showLoginError('Nama minimal 2 karakter!');
+    nameInput.focus();
+    return;
+  }
+
+  if (!pw) {
+    showLoginError('Password tidak boleh kosong!');
+    pwInput.focus();
+    return;
+  }
+
+  if (pw !== ROOM_PASSWORD) {
+    showLoginError('Password salah! Hubungi ketua kamar.');
+    pwInput.value = '';
+    pwInput.focus();
+    return;
+  }
+
+  /* Login berhasil */
+  btn.textContent = '✓ Berhasil masuk...';
+  btn.classList.add('loading');
+
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ name, ts: Date.now() }));
+  currentUser = name;
+
+  setTimeout(() => {
+    /* Sembunyikan gate */
+    document.getElementById('login-gate').classList.add('hide');
+
+    /* Tampilkan app */
+    const app = document.getElementById('app-container');
+    app.classList.add('visible');
+
+    /* Update UI */
+    updateUserBadge(name);
+
+    /* Hapus gate dari DOM setelah animasi */
+    setTimeout(() => {
+      const gate = document.getElementById('login-gate');
+      if (gate) gate.remove();
+    }, 700);
+
+    /* Init app */
+    initApp();
+    showToast(`👋 Halo, ${name}! Selamat datang.`);
+  }, 600);
+}
+
+/** Logout */
+function doLogout() {
+  if (!confirm(`Keluar dari sesi ${currentUser}?`)) return;
+  localStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+
+/** Update tampilan badge user di header */
+function updateUserBadge(name) {
+  const badge   = document.getElementById('user-badge');
+  const avatar  = document.getElementById('user-avatar');
+  const nameEl  = document.getElementById('user-name-display');
+
+  if (avatar)  avatar.textContent  = name.charAt(0).toUpperCase();
+  if (nameEl)  nameEl.textContent  = name;
+  if (badge)   badge.style.display = 'flex';
+}
+
+/** Cek apakah sudah login */
+function checkSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    /* Session berlaku 24 jam */
+    if (Date.now() - session.ts > 86400000) {
+      localStorage.removeItem(SESSION_KEY);
+      return null;
+    }
+    return session.name;
+  } catch { return null; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INJECT ROOM LABEL
+════════════════════════════════════════════════════════════════ */
 (function applyRoomLabel() {
   const tag   = document.getElementById('ui-room-tag');
   const title = document.getElementById('ui-brand-title');
@@ -423,14 +964,14 @@ function showToast(msg) {
 function refreshUI() { renderStrip(); renderSchedule(); renderMembers(); }
 
 /* ════════════════════════════════════════════════════════════════
-   SUPABASE — LOAD (filter by room_id)
+   SUPABASE — LOAD
 ════════════════════════════════════════════════════════════════ */
 async function loadData() {
   try {
     const { data, error } = await db
       .from(TABLE)
       .select('date_key, is_done, photo_url')
-      .eq('room_id', ROOM_ID);          /* ← filter multi-tenant */
+      .eq('room_id', ROOM_ID);
 
     if (error) throw error;
 
@@ -449,7 +990,7 @@ async function loadData() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SUPABASE — SAVE STATUS (composite key: date_key + room_id)
+   SUPABASE — SAVE STATUS
 ════════════════════════════════════════════════════════════════ */
 async function saveStatus(dateKey, isDone) {
   try {
@@ -457,13 +998,8 @@ async function saveStatus(dateKey, isDone) {
     const { error } = await db
       .from(TABLE)
       .upsert(
-        {
-          date_key:  dateKey,
-          room_id:   ROOM_ID,            /* ← sertakan room_id */
-          is_done:   isDone,
-          photo_url: JSON.stringify(current.photos),
-        },
-        { onConflict: 'date_key,room_id' }  /* ← composite conflict key */
+        { date_key: dateKey, room_id: ROOM_ID, is_done: isDone, photo_url: JSON.stringify(current.photos) },
+        { onConflict: 'date_key,room_id' }
       );
     if (error) throw error;
   } catch (err) {
@@ -473,7 +1009,7 @@ async function saveStatus(dateKey, isDone) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SUPABASE — UPLOAD FOTO (path: ROOM_ID/filename)
+   SUPABASE — UPLOAD FOTO
 ════════════════════════════════════════════════════════════════ */
 async function uploadPhotos(dateKey, files) {
   if (!files || files.length === 0) return;
@@ -487,15 +1023,9 @@ async function uploadPhotos(dateKey, files) {
   for (const file of files) {
     try {
       const ext      = file.name.split('.').pop() || 'jpg';
-      /* ── path isolasi per kamar: ROOM_ID/filename ── */
       const fileName = `${ROOM_ID}/${dateKey}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
-
-      const { error: upErr } = await db.storage
-        .from(BUCKET)
-        .upload(fileName, file, { upsert: false, contentType: file.type });
-
+      const { error: upErr } = await db.storage.from(BUCKET).upload(fileName, file, { upsert: false, contentType: file.type });
       if (upErr) throw upErr;
-
       const { data: urlData } = db.storage.from(BUCKET).getPublicUrl(fileName);
       uploaded.push(urlData.publicUrl);
     } catch (err) {
@@ -505,11 +1035,7 @@ async function uploadPhotos(dateKey, files) {
   }
 
   if (spinner) spinner.classList.remove('show');
-
-  if (uploaded.length === 0) {
-    showToast('❌ Semua foto gagal diupload');
-    return;
-  }
+  if (uploaded.length === 0) { showToast('❌ Semua foto gagal diupload'); return; }
 
   if (!doneMap[dateKey]) doneMap[dateKey] = { is_done: false, photos: [] };
   const allPhotos = [...doneMap[dateKey].photos, ...uploaded];
@@ -517,58 +1043,40 @@ async function uploadPhotos(dateKey, files) {
   doneMap[dateKey].is_done = true;
 
   try {
-    const { error: dbErr } = await db
-      .from(TABLE)
-      .upsert(
-        {
-          date_key:  dateKey,
-          room_id:   ROOM_ID,            /* ← sertakan room_id */
-          is_done:   true,
-          photo_url: JSON.stringify(allPhotos),
-        },
-        { onConflict: 'date_key,room_id' }  /* ← composite conflict key */
-      );
+    const { error: dbErr } = await db.from(TABLE).upsert(
+      { date_key: dateKey, room_id: ROOM_ID, is_done: true, photo_url: JSON.stringify(allPhotos) },
+      { onConflict: 'date_key,room_id' }
+    );
     if (dbErr) throw dbErr;
-  } catch (err) {
-    console.error('DB save error:', err.message);
-  }
+  } catch (err) { console.error('DB save error:', err.message); }
 
-  showToast(errors.length > 0
-    ? `📸 ${uploaded.length} foto tersimpan, ${errors.length} gagal`
-    : `📸 ${uploaded.length} foto tersimpan!`
-  );
+  showToast(errors.length > 0 ? `📸 ${uploaded.length} foto tersimpan, ${errors.length} gagal` : `📸 ${uploaded.length} foto tersimpan!`);
   refreshUI();
 }
 
 /* ════════════════════════════════════════════════════════════════
-   REALTIME — filter hanya room_id milik kamar ini
+   REALTIME
 ════════════════════════════════════════════════════════════════ */
 function listenRealtime() {
-  db.channel(`piket-rt-${ROOM_ID}`)
-    .on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: TABLE
-      },
-      (payload) => {
-        console.log('Ada Sinyal Masuk dari Database:', payload);
-        
-        const row = payload.new || {};
-        
-        if (row.room_id === ROOM_ID) {
-          doneMap[row.date_key] = {
-            is_done: row.is_done || false,
-            photos: parsePhotos(row.photo_url),
-          };
-          refreshUI();
-        }
-      }
-    )
-    .subscribe();
+    db.channel('piket-realtime')
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: TABLE },
+            (payload) => {
+                console.log('Ada update dari database!', payload);
+                const row = payload.new || {};
+                
+                // Cek apakah data yang berubah adalah milik kamar ini
+                if (row.room_id === ROOM_ID) {
+                    // Panggil fungsi untuk mengambil data ulang (misal: fetchInitialData)
+                    if (typeof fetchInitialData === "function") fetchInitialData();
+                }
+            }
+        )
+        .subscribe((status) => {
+            console.log("Status Realtime:", status);
+        });
 }
-
 /* ════════════════════════════════════════════════════════════════
    LIGHTBOX
 ════════════════════════════════════════════════════════════════ */
@@ -626,7 +1134,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
   let tx = null;
   const wrap = document.getElementById('sliderWrap');
   wrap.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive:true });
-  wrap.addEventListener('touchend',   e => {
+  wrap.addEventListener('touchend', e => {
     if (tx === null) return;
     const diff = tx - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 40) goTo(diff > 0 ? cur+1 : cur-1, true);
@@ -638,7 +1146,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
 })();
 
 /* ════════════════════════════════════════════════════════════════
-   RENDER — STRIP
+   RENDER STRIP
 ════════════════════════════════════════════════════════════════ */
 function renderStrip() {
   const strip = document.getElementById('today-strip');
@@ -663,7 +1171,7 @@ function renderStrip() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   RENDER — JADWAL MINGGUAN
+   RENDER JADWAL
 ════════════════════════════════════════════════════════════════ */
 function renderSchedule() {
   const grid = document.getElementById('sched');
@@ -709,8 +1217,7 @@ function renderSchedule() {
       const photosHtml = photos.length
         ? `<div class="photos-grid">${photos.map(url =>
             `<img src="${url}" class="proof-thumb" onclick="openLightbox('${url}')" title="Klik lihat bukti">`
-          ).join('')}</div>`
-        : '';
+          ).join('')}</div>` : '';
 
       body = `
         <div class="persons-row">
@@ -760,7 +1267,7 @@ function renderSchedule() {
       if (!val) doneMap[dk].photos = [];
       refreshUI();
       await saveStatus(dk, val);
-      showToast(val ? '✅ Tersimpan!' : '↩ Dibatalkan');
+      showToast(val ? `✅ ${currentUser} menandai selesai!` : '↩ Tanda dibatalkan');
     };
   });
 
@@ -775,7 +1282,7 @@ function renderSchedule() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   RENDER — ANGGOTA
+   RENDER ANGGOTA
 ════════════════════════════════════════════════════════════════ */
 function renderMembers() {
   const grid = document.getElementById('members');
@@ -817,12 +1324,105 @@ document.getElementById('btn-next').onclick  = () => { weekOffset++; renderSched
 document.getElementById('btn-today').onclick = () => { weekOffset = 0; renderSchedule(); showToast('↩ Kembali ke minggu ini'); };
 
 /* ════════════════════════════════════════════════════════════════
-   INIT
+   TOGGLE PASSWORD VISIBILITY
 ════════════════════════════════════════════════════════════════ */
-setInterval(updateClock, 1000);
-updateClock();
-loadData();
-listenRealtime();
+document.getElementById('toggle-pw').onclick = function() {
+  const pw = document.getElementById('login-pw');
+  if (pw.type === 'password') {
+    pw.type = 'text';
+    this.textContent = '🙈';
+  } else {
+    pw.type = 'password';
+    this.textContent = '👁️';
+  }
+};
+
+/* Enter key di login form */
+['login-name','login-pw'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+
+/* Tombol login */
+document.getElementById('login-btn').onclick = doLogin;
+
+/* ════════════════════════════════════════════════════════════════
+   INIT APP (dipanggil setelah login berhasil)
+════════════════════════════════════════════════════════════════ */
+function initApp() {
+  setInterval(updateClock, 1000);
+  updateClock();
+  loadData();
+  listenRealtime();
+}
+
+/* ==========================================================
+   TAHAP 1: KONEKSI SUPABASE
+   ========================================================== */
+const SUPABASE_URL = 'https://lzjmyilduranngskrcyo.supabase.co'; 
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6am15aWxkdXJhbm5nc2tyY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzU1NjUsImV4cCI6MjA4NjgxMTU2NX0.ybyZTOLYGMOjM_SucsfpsVU3WaL8qVY4m-1XYdK2J7Q'; // Ganti dengan Anon Key kamu
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const TABLE = 'KAMAR-NAGA-PUTIH';
+const ROOM_ID = 'naga-putih';
+
+/* ==========================================================
+   TAHAP 2: LOGIKA LOGIN & ENTRY POINT
+   ========================================================== */
+const PASS_RAHASIA = "JAGAKEBERSIHAN";
+
+// Fungsi untuk mengecek apakah user sudah login sebelumnya
+function checkAuth() {
+    const isAuth = localStorage.getItem('naga_putih_auth');
+    const savedUser = localStorage.getItem('naga_putih_user');
+
+    if (isAuth === 'true' && savedUser) {
+        // 1. Sembunyikan Gerbang Login
+        const loginGate = document.getElementById('login-gate');
+        if(loginGate) loginGate.remove();
+
+        // 2. Tampilkan Konten Utama
+        const appContainer = document.getElementById('app-container');
+        if(appContainer) appContainer.classList.add('visible');
+
+        // 3. Set User Aktif
+        currentUser = savedUser; 
+
+        // 4. Jalankan Aplikasi
+        initApp(); 
+    } else {
+        // Jika belum login, arahkan kursor ke input nama
+        const nameInput = document.getElementById('login-name');
+        if(nameInput) nameInput.focus();
+    }
+}
+
+// Logika saat tombol "Masuk ke Kamar" diklik
+const loginBtn = document.getElementById('login-btn');
+if(loginBtn) {
+    loginBtn.addEventListener('click', () => {
+        const nameInput = document.getElementById('login-name').value;
+        const passInput = document.getElementById('login-pw').value;
+        const errorEl = document.getElementById('login-error');
+
+        if (passInput === PASS_RAHASIA && nameInput.trim() !== "") {
+            localStorage.setItem('naga_putih_auth', 'true');
+            localStorage.setItem('naga_putih_user', nameInput);
+            location.reload(); // Muat ulang halaman untuk masuk ke mode aplikasi
+        } else {
+            if(errorEl) {
+                errorEl.classList.add('show');
+                setTimeout(() => errorEl.classList.remove('show'), 3000);
+            }
+        }
+    });
+}
+
+// JALANKAN PENGECEKAN SAAT HALAMAN DIBUKA
+createParticles();
+checkAuth();
+
 </script>
 </body>
 </html>
