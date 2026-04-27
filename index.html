@@ -668,29 +668,6 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ════════════════════════════════════════════════════════════════
-   KONFIGURASI — EDIT DI SINI SAJA
-   ────────────────────────────────────────────────────────────────
-
-   SQL MIGRATION — Jalankan di Supabase SQL Editor:
-
-   -- 1. Buat tabel jika belum ada
-   CREATE TABLE IF NOT EXISTS "KAMAR-NAGA-PUTIH" (
-     date_key  TEXT        NOT NULL,
-     room_id   TEXT        NOT NULL DEFAULT 'naga-putih',
-     is_done   BOOLEAN     NOT NULL DEFAULT FALSE,
-     photo_url TEXT,
-     PRIMARY KEY (date_key, room_id)
-   );
-
-   -- 2. Aktifkan Realtime
-   ALTER TABLE "KAMAR-NAGA-PUTIH" REPLICA IDENTITY FULL;
-
-   -- 3. Matikan RLS (atau buat policy sesuai kebutuhan)
-   ALTER TABLE "KAMAR-NAGA-PUTIH" DISABLE ROW LEVEL SECURITY;
-
-   -- 4. Storage bucket "foto-piket" → set PUBLIC di dashboard
-════════════════════════════════════════════════════════════════ */
 
 // Pastikan URL-nya hanya memiliki dua huruf 'n'
 const SUPABASE_URL = 'https://lzjmyilduranngskrcyo.supabase.co'; 
@@ -701,7 +678,6 @@ const SUPABASE_KEY = 'MASUKKAN_ANON_KEY_KAMU_DI_SINI';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Sesuaikan dengan nama tabel dan bucket kita
-const TABLE = 'KAMAR-NAGA-PUTIH';
 const ROOM_ID = 'naga-putih';
 const BUCKET = 'foto-piket';
 
@@ -761,7 +737,6 @@ const GROUPS = [
    JANGAN UBAH DI BAWAH GARIS INI
 ════════════════════════════════════════════════════════════════ */
 
-const TABLE       = 'KAMAR-NAGA-PUTIH';
 const BUCKET      = 'foto-piket';
 const SESSION_KEY = `piket_session_${ROOM_ID}`;
 
@@ -1401,10 +1376,11 @@ if(loginBtn) {
         const passInput = document.getElementById('login-pw').value;
         const errorEl = document.getElementById('login-error');
 
+        // Gunakan password "JAGAKEBERSIHAN"
         if (passInput === "JAGAKEBERSIHAN" && nameInput.trim() !== "") {
             localStorage.setItem('naga_putih_auth', 'true');
-            localStorage.setItem('naga_putih_user', nameInput);
-            location.reload(); // Muat ulang halaman untuk masuk ke mode aplikasi
+            localStorage.setItem('naga_putih_user', nameInput.trim());
+            location.reload(); // Muat ulang agar masuk ke aplikasi
         } else {
             if(errorEl) {
                 errorEl.classList.add('show');
