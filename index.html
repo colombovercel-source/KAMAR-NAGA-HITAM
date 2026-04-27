@@ -679,7 +679,6 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Sesuaikan dengan nama tabel dan bucket kita
 const ROOM_ID = 'naga-putih';
-const BUCKET = 'foto-piket';
 
 /* ── PASSWORD KAMAR ── */
 const PASS_RAHASIA = "JAGAKEBERSIHAN";
@@ -1033,21 +1032,30 @@ async function uploadPhotos(dateKey, files) {
    REALTIME
 ════════════════════════════════════════════════════════════════ */
 function listenRealtime() {
-    db.channel('piket-realtime')
+    db.channel('piket-rt-' + ROOM_ID)
         .on(
             'postgres_changes',
-            { event: '*', schema: 'public', table: TABLE },
+            {
+                event: '*',
+                schema: 'public',
+                table: TABLE
+            },
             (payload) => {
-                console.log('Ada Sinyal Masuk:', payload);
+                console.log('Sinyal Masuk:', payload);
                 const row = payload.new || {};
                 if (row.room_id === ROOM_ID) {
-                    // Panggil fungsi untuk ambil data terbaru
-                    if (typeof loadData === "function") loadData();
+                    doneMap[row.date_key] = {
+                        is_done: row.is_done || false,
+                        photos: parsePhotos(row.photo_url),
+                    };
+                    refreshUI();
                 }
             }
         )
         .subscribe();
-}/* ════════════════════════════════════════════════════════════════
+}
+
+/* ════════════════════════════════════════════════════════════════
    LIGHTBOX
 ════════════════════════════════════════════════════════════════ */
 function openLightbox(src) {
@@ -1342,25 +1350,31 @@ const ROOM_ID = 'naga-putih';
    ========================================================== */
 const PASS_RAHASIA = "JAGAKEBERSIHAN";
 
-// Fungsi untuk mengecek apakah user sudah login sebelumnya
+// --- JALANKAN CEK LOGIN ---
 function checkAuth() {
     const isAuth = localStorage.getItem('naga_putih_auth');
     const savedUser = localStorage.getItem('naga_putih_user');
 
     if (isAuth === 'true' && savedUser) {
-        // 1. Sembunyikan Gerbang Login
+        // Jika sudah login, hapus gate dan munculkan app
         const loginGate = document.getElementById('login-gate');
-        if(loginGate) loginGate.remove();
+        if (loginGate) loginGate.remove();
 
-        // 2. Tampilkan Konten Utama
         const appContainer = document.getElementById('app-container');
-        if(appContainer) appContainer.classList.add('visible');
+        if (appContainer) appContainer.classList.add('visible');
 
-        // 3. Set User Aktif
-        currentUser = savedUser; 
+        currentUser = savedUser;
+        updateUserBadge(savedUser);
+        initApp(); // Jalankan jam, load data, dan realtime
+    } else {
+        const nameInput = document.getElementById('login-name');
+        if (nameInput) nameInput.focus();
+    }
+}
 
-        // 4. Jalankan Aplikasi
-        initApp(); 
+// Tambahkan trigger jalankan di paling bawah
+createParticles();
+checkAuth();
     } else {
         // Jika belum login, arahkan kursor ke input nama
         const nameInput = document.getElementById('login-name');
