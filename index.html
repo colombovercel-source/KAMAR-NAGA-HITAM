@@ -667,763 +667,139 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+/* ══════════════════════════════════════════
+   KONFIGURASI & VARIABEL GLOBAL
+══════════════════════════════════════════ */
+const SUPABASE_URL = 'https://link-proyek-anda.supabase.co'; // Ganti dengan URL Anda
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6am15aWxkdXJhbm5nc2tyY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzU1NjUsImV4cCI6MjA4NjgxMTU2NX0.ybyZTOLYGMOjM_SucsfpsVU3WaL8qVY4m-1XYdK2J7Q';        // Ganti dengan Key Anda
 
-// Pastikan URL-nya hanya memiliki dua huruf 'n'
-const SUPABASE_URL = 'https://lzjmyilduranngskrcyo.supabase.co'; 
-
-// Gunakan Anon Key yang kamu miliki (yang diawali eyJhbGci...)
-const SUPABASE_KEY = 'MASUKKAN_ANON_KEY_KAMU_DI_SINI'; 
-
+// Inisialisasi Supabase (Cukup satu kali saja!)
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Sesuaikan dengan nama tabel dan bucket kita
-const ROOM_ID = 'naga-putih';
+const TABLE = 'piket_naga';
+const BUCKET = 'bukti_piket';
+const ROOM_ID = 'KAMAR_NAGA_PUTIH';
+const LOGIN_PASS = 'JAGAKEBERSIHAN';
 
-/* ── PASSWORD KAMAR ── */
-const PASS_RAHASIA = "JAGAKEBERSIHAN";
+let currentWeekStart = new Date();
+// Atur ke hari Senin di minggu ini
+const day = currentWeekStart.getDay();
+const diff = currentWeekStart.getDate() - day + (day === 0 ? -6 : 1);
+currentWeekStart.setDate(diff);
+currentWeekStart.setHours(0,0,0,0);
 
-// 1. Fungsi Cek Login saat web dibuka
+/* ══════════════════════════════════════════
+   SISTEM LOGIN (AUTH)
+══════════════════════════════════════════ */
 function checkAuth() {
-    const isAuth = localStorage.getItem('naga_putih_auth');
-    if (isAuth === 'true') {
-        // Jika sudah login, sembunyikan gerbang login dan tampilkan konten
-        document.getElementById('login-gate').classList.add('hide');
-        document.getElementById('app-container').classList.add('visible');
-        
-        // Panggil fungsi utama aplikasi kamu (misal: fetchData)
-        if (typeof initApp === "function") initApp(); 
-    }
-}
-
-// 2. Logika Klik Tombol Login
-document.getElementById('login-btn').addEventListener('click', () => {
-    const nameInput = document.getElementById('login-name').value;
-    const passInput = document.getElementById('login-pw').value;
-    const errorEl = document.getElementById('login-error');
-
-    if (passInput === PASS_RAHASIA && nameInput.trim() !== "") {
-        // Simpan status login di browser
-        localStorage.setItem('naga_putih_auth', 'true');
-        localStorage.setItem('naga_putih_user', nameInput);
-        
-        // Refresh halaman agar masuk ke menu utama
-        location.reload();
-    } else {
-        // Tampilkan pesan error jika salah
-        errorEl.classList.add('show');
-        setTimeout(() => errorEl.classList.remove('show'), 3000);
-    }
-});
-
-// Jalankan pengecekan auth setiap kali halaman dimuat
-checkAuth();
-
-/* ── JADWAL ── */
-const ANCHOR     = new Date('2026-04-25'); ANCHOR.setHours(0,0,0,0);
-const CYCLE_DAYS = 5;
-
-const GROUPS = [
-  { persons:['Jufri',   'Ardi'],       photos:['https://i.imgur.com/YPuXfjB.png','https://i.imgur.com/YPuXfjB.png'] },
-  { persons:['Reonaldo','Agus'],        photos:['https://i.imgur.com/sDDUjZQ.png','https://i.imgur.com/sDDUjZQ.png'] },
-  { persons:['Farizi',  'Yope Musang'], photos:['https://i.imgur.com/JADPNwJ.png','https://i.imgur.com/JADPNwJ.png'] },
-  { persons:['Hasan',   'Geo'],         photos:['https://i.imgur.com/em5Nyuy.png','https://i.imgur.com/em5Nyuy.png'] },
-  { persons:['Aksan',   'Chandra'],     photos:['https://i.imgur.com/sDDUjZQ.png','https://i.imgur.com/sDDUjZQ.png'] },
-  { persons:['Imanuel', 'Dandi'],       photos:['https://i.imgur.com/JADPNwJ.png','https://i.imgur.com/JADPNwJ.png'] },
-];
-
-/* ════════════════════════════════════════════════════════════════
-   JANGAN UBAH DI BAWAH GARIS INI
-════════════════════════════════════════════════════════════════ */
-
-const BUCKET      = 'foto-piket';
-const SESSION_KEY = `piket_session_${ROOM_ID}`;
-
-const db          = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const ALL_MEMBERS = GROUPS.flatMap(g => g.persons.map((p,i) => ({ name:p, photo:g.photos[i] })));
-
-const today    = new Date(); today.setHours(0,0,0,0);
-const todayKey = fmtDate(today);
-let weekOffset = 0;
-let doneMap    = {};
-let currentUser = '';
-
-const DAY_S = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-const DAY_F = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-const MON_S = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-const MON_F = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-
-/* ════════════════════════════════════════════════════════════════
-   SISTEM LOGIN GERBANG
-════════════════════════════════════════════════════════════════ */
-
-/** Buat partikel mengambang di background login */
-function createParticles() {
-  const container = document.getElementById('particles');
-  if (!container) return;
-  for (let i = 0; i < 18; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = Math.random() * 4 + 2;
-    p.style.cssText = `
-      width: ${size}px; height: ${size}px;
-      left: ${Math.random() * 100}%;
-      top: ${Math.random() * 100 + 100}%;
-      animation-duration: ${Math.random() * 15 + 10}s;
-      animation-delay: ${Math.random() * 8}s;
-      opacity: ${Math.random() * 0.6 + 0.2};
-    `;
-    container.appendChild(p);
-  }
-}
-
-/** Tampilkan error login */
-function showLoginError(msg) {
-  const el = document.getElementById('login-error');
-  const msgEl = document.getElementById('error-msg');
-  msgEl.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 4000);
-
-  /* Shake animasi pada card */
-  const card = document.querySelector('.login-card');
-  card.style.animation = 'none';
-  card.style.transform = 'translateX(-8px)';
-  setTimeout(() => { card.style.transform = 'translateX(8px)'; }, 80);
-  setTimeout(() => { card.style.transform = 'translateX(-5px)'; }, 160);
-  setTimeout(() => { card.style.transform = 'translateX(5px)'; }, 240);
-  setTimeout(() => { card.style.transform = 'translateX(0)'; card.style.transition = 'transform 0.2s'; }, 320);
-}
-
-/** Proses login */
-function doLogin() {
-  const nameInput = document.getElementById('login-name');
-  const pwInput   = document.getElementById('login-pw');
-  const btn       = document.getElementById('login-btn');
-
-  const name = nameInput.value.trim();
-  const pw   = pwInput.value.trim();
-
-  if (!name) {
-    showLoginError('Nama tidak boleh kosong!');
-    nameInput.focus();
-    return;
-  }
-
-  if (name.length < 2) {
-    showLoginError('Nama minimal 2 karakter!');
-    nameInput.focus();
-    return;
-  }
-
-  if (!pw) {
-    showLoginError('Password tidak boleh kosong!');
-    pwInput.focus();
-    return;
-  }
-
-  if (pw !== ROOM_PASSWORD) {
-    showLoginError('Password salah! Hubungi ketua kamar.');
-    pwInput.value = '';
-    pwInput.focus();
-    return;
-  }
-
-  /* Login berhasil */
-  btn.textContent = '✓ Berhasil masuk...';
-  btn.classList.add('loading');
-
-  localStorage.setItem(SESSION_KEY, JSON.stringify({ name, ts: Date.now() }));
-  currentUser = name;
-
-  setTimeout(() => {
-    /* Sembunyikan gate */
-    document.getElementById('login-gate').classList.add('hide');
-
-    /* Tampilkan app */
+    const user = localStorage.getItem('piket_user');
+    const gate = document.getElementById('login-gate');
     const app = document.getElementById('app-container');
-    app.classList.add('visible');
 
-    /* Update UI */
-    updateUserBadge(name);
-
-    /* Hapus gate dari DOM setelah animasi */
-    setTimeout(() => {
-      const gate = document.getElementById('login-gate');
-      if (gate) gate.remove();
-    }, 700);
-
-    /* Init app */
-    initApp();
-    showToast(`👋 Halo, ${name}! Selamat datang.`);
-  }, 600);
+    if (user) {
+        gate.classList.add('hide');
+        app.classList.add('visible');
+        document.getElementById('user-name-display').textContent = user;
+        document.getElementById('user-avatar').textContent = user.charAt(0).toUpperCase();
+        initApp();
+    }
 }
 
-/** Logout */
+document.getElementById('login-btn').addEventListener('click', () => {
+    const name = document.getElementById('login-name').value.trim();
+    const pw = document.getElementById('login-pw').value;
+    const err = document.getElementById('login-error');
+
+    if (name && pw === LOGIN_PASS) {
+        localStorage.setItem('piket_user', name);
+        checkAuth();
+    } else {
+        err.classList.add('show');
+        setTimeout(() => err.classList.remove('show'), 3000);
+    }
+});
+
 function doLogout() {
-  if (!confirm(`Keluar dari sesi ${currentUser}?`)) return;
-  localStorage.removeItem(SESSION_KEY);
-  location.reload();
-}
-
-/** Update tampilan badge user di header */
-function updateUserBadge(name) {
-  const badge   = document.getElementById('user-badge');
-  const avatar  = document.getElementById('user-avatar');
-  const nameEl  = document.getElementById('user-name-display');
-
-  if (avatar)  avatar.textContent  = name.charAt(0).toUpperCase();
-  if (nameEl)  nameEl.textContent  = name;
-  if (badge)   badge.style.display = 'flex';
-}
-
-/** Cek apakah sudah login */
-function checkSession() {
-  try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    const session = JSON.parse(raw);
-    /* Session berlaku 24 jam */
-    if (Date.now() - session.ts > 86400000) {
-      localStorage.removeItem(SESSION_KEY);
-      return null;
+    if(confirm('Keluar dari aplikasi?')) {
+        localStorage.removeItem('piket_user');
+        location.reload();
     }
-    return session.name;
-  } catch { return null; }
 }
 
-/* ════════════════════════════════════════════════════════════════
-   INJECT ROOM LABEL
-════════════════════════════════════════════════════════════════ */
-(function applyRoomLabel() {
-  const tag   = document.getElementById('ui-room-tag');
-  const title = document.getElementById('ui-brand-title');
-  if (tag)   tag.textContent   = ROOM_LABEL;
-  if (title) title.textContent = 'Jadwal Piket 🏠';
-  document.title = `Jadwal Piket · ${ROOM_LABEL}`;
-})();
-
-/* ════════════════════════════════════════════════════════════════
-   HELPERS
-════════════════════════════════════════════════════════════════ */
-function fmtDate(d) {
-  return d.getFullYear() + '-' +
-    String(d.getMonth()+1).padStart(2,'0') + '-' +
-    String(d.getDate()).padStart(2,'0');
+/* ══════════════════════════════════════════
+   CORE FUNCTIONS (REALTIME & DATA)
+══════════════════════════════════════════ */
+async function initApp() {
+    updateClock();
+    setInterval(updateClock, 1000);
+    renderSchedule();
+    listenRealtime();
+    // Panggil fungsi slider & partikel jika ada
+    createParticles();
 }
 
-function getGroupForDate(date) {
-  const d    = new Date(date); d.setHours(0,0,0,0);
-  const diff = Math.round((d - ANCHOR) / 86400000);
-  if (diff < 0 || diff % CYCLE_DAYS !== 0) return null;
-  return GROUPS[Math.floor(diff / CYCLE_DAYS) % GROUPS.length];
-}
-
-function parsePhotos(raw) {
-  if (!raw) return [];
-  if (Array.isArray(raw)) return raw;
-  try { const p = JSON.parse(raw); return Array.isArray(p) ? p : (p ? [p] : []); }
-  catch { return raw ? [raw] : []; }
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._tid);
-  t._tid = setTimeout(() => t.classList.remove('show'), 2600);
-}
-
-function refreshUI() { renderStrip(); renderSchedule(); renderMembers(); }
-
-/* ════════════════════════════════════════════════════════════════
-   SUPABASE — LOAD
-════════════════════════════════════════════════════════════════ */
-async function loadData() {
-  try {
-    const { data, error } = await db
-      .from(TABLE)
-      .select('date_key, is_done, photo_url')
-      .eq('room_id', ROOM_ID);
-
-    if (error) throw error;
-
-    doneMap = {};
-    (data || []).forEach(row => {
-      doneMap[row.date_key] = {
-        is_done: row.is_done || false,
-        photos:  parsePhotos(row.photo_url),
-      };
-    });
-  } catch (err) {
-    console.warn('loadData error:', err.message);
-  } finally {
-    refreshUI();
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════
-   SUPABASE — SAVE STATUS
-════════════════════════════════════════════════════════════════ */
-async function saveStatus(dateKey, isDone) {
-  try {
-    const current = doneMap[dateKey] || { is_done: false, photos: [] };
-    const { error } = await db
-      .from(TABLE)
-      .upsert(
-        { date_key: dateKey, room_id: ROOM_ID, is_done: isDone, photo_url: JSON.stringify(current.photos) },
-        { onConflict: 'date_key,room_id' }
-      );
-    if (error) throw error;
-  } catch (err) {
-    console.error('saveStatus error:', err.message);
-    showToast('❌ Gagal sinkron ke database');
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════
-   SUPABASE — UPLOAD FOTO
-════════════════════════════════════════════════════════════════ */
-async function uploadPhotos(dateKey, files) {
-  if (!files || files.length === 0) return;
-
-  const spinner = document.getElementById(`spinner-${dateKey}`);
-  if (spinner) spinner.classList.add('show');
-  showToast(`⏳ Mengupload ${files.length} foto...`);
-
-  const uploaded = [], errors = [];
-
-  for (const file of files) {
-    try {
-      const ext      = file.name.split('.').pop() || 'jpg';
-      const fileName = `${ROOM_ID}/${dateKey}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
-      const { error: upErr } = await db.storage.from(BUCKET).upload(fileName, file, { upsert: false, contentType: file.type });
-      if (upErr) throw upErr;
-      const { data: urlData } = db.storage.from(BUCKET).getPublicUrl(fileName);
-      uploaded.push(urlData.publicUrl);
-    } catch (err) {
-      errors.push(file.name);
-      console.error('upload error:', file.name, err.message);
-    }
-  }
-
-  if (spinner) spinner.classList.remove('show');
-  if (uploaded.length === 0) { showToast('❌ Semua foto gagal diupload'); return; }
-
-  if (!doneMap[dateKey]) doneMap[dateKey] = { is_done: false, photos: [] };
-  const allPhotos = [...doneMap[dateKey].photos, ...uploaded];
-  doneMap[dateKey].photos  = allPhotos;
-  doneMap[dateKey].is_done = true;
-
-  try {
-    const { error: dbErr } = await db.from(TABLE).upsert(
-      { date_key: dateKey, room_id: ROOM_ID, is_done: true, photo_url: JSON.stringify(allPhotos) },
-      { onConflict: 'date_key,room_id' }
-    );
-    if (dbErr) throw dbErr;
-  } catch (err) { console.error('DB save error:', err.message); }
-
-  showToast(errors.length > 0 ? `📸 ${uploaded.length} foto tersimpan, ${errors.length} gagal` : `📸 ${uploaded.length} foto tersimpan!`);
-  refreshUI();
-}
-
-/* ════════════════════════════════════════════════════════════════
-   REALTIME
-════════════════════════════════════════════════════════════════ */
 function listenRealtime() {
-    db.channel('piket-rt-' + ROOM_ID)
-        .on(
-            'postgres_changes',
-            {
-                event: '*',
-                schema: 'public',
-                table: TABLE
-            },
-            (payload) => {
-                console.log('Sinyal Masuk:', payload);
-                const row = payload.new || {};
-                if (row.room_id === ROOM_ID) {
-                    doneMap[row.date_key] = {
-                        is_done: row.is_done || false,
-                        photos: parsePhotos(row.photo_url),
-                    };
-                    refreshUI();
-                }
-            }
-        )
-        .subscribe();
+    // Perbaikan syntax kurung kurawal di sini
+    db.channel('public:piket_naga')
+    .on('postgres_changes', 
+        { event: '*', schema: 'public', table: TABLE }, 
+        (payload) => {
+            console.log('Perubahan terdeteksi:', payload);
+            renderSchedule();
+        }
+    )
+    .subscribe();
 }
 
-/* ════════════════════════════════════════════════════════════════
-   LIGHTBOX
-════════════════════════════════════════════════════════════════ */
-function openLightbox(src) {
-  document.getElementById('lightbox-img').src = src;
-  document.getElementById('lightbox').classList.add('show');
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('show');
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
-
-/* ════════════════════════════════════════════════════════════════
-   SLIDER
-════════════════════════════════════════════════════════════════ */
-(function initSlider() {
-  const TOTAL = 7, INTERVAL = 2500;
-  const track = document.getElementById('sliderTrack');
-  const dots  = document.getElementById('sDots');
-  const ctr   = document.getElementById('sCtr');
-  const bar   = document.getElementById('sBar');
-  if (!track || !dots) return;
-
-  let cur = 0, timer = null, raf = null, t0 = null;
-
-  for (let i = 0; i < TOTAL; i++) {
-    const d = document.createElement('button');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => goTo(i, true);
-    dots.appendChild(d);
-  }
-
-  function updateUI() {
-    track.style.transform = `translateX(-${cur*100}%)`;
-    ctr.textContent = `${cur+1} / ${TOTAL}`;
-    dots.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i === cur));
-  }
-  function goTo(i, manual) { cur = (i+TOTAL)%TOTAL; updateUI(); if (manual) reset(); }
-  function startProg() {
-    cancelAnimationFrame(raf);
-    if (bar) { bar.style.transition='none'; bar.style.width='0%'; }
-    t0 = performance.now();
-    (function step(now) {
-      const p = Math.min(((now-t0)/INTERVAL)*100, 100);
-      if (bar) bar.style.width = p+'%';
-      if (p < 100) raf = requestAnimationFrame(step);
-    })(performance.now());
-  }
-  function start() { clearInterval(timer); startProg(); timer = setInterval(() => { cur=(cur+1)%TOTAL; updateUI(); startProg(); }, INTERVAL); }
-  function reset() { clearInterval(timer); cancelAnimationFrame(raf); start(); }
-
-  document.getElementById('sPrev').onclick = () => goTo(cur-1, true);
-  document.getElementById('sNext').onclick = () => goTo(cur+1, true);
-
-  let tx = null;
-  const wrap = document.getElementById('sliderWrap');
-  wrap.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive:true });
-  wrap.addEventListener('touchend', e => {
-    if (tx === null) return;
-    const diff = tx - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) goTo(diff > 0 ? cur+1 : cur-1, true);
-    tx = null;
-  });
-  wrap.onmouseenter = () => { clearInterval(timer); cancelAnimationFrame(raf); };
-  wrap.onmouseleave = start;
-  updateUI(); start();
-})();
-
-/* ════════════════════════════════════════════════════════════════
-   RENDER STRIP
-════════════════════════════════════════════════════════════════ */
-function renderStrip() {
-  const strip = document.getElementById('today-strip');
-  const txt   = document.getElementById('strip-text');
-  if (!strip || !txt) return;
-  strip.className = 'today-strip';
-  if (today.getDay() === 0) {
-    strip.classList.add('holiday');
-    txt.textContent = 'Hari ini Minggu — Libur piket! 🎉';
-    return;
-  }
-  const grp  = getGroupForDate(today);
-  const data = doneMap[todayKey];
-  strip.classList.add('on-duty');
-  if (grp) {
-    txt.innerHTML = (data && data.is_done)
-      ? `✅ Piket <strong>${grp.persons.join(' & ')}</strong> sudah selesai!`
-      : `🧹 Giliran: <strong>${grp.persons.join(' & ')}</strong> — Semangat!`;
-  } else {
-    txt.textContent = '📅 Tidak ada jadwal piket hari ini';
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════
-   RENDER JADWAL
-════════════════════════════════════════════════════════════════ */
-function renderSchedule() {
-  const grid = document.getElementById('sched');
-  if (!grid) return;
-
-  const dow    = today.getDay() === 0 ? 6 : today.getDay() - 1;
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - dow + weekOffset * 7);
-  const dates = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday); d.setDate(monday.getDate()+i); return d;
-  });
-  const sun = dates[6];
-  document.getElementById('week-label').textContent =
-    dates[0].getDate() + ' ' + MON_S[dates[0].getMonth()] + ' – ' +
-    sun.getDate() + ' ' + MON_S[sun.getMonth()] + ' ' + sun.getFullYear();
-
-  let html = '';
-  dates.forEach((date, idx) => {
-    const dkey    = fmtDate(date);
-    const isSun   = date.getDay() === 0;
-    const isToday = dkey === todayKey;
-    const rowData = doneMap[dkey] || { is_done:false, photos:[] };
-    const done    = rowData.is_done;
-    const photos  = rowData.photos || [];
-    const grp     = getGroupForDate(date);
-
-    let cls = 'day-card' +
-      (isToday ? ' is-today live' : done ? ' done-card' : ' upcoming') +
-      (isSun ? ' is-sunday' : '');
-
-    let body = '';
-    if (isSun) {
-      body = `<div class="holiday-pill">🔴 Libur — Minggu</div>`;
-    } else if (grp) {
-      const chips = grp.persons.map((p,i) => `
-        <div class="person-chip">
-          <div class="avatar-sm ${done ? 'done-av' : ''}">
-            <img src="${grp.photos[i]}" alt="${p}" onerror="this.style.display='none'">
-          </div>
-          <span class="person-nm">${p}</span>
-        </div>`).join('');
-
-      const photosHtml = photos.length
-        ? `<div class="photos-grid">${photos.map(url =>
-            `<img src="${url}" class="proof-thumb" onclick="openLightbox('${url}')" title="Klik lihat bukti">`
-          ).join('')}</div>` : '';
-
-      body = `
-        <div class="persons-row">
-          <div class="persons-list">${chips}</div>
-          <div class="done-wrap">
-            <label class="done-lbl" for="chk-${dkey}">${done ? '✓ Selesai' : 'Tandai'}</label>
-            <input class="done-toggle" type="checkbox" id="chk-${dkey}" data-dk="${dkey}" ${done ? 'checked' : ''}>
-          </div>
-        </div>
-        <div class="proof-section">
-          ${photosHtml}
-          <div class="proof-actions">
-            <label class="upload-label">
-              📸 ${photos.length > 0 ? `Tambah Foto (${photos.length})` : 'Upload Bukti'}
-              <input type="file" accept="image/*" multiple data-dk="${dkey}">
-            </label>
-            <div class="uploading-badge" id="spinner-${dkey}">
-              <div class="spin"></div> Mengupload...
-            </div>
-            ${photos.length > 0 ? `<span class="upload-count">${photos.length} foto tersimpan</span>` : ''}
-          </div>
-        </div>`;
-    } else {
-      body = `<div class="no-sched">Tidak ada jadwal piket hari ini</div>`;
-    }
-
-    html += `
-      <div class="${cls}" style="animation-delay:${idx*.05}s">
-        <div class="day-row">
-          <div class="date-col">
-            <div class="date-dow">${DAY_S[date.getDay()]}</div>
-            <div class="date-num">${date.getDate()}</div>
-            <div class="date-mon">${MON_S[date.getMonth()]}</div>
-          </div>
-          <div class="card-body">${body}</div>
-        </div>
-      </div>`;
-  });
-
-  grid.innerHTML = html;
-
-  grid.querySelectorAll('.done-toggle').forEach(chk => {
-    chk.onchange = async function () {
-      const dk = this.dataset.dk, val = this.checked;
-      if (!doneMap[dk]) doneMap[dk] = { is_done:false, photos:[] };
-      doneMap[dk].is_done = val;
-      if (!val) doneMap[dk].photos = [];
-      refreshUI();
-      await saveStatus(dk, val);
-      showToast(val ? `✅ ${currentUser} menandai selesai!` : '↩ Tanda dibatalkan');
-    };
-  });
-
-  grid.querySelectorAll('input[type="file"][data-dk]').forEach(input => {
-    input.onchange = function () {
-      if (this.files && this.files.length > 0) {
-        uploadPhotos(this.dataset.dk, Array.from(this.files));
-        this.value = '';
-      }
-    };
-  });
-}
-
-/* ════════════════════════════════════════════════════════════════
-   RENDER ANGGOTA
-════════════════════════════════════════════════════════════════ */
-function renderMembers() {
-  const grid = document.getElementById('members');
-  if (!grid) return;
-  let html = '';
-  ALL_MEMBERS.forEach((m, i) => {
-    let count = 0;
-    Object.keys(doneMap).forEach(dk => {
-      if (doneMap[dk]?.is_done) {
-        const g = getGroupForDate(new Date(dk + 'T00:00:00'));
-        if (g && g.persons.includes(m.name)) count++;
-      }
-    });
-    html += `
-      <div class="member-card" style="animation-delay:${i*.05}s">
-        <div class="member-av">
-          <img src="${m.photo}" alt="${m.name}" onerror="this.parentElement.style.background='var(--brand-dim)'">
-        </div>
-        <div class="member-name">${m.name}</div>
-        <div class="member-count">Selesai: <strong>${count}×</strong></div>
-      </div>`;
-  });
-  grid.innerHTML = html;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   JAM & NAVIGASI
-════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   UI HELPERS (JAM & EFEK)
+══════════════════════════════════════════ */
 function updateClock() {
-  const n = new Date();
-  const dEl = document.getElementById('live-date');
-  const tEl = document.getElementById('live-time');
-  if (dEl) dEl.textContent = DAY_F[n.getDay()] + ', ' + n.getDate() + ' ' + MON_F[n.getMonth()] + ' ' + n.getFullYear();
-  if (tEl) tEl.textContent = String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0') + ':' + String(n.getSeconds()).padStart(2,'0');
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('live-date').textContent = now.toLocaleDateString('id-ID', options);
+    document.getElementById('live-time').textContent = now.toLocaleTimeString('id-ID', { hour12: false });
 }
 
-document.getElementById('btn-prev').onclick  = () => { weekOffset--; renderSchedule(); };
-document.getElementById('btn-next').onclick  = () => { weekOffset++; renderSchedule(); };
-document.getElementById('btn-today').onclick = () => { weekOffset = 0; renderSchedule(); showToast('↩ Kembali ke minggu ini'); };
+function createParticles() {
+    const container = document.getElementById('particles');
+    if(!container) return;
+    for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 4 + 2 + 'px';
+        p.style.width = size;
+        p.style.height = size;
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = Math.random() * 3 + 4 + 's';
+        p.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(p);
+    }
+}
 
-/* ════════════════════════════════════════════════════════════════
-   TOGGLE PASSWORD VISIBILITY
-════════════════════════════════════════════════════════════════ */
-document.getElementById('toggle-pw').onclick = function() {
-  const pw = document.getElementById('login-pw');
-  if (pw.type === 'password') {
-    pw.type = 'text';
-    this.textContent = '🙈';
-  } else {
-    pw.type = 'password';
-    this.textContent = '👁️';
-  }
-};
+// Jalankan pengecekan login saat halaman dimuat
+window.onload = checkAuth;
 
-/* Enter key di login form */
-['login-name','login-pw'].forEach(id => {
-  document.getElementById(id).addEventListener('keydown', e => {
-    if (e.key === 'Enter') doLogin();
-  });
+// Toggle Password
+document.getElementById('toggle-pw').addEventListener('click', function() {
+    const input = document.getElementById('login-pw');
+    if (input.type === 'password') {
+        input.type = 'text';
+        this.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        this.textContent = '👁️';
+    }
 });
 
-/* Tombol login */
-document.getElementById('login-btn').onclick = doLogin;
-
-/* ════════════════════════════════════════════════════════════════
-   INIT APP (dipanggil setelah login berhasil)
-════════════════════════════════════════════════════════════════ */
-function initApp() {
-  setInterval(updateClock, 1000);
-  updateClock();
-  loadData();
-  listenRealtime();
+/* Tambahkan fungsi renderSchedule, renderMembers, dsb di bawah sini jika sudah siap */
+async function renderSchedule() {
+    const container = document.getElementById('sched');
+    container.innerHTML = '<div style="text-align:center; padding:20px;">Memuat data...</div>';
+    // Logika fetch data Supabase Anda di sini
 }
-
-/* ==========================================================
-   TAHAP 1: KONEKSI SUPABASE
-   ========================================================== */
-const SUPABASE_URL = 'https://lzjmyilduranngskrcyo.supabase.co'; 
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6am15aWxkdXJhbm5nc2tyY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzU1NjUsImV4cCI6MjA4NjgxMTU2NX0.ybyZTOLYGMOjM_SucsfpsVU3WaL8qVY4m-1XYdK2J7Q'; // Ganti dengan Anon Key kamu
-
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const TABLE = 'KAMAR-NAGA-PUTIH';
-const ROOM_ID = 'naga-putih';
-
-/* ==========================================================
-   TAHAP 2: LOGIKA LOGIN & ENTRY POINT
-   ========================================================== */
-const PASS_RAHASIA = "JAGAKEBERSIHAN";
-
-// --- JALANKAN CEK LOGIN ---
-function checkAuth() {
-    const isAuth = localStorage.getItem('naga_putih_auth');
-    const savedUser = localStorage.getItem('naga_putih_user');
-
-    if (isAuth === 'true' && savedUser) {
-        // Jika sudah login, hapus gate dan munculkan app
-        const loginGate = document.getElementById('login-gate');
-        if (loginGate) loginGate.remove();
-
-        const appContainer = document.getElementById('app-container');
-        if (appContainer) appContainer.classList.add('visible');
-
-        currentUser = savedUser;
-        updateUserBadge(savedUser);
-        initApp(); // Jalankan jam, load data, dan realtime
-    } else {
-        const nameInput = document.getElementById('login-name');
-        if (nameInput) nameInput.focus();
-    }
-}
-
-// Tambahkan trigger jalankan di paling bawah
-createParticles();
-checkAuth();
-    } else {
-        // Jika belum login, arahkan kursor ke input nama
-        const nameInput = document.getElementById('login-name');
-        if(nameInput) nameInput.focus();
-    }
-}
-
-// Logika saat tombol "Masuk ke Kamar" diklik
-const loginBtn = document.getElementById('login-btn');
-if(loginBtn) {
-    loginBtn.addEventListener('click', () => {
-        const nameInput = document.getElementById('login-name').value;
-        const passInput = document.getElementById('login-pw').value;
-        const errorEl = document.getElementById('login-error');
-
-        // Gunakan password "JAGAKEBERSIHAN"
-        if (passInput === "JAGAKEBERSIHAN" && nameInput.trim() !== "") {
-            localStorage.setItem('naga_putih_auth', 'true');
-            localStorage.setItem('naga_putih_user', nameInput.trim());
-            location.reload(); // Muat ulang agar masuk ke aplikasi
-        } else {
-            if(errorEl) {
-                errorEl.classList.add('show');
-                setTimeout(() => errorEl.classList.remove('show'), 3000);
-            }
-        }
-    });
-}
-
-// JALANKAN PENGECEKAN SAAT HALAMAN DIBUKA
-createParticles();
-checkAuth();
-
-// Memastikan tombol login berfungsi meski ada error di script lain
-document.addEventListener('click', function (e) {
-    if (e.target && e.target.id === 'login-btn') {
-        const nameVal = document.getElementById('login-name').value;
-        const passVal = document.getElementById('login-pw').value;
-        
-        if (passVal === "JAGAKEBERSIHAN" && nameVal.trim() !== "") {
-            localStorage.setItem('naga_putih_auth', 'true');
-            localStorage.setItem('naga_putih_user', nameVal);
-            alert("Login Berhasil! Klik OK untuk masuk.");
-            location.reload();
-        } else {
-            alert("Nama harus diisi & Password salah!");
-        }
-    }
-});
 
 </script>
 </body>
