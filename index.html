@@ -544,27 +544,26 @@ async function uploadPhotos(dateKey, files) {
    REALTIME — filter hanya room_id milik kamar ini
 ════════════════════════════════════════════════════════════════ */
 function listenRealtime() {
-  db.channel(`piket-rt-${ROOM_ID}`)   /* channel name unik per kamar */
+  db.channel(`piket-rt-${ROOM_ID}`)
     .on(
       'postgres_changes',
       {
-        {
-    event: '*',
-    schema: 'public',
-    table: TABLE
-},
-payload => {
-    console.log('Ada Sinyal Masuk dari Database:', payload); // Biar kelihatan di F12
-    
-    const row = payload.new || {};
-
-    // Kita cek manual saja di sini daripada pakai filter Supabase yang sensitif
-    if (row.room_id === ROOM_ID) {
-        doneMap[row.date_key] = {
+        event: '*',
+        schema: 'public',
+        table: TABLE
+      },
+      (payload) => {
+        console.log('Ada Sinyal Masuk dari Database:', payload);
+        
+        const row = payload.new || {};
+        
+        if (row.room_id === ROOM_ID) {
+          doneMap[row.date_key] = {
             is_done: row.is_done || false,
             photos: parsePhotos(row.photo_url),
-        };
-        refreshUI();
+          };
+          refreshUI();
+        }
       }
     )
     .subscribe();
