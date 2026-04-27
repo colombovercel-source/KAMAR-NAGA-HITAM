@@ -1063,21 +1063,16 @@ function listenRealtime() {
             'postgres_changes',
             { event: '*', schema: 'public', table: TABLE },
             (payload) => {
-                console.log('Ada update dari database!', payload);
+                console.log('Ada Sinyal Masuk:', payload);
                 const row = payload.new || {};
-                
-                // Cek apakah data yang berubah adalah milik kamar ini
                 if (row.room_id === ROOM_ID) {
-                    // Panggil fungsi untuk mengambil data ulang (misal: fetchInitialData)
-                    if (typeof fetchInitialData === "function") fetchInitialData();
+                    // Panggil fungsi untuk ambil data terbaru
+                    if (typeof loadData === "function") loadData();
                 }
             }
         )
-        .subscribe((status) => {
-            console.log("Status Realtime:", status);
-        });
-}
-/* ════════════════════════════════════════════════════════════════
+        .subscribe();
+}/* ════════════════════════════════════════════════════════════════
    LIGHTBOX
 ════════════════════════════════════════════════════════════════ */
 function openLightbox(src) {
@@ -1406,7 +1401,7 @@ if(loginBtn) {
         const passInput = document.getElementById('login-pw').value;
         const errorEl = document.getElementById('login-error');
 
-        if (passInput === PASS_RAHASIA && nameInput.trim() !== "") {
+        if (passInput === "JAGAKEBERSIHAN" && nameInput.trim() !== "") {
             localStorage.setItem('naga_putih_auth', 'true');
             localStorage.setItem('naga_putih_user', nameInput);
             location.reload(); // Muat ulang halaman untuk masuk ke mode aplikasi
@@ -1422,6 +1417,23 @@ if(loginBtn) {
 // JALANKAN PENGECEKAN SAAT HALAMAN DIBUKA
 createParticles();
 checkAuth();
+
+// Memastikan tombol login berfungsi meski ada error di script lain
+document.addEventListener('click', function (e) {
+    if (e.target && e.target.id === 'login-btn') {
+        const nameVal = document.getElementById('login-name').value;
+        const passVal = document.getElementById('login-pw').value;
+        
+        if (passVal === "JAGAKEBERSIHAN" && nameVal.trim() !== "") {
+            localStorage.setItem('naga_putih_auth', 'true');
+            localStorage.setItem('naga_putih_user', nameVal);
+            alert("Login Berhasil! Klik OK untuk masuk.");
+            location.reload();
+        } else {
+            alert("Nama harus diisi & Password salah!");
+        }
+    }
+});
 
 </script>
 </body>
