@@ -348,7 +348,7 @@ const ROOM_LABEL = 'Kamar Naga HITAM';     // Nama tampil di header
 
 /* ── JADWAL ── */
 const ANCHOR     = new Date('2026-04-25'); ANCHOR.setHours(0,0,0,0);
-const CYCLE_DAYS = 5;
+const CYCLE_DAYS = 1;
 
 /* ── DATA ANGGOTA & ROTASI ── */
 const GROUPS = [
@@ -402,10 +402,15 @@ function fmtDate(d) {
 }
 
 function getGroupForDate(date) {
-  const d    = new Date(date); d.setHours(0,0,0,0);
-  const diff = Math.round((d - ANCHOR) / 86400000);
-  if (diff < 0 || diff % CYCLE_DAYS !== 0) return null;
-  return GROUPS[Math.floor(diff / CYCLE_DAYS) % GROUPS.length];
+  const d = new Date(date); 
+  d.setHours(0,0,0,0);
+
+  const diff = Math.floor((d - ANCHOR) / 86400000);
+
+  if (diff < 0) return null;
+
+  // ROTASI HARIAN
+  return GROUPS[diff % GROUPS.length];
 }
 
 function parsePhotos(raw) {
