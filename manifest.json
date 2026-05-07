@@ -1,21 +1,23 @@
 {
-  "name": "Piket naga hitam",
-  "short_name": "naga hitam",
-  "start_url": "./index.html",
+  "name": "Kamar Naga Hitam",
+  "short_name": "Naga Hitam",
+  "description": "Jadwal Piket Kamar Naga Hitam",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#f7f4ef",
-  "theme_color": "#4f46e5",
+  "background_color": "#0e1016",
+  "theme_color": "#e8c84a",
   "icons": [
-  {
-    "src": "https://i.imgur.com/mF88miV.png",
-    "sizes": "192x192",
-    "type": "image/png",
-    "purpose": "any maskable"
-  },
-  {
-    "src": "https://i.imgur.com/mF88miV.png",
-    "sizes": "512x512",
-    "type": "image/png",
-    "purpose": "any maskable"
-  }
-]
+    {
+      "src": "https://i.imgur.com/mF88miV.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.imgur.com/mF88miV.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
