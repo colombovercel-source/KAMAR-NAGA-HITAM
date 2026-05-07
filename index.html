@@ -64,15 +64,16 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
     z-index: 3;
     max-width: 600px;
     margin: 0 auto;
-    /* Padding bawah ditambah (7rem) agar konten tidak tertutup menu nav */
-    /* Padding samping (1.2rem) agar teks tidak mepet ke pinggir layar HP */
-    padding: 0 1.2rem 7rem 1.2rem;
+    /* Gunakan min-height agar area scroll selalu ada */
+    min-height: 101vh; 
+    /* Padding bawah 8rem agar navigasi tidak menutupi tombol terakhir */
+    padding: 1.5rem 1.2rem 8rem 1.2rem;
+    box-sizing: border-box;
     
-    /* Efek transisi halus saat pindah halaman */
     animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Tambahan animasi agar perpindahan halaman terasa smooth */
+/* Animasi muncul */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -233,18 +234,28 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
   .date-col{min-width:68px;}.brand-title{font-size:1rem;}.brand-logo{width:40px;height:40px;border-radius:11px;}
 }
 
-/* TAMBAHKAN INI DI DALAM <style> */
+/* Update bagian ini di dalam <style> */
 html, body {
-  overflow-x: hidden;
-  overscroll-behavior-y: contain; /* Biar gak refresh otomatis pas ditarik ke bawah */
-  background-color: #0e1016;
-  -webkit-tap-highlight-color: transparent;
+    /* Pastikan tinggi tidak dikunci agar bisa memanjang */
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    /* Ganti 'contain' ke 'none' atau hapus jika masih macet, 
+       tapi 'auto' adalah yang paling aman untuk scroll */
+    overflow-y: auto; 
+    overscroll-behavior-y: auto; 
+    background-color: #0e1016;
+    -webkit-tap-highlight-color: transparent;
+    /* Smooth scroll untuk pengguna iPhone */
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Biar tombol unduh lebih pas di layar kecil */
+/* Tombol unduh tetap responsif */
 #installBtn span {
-  font-size: 0.9rem;
-  letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    white-space: nowrap; /* Biar tulisan gak kepotong jadi 2 baris */
 }
 
 </style>
