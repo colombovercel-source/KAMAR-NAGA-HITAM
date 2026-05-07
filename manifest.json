@@ -1,11 +1,15 @@
 {
   "name": "Kamar Naga Hitam",
   "short_name": "Naga Hitam",
-  "description": "Jadwal Piket Kamar Naga Hitam",
+  "description": "Jadwal Piket Kamar Naga Hitam ",
+  "id": "/index.html",
   "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0e1016",
   "theme_color": "#e8c84a",
+  "categories": ["utilities", "productivity"],
   "icons": [
     {
       "src": "https://i.imgur.com/iaQmyzv.png",
