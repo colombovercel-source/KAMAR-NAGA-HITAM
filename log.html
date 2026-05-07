@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Riwayat Piket · Kamar Naga Hitam">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Naga Hitam">
+<meta name="theme-color" content="#0e1016">
+<title>Riwayat Piket · Kamar Naga Hitam</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="https://i.imgur.com/mF88miV.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   DESIGN TOKENS — sama persis dengan index.html
+═══════════════════════════════════════ */
+:root {
+  --brand:      #e8c84a;
+  --brand2:     #c9a82a;
+  --brand-dim:  rgba(232,200,74,0.12);
+  --brand-glow: rgba(232,200,74,0.22);
+  --surface:    rgba(14,16,22,0.92);
+  --surface2:   rgba(20,22,30,0.88);
+  --surface3:   rgba(28,30,42,0.90);
+  --glass:      rgba(10,12,18,0.72);
+  --border:     rgba(255,255,255,0.07);
+  --border2:    rgba(255,255,255,0.11);
+  --border3:    rgba(255,255,255,0.18);
+  --ink:        #f0f2f8;
+  --ink2:       #ffffff;
+  --ink3:       #e2e8f0;
+  --ink4:       #cbd5e1;
+  --ink5:       #94a3b8;
+  --ok:         #22c55e;
+  --ok-dim:     rgba(34,197,94,0.10);
+  --ok-b:       rgba(34,197,94,0.28);
+  --danger:     #ef4444;
+  --danger-dim: rgba(239,68,68,0.10);
+  --danger-b:   rgba(239,68,68,0.28);
+  --font:       'Outfit', sans-serif;
+  --mono:       'JetBrains Mono', monospace;
+  --r:    10px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --blur: blur(20px) saturate(1.5);
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+  background-color: #0e1016;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+}
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 15px;
+  line-height: 1.6;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ═══ BACKGROUND ═══ */
+.bg-layer    { position:fixed; inset:0; z-index:0; background-image:url('https://i.imgur.com/bfrp75y.png'); background-size:cover; background-position:center; filter:brightness(1.05) contrast(1.05); }
+.bg-overlay  { position:fixed; inset:0; z-index:1; background:linear-gradient(160deg,rgba(5,7,14,.8) 0%,rgba(8,10,18,.72) 50%,rgba(5,7,14,.85) 100%); }
+.bg-glow     { position:fixed; top:-250px; left:50%; transform:translateX(-50%); width:700px; height:500px; border-radius:50%; background:radial-gradient(ellipse,rgba(232,200,74,.05) 0%,transparent 65%); pointer-events:none; z-index:2; }
+
+.page {
+  position: relative;
+  z-index: 3;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 0 7rem;
+  animation: fadeIn .4s ease-in-out;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══ HEADER ═══ */
+.header {
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-bottom: 1px solid var(--border2);
+  padding: 1rem 1.4rem .9rem;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 1px 0 var(--border), 0 4px 24px rgba(0,0,0,.35);
+}
+.header-inner { display:flex; align-items:center; gap:12px; }
+.header-logo  { width:44px; height:44px; border-radius:12px; overflow:hidden; flex-shrink:0; border:1.5px solid rgba(232,200,74,.3); box-shadow:0 0 18px var(--brand-glow); background:rgba(0,0,0,.4); }
+.header-logo img { width:100%; height:100%; object-fit:cover; display:block; }
+.header-text  { flex:1; }
+.header-tag   { font-family:var(--mono); font-size:.62rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#0a0b0f; background:linear-gradient(135deg,var(--brand),var(--brand2)); padding:2px 8px; border-radius:4px; display:inline-block; margin-bottom:2px; }
+.header-title { font-size:1.05rem; font-weight:800; color:var(--ink2); letter-spacing:-.3px; }
+.header-sub   { font-size:.62rem; color:var(--ink5); margin-top:1px; }
+
+/* ═══ FILTER BAR ═══ */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .75rem 1.4rem;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 72px;
+  z-index: 190;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-bar::-webkit-scrollbar { display:none; }
+.filter-btn {
+  flex-shrink: 0;
+  padding: .38rem .85rem;
+  border-radius: 99px;
+  border: 1px solid var(--border2);
+  background: rgba(255,255,255,.04);
+  color: var(--ink5);
+  font-family: var(--font);
+  font-size: .68rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.filter-btn:hover { border-color:rgba(232,200,74,.25); color:var(--brand); }
+.filter-btn.active { background:var(--brand-dim); border-color:rgba(232,200,74,.35); color:var(--brand); }
+
+/* ═══ SUMMARY CHIPS ═══ */
+.summary-bar {
+  display: flex;
+  gap: .5rem;
+  padding: .85rem 1.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.summary-bar::-webkit-scrollbar { display:none; }
+.summary-chip {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  padding: .65rem 1rem;
+  min-width: 80px;
+  transition: border-color .2s;
+}
+.summary-chip:hover { border-color: rgba(232,200,74,.22); }
+.chip-val { font-family:var(--mono); font-size:1.2rem; font-weight:700; color:var(--brand); line-height:1; text-shadow:0 0 14px var(--brand-glow); }
+.chip-lbl { font-size:.58rem; font-weight:600; color:var(--ink5); white-space:nowrap; }
+
+/* ═══ SECTION TITLE ═══ */
+.sec-title {
+  font-size:.58rem; font-weight:800; letter-spacing:3px; text-transform:uppercase;
+  color:var(--ink5); display:flex; align-items:center; gap:10px;
+  padding: 0 1.4rem;
+  margin-bottom: .6rem;
+  margin-top: 1.25rem;
+}
+.sec-title::after { content:''; flex:1; height:1px; background:var(--border2); }
+
+/* ═══ LOADING ═══ */
+.loading-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 4rem 1rem;
+  color: var(--ink5);
+  font-size: .85rem;
+}
+.spin { width:16px; height:16px; border:2px solid rgba(232,200,74,.2); border-top-color:var(--brand); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══ LOG LIST ═══ */
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 0 1.4rem;
+}
+
+.log-card {
+  display: flex;
+  align-items: stretch;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: all .18s;
+  animation: fadeUp .3s ease both;
+  position: relative;
+}
+.log-card:hover { border-color:var(--border3); box-shadow:0 4px 20px rgba(0,0,0,.4); transform:translateY(-1px); }
+.log-card.is-done  { border-left:3px solid rgba(34,197,94,.6); }
+.log-card.is-miss  { border-left:3px solid rgba(239,68,68,.5); }
+
+/* Date column */
+.log-date-col {
+  padding: .8rem .75rem;
+  min-width: 68px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,.2);
+  gap: 1px;
+}
+.log-card.is-done .log-date-col { background:rgba(34,197,94,.06); border-right-color:rgba(34,197,94,.18); }
+.log-card.is-miss .log-date-col { background:rgba(239,68,68,.05); border-right-color:rgba(239,68,68,.15); }
+.log-dow  { font-family:var(--mono); font-size:.52rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.55); }
+.log-day  { font-size:1.4rem; font-weight:800; line-height:1; letter-spacing:-1px; color:#fff; }
+.log-mon  { font-size:.57rem; color:rgba(255,255,255,.55); font-weight:500; }
+
+/* Body */
+.log-body { flex:1; padding:.7rem .95rem; display:flex; flex-direction:column; justify-content:center; gap:.3rem; }
+.log-top  { display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
+.log-person { display:flex; align-items:center; gap:8px; }
+.log-avatar {
+  width:30px; height:30px; border-radius:50%;
+  overflow:hidden; flex-shrink:0;
+  border:1.5px solid rgba(232,200,74,.25);
+  background:rgba(0,0,0,.4);
+}
+.log-avatar img { width:100%; height:100%; object-fit:cover; }
+.log-name  { font-size:.87rem; font-weight:800; color:var(--ink); }
+.log-task  { font-size:.65rem; color:var(--ink5); margin-top:1px; display:flex; align-items:center; gap:4px; }
+.log-task-tag {
+  display:inline-flex; align-items:center;
+  background:rgba(232,200,74,.09);
+  border:1px solid rgba(232,200,74,.18);
+  color:rgba(232,200,74,.8);
+  font-size:.56rem; font-weight:700;
+  padding:1px 7px; border-radius:4px;
+}
+.log-status-badge {
+  display:inline-flex; align-items:center; gap:3px;
+  font-size:.6rem; font-weight:700; padding:3px 8px; border-radius:6px;
+  flex-shrink:0;
+}
+.badge-done { background:var(--ok-dim); color:var(--ok); border:1px solid var(--ok-b); }
+.badge-miss { background:var(--danger-dim); color:var(--danger); border:1px solid var(--danger-b); }
+.badge-photo { background:var(--brand-dim); color:var(--brand); border:1px solid rgba(232,200,74,.2); }
+.log-bottom { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+.log-time   { font-family:var(--mono); font-size:.6rem; color:var(--ink5); }
+
+/* Thumbnail strip */
+.log-thumbs { display:flex; gap:4px; align-items:center; }
+.log-thumb  {
+  width:30px; height:30px; border-radius:5px;
+  object-fit:cover;
+  border:1px solid rgba(232,200,74,.25);
+  cursor:pointer; flex-shrink:0;
+  transition:transform .15s, box-shadow .15s;
+}
+.log-thumb:hover { transform:scale(1.12); box-shadow:0 4px 12px rgba(0,0,0,.5); }
+.log-more-badge {
+  width:30px; height:30px; border-radius:5px;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--border3);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:.58rem; font-weight:700; color:var(--ink5);
+}
+
+/* ═══ MONTH DIVIDER ═══ */
+.month-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1.2rem 1.4rem .5rem;
+  font-family: var(--mono);
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--brand);
+  opacity: .75;
+}
+.month-divider::before,.month-divider::after { content:''; flex:1; height:1px; background:rgba(232,200,74,.15); }
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state {
+  text-align: center;
+  padding: 4rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+}
+.empty-icon  { font-size:3rem; opacity:.25; }
+.empty-title { font-size:.95rem; font-weight:800; color:var(--ink4); }
+.empty-sub   { font-size:.76rem; color:var(--ink5); }
+
+/* ═══ LIGHTBOX ═══ */
+.lightbox {
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,.92);
+  align-items:center; justify-content:center; cursor:zoom-out;
+}
+.lightbox.show { display:flex; animation:fadeUp .2s ease; }
+.lightbox img { max-width:92vw; max-height:88vh; border-radius:var(--r-lg); box-shadow:0 20px 60px rgba(0,0,0,.8); object-fit:contain; }
+.lightbox-close { position:absolute; top:16px; right:18px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:white; font-size:1.1rem; width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; z-index:10; }
+.lightbox-close:hover { background:rgba(255,255,255,.25); }
+.lightbox-caption { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.6); color:rgba(255,255,255,.85); font-size:.72rem; font-weight:600; padding:4px 14px; border-radius:99px; white-space:nowrap; backdrop-filter:blur(8px); }
+
+/* ═══ BOTTOM NAV ═══ */
+.bottom-nav {
+  position: fixed; bottom:0; left:0; right:0;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  border-top: 1px solid var(--border2);
+  padding: .5rem .5rem calc(.5rem + env(safe-area-inset-bottom));
+  z-index: 300;
+  box-shadow: 0 -4px 24px rgba(0,0,0,.4);
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: .4rem .25rem;
+  text-decoration: none;
+  border-radius: var(--r);
+  transition: all .15s;
+  color: var(--ink5);
+}
+.nav-btn:hover { background:var(--brand-dim); color:var(--brand); }
+.nav-btn.active { color:var(--brand); }
+.nav-btn.active .nav-icon { background:var(--brand-dim); transform:translateY(-2px); box-shadow:0 4px 14px rgba(232,200,74,.12); }
+.nav-icon  { width:36px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.92rem; transition:all .2s; }
+.nav-label { font-size:.6rem; font-weight:700; letter-spacing:.3px; }
+
+/* ═══ TOAST ═══ */
+.toast {
+  position: fixed; bottom:5.5rem; left:50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--surface3); color:var(--ink);
+  font-size:.78rem; font-weight:600;
+  padding:.6rem 1.3rem; border-radius:50px;
+  opacity:0; transition:all .28s ease;
+  pointer-events:none; white-space:nowrap; z-index:9999;
+  box-shadow:0 12px 40px rgba(0,0,0,.5);
+  border:1px solid var(--border3); backdrop-filter:blur(12px);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+@media(max-width:440px){
+  .log-list { padding-left:1rem; padding-right:1rem; }
+  .summary-bar { padding-left:1rem; padding-right:1rem; }
+  .filter-bar { padding-left:1rem; padding-right:1rem; }
+  .sec-title { padding-left:1rem; padding-right:1rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-overlay"></div>
+<div class="bg-glow"></div>
+
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-logo"><img src="https://i.imgur.com/mF88miV.png" alt="Logo"></div>
+      <div class="header-text">
+        <div class="header-tag">Naga Hitam</div>
+        <div class="header-title">📜 Riwayat Piket</div>
+        <div class="header-sub" id="headerSub">Memuat data...</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ FILTER BAR ══ -->
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-btn active" data-filter="all">Semua</button>
+    <!-- Filter per anggota diisi JS -->
+  </div>
+
+  <!-- ══ SUMMARY CHIPS ══ -->
+  <div class="summary-bar">
+    <div class="summary-chip">
+      <div class="chip-val" id="chipTotal">—</div>
+      <div class="chip-lbl">Total Log</div>
+    </div>
+    <div class="summary-chip">
+      <div class="chip-val" id="chipDone">—</div>
+      <div class="chip-lbl">Selesai</div>
+    </div>
+    <div class="summary-chip">
+      <div class="chip-val" id="chipPhoto">—</div>
+      <div class="chip-lbl">Ada Foto</div>
+    </div>
+    <div class="summary-chip">
+      <div class="chip-val" id="chipBulan">—</div>
+      <div class="chip-lbl">Bulan Ini</div>
+    </div>
+  </div>
+
+  <!-- ══ LOADING ══ -->
+  <div class="loading-box" id="loadingBox">
+    <div class="spin"></div>
+    Memuat riwayat dari Supabase...
+  </div>
+
+  <!-- ══ LOG CONTAINER ══ -->
+  <div id="logContainer" style="display:none"></div>
+
+</div><!-- /.page -->
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <a class="nav-btn" href="index.html">
+    <div class="nav-icon">🏠</div>
+    <span class="nav-label">Home</span>
+  </a>
+  <a class="nav-btn active" href="log.html">
+    <div class="nav-icon">📜</div>
+    <span class="nav-label">Log</span>
+  </a>
+  <a class="nav-btn" href="stats.html">
+    <div class="nav-icon">📊</div>
+    <span class="nav-label">Stats</span>
+  </a>
+</nav>
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg" src="" alt="Bukti Piket">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ════════════════════════════════════════════════════════
+   KONFIGURASI
+════════════════════════════════════════════════════════ */
+const SUPABASE_URL = 'https://lzjmyilduranngskrcyo.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6am15aWxkdXJhbm5nc2tyY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzU1NjUsImV4cCI6MjA4NjgxMTU2NX0.ybyZTOLYGMOjM_SucsfpsVU3WaL8qVY4m-1XYdK2J7Q';
+
+/* Tabel utama piket (sama dengan index.html) */
+const TABLE   = 'KAMAR-NAGA-PUTIH';
+const ROOM_ID = 'naga-hitam';
+
+/* Tabel log aktivitas */
+const LOG_TABLE = 'naga_hitam_logs';
+
+/* Foto anggota */
+const MEMBER_PHOTOS = {
+  SASWIN:   'https://i.imgur.com/KxLtKEp.png',
+  RIZKI:    'https://i.imgur.com/gxVjB5j.png',
+  RIZKY:    'https://i.imgur.com/fcNEXqP.png',
+  AZIS:     'https://i.imgur.com/OA7m8pc.png',
+  TIYAS:    'https://i.imgur.com/bGy94d6.png',
+  DERMAWAN: 'https://i.imgur.com/THQftbr.png',
+};
+const MEMBERS = Object.keys(MEMBER_PHOTOS);
+
+/* Rotasi piket (sama dengan index.html) */
+const ANCHOR = new Date('2026-04-25');
+ANCHOR.setHours(0,0,0,0);
+const GROUPS = [
+  { name:'SASWIN',   photo:MEMBER_PHOTOS.SASWIN },
+  { name:'RIZKI',    photo:MEMBER_PHOTOS.RIZKI },
+  { name:'RIZKY',    photo:MEMBER_PHOTOS.RIZKY },
+  { name:'AZIS',     photo:MEMBER_PHOTOS.AZIS },
+  { name:'TIYAS',    photo:MEMBER_PHOTOS.TIYAS },
+  { name:'DERMAWAN', photo:MEMBER_PHOTOS.DERMAWAN },
+];
+
+const DAY_S  = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const MON_S  = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const MON_F  = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const LIMIT  = 50;
+
+/* ════════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════════ */
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let _allEntries  = [];   // semua data setelah merge
+let _activeFilter = 'all';
+
+/* ════════════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════════════ */
+function parsePhotos(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try { const p = JSON.parse(raw); return Array.isArray(p) ? p : (p ? [p] : []); }
+  catch { return raw ? [raw] : []; }
+}
+
+function getPersonForDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setHours(0,0,0,0);
+  const diff = Math.floor((d - ANCHOR) / 86400000);
+  if (diff < 0) return null;
+  return GROUPS[diff % GROUPS.length].name;
+}
+
+function fmtTime(isoStr) {
+  const d = new Date(isoStr);
+  return d.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ════════════════════════════════════════════════════════
+   LOAD DATA — Gabungkan dari dua sumber:
+   1. Tabel utama KAMAR-NAGA-PUTIH (jadwal + foto)
+   2. Tabel naga_hitam_logs (log aktivitas jika ada)
+════════════════════════════════════════════════════════ */
+async function loadData() {
+  try {
+    /* Sumber 1: tabel jadwal utama */
+    const { data: schedData, error: schedErr } = await db
+      .from(TABLE)
+      .select('date_key, is_done, photo_url, created_At')
+      .eq('room_id', ROOM_ID)
+      .order('date_key', { ascending: false })
+      .limit(LIMIT);
+
+    if (schedErr) throw schedErr;
+
+    /* Sumber 2: tabel log aktivitas (jika ada) */
+    let logData = [];
+    try {
+      const { data: ld } = await db
+        .from(LOG_TABLE)
+        .select('staf_name, task_name, created_at')
+        .order('created_at', { ascending: false })
+        .limit(LIMIT);
+      logData = ld || [];
+    } catch (_) { /* tabel mungkin belum ada, abaikan */ }
+
+    /* Merge: prioritas tampilan dari jadwal utama, enriched dengan log jika ada */
+    const logMap = {};
+    logData.forEach(l => {
+      const dk = l.created_at ? l.created_at.slice(0, 10) : null;
+      if (dk) logMap[dk] = l;
+    });
+
+    _allEntries = (schedData || []).map(row => {
+      const photos  = parsePhotos(row.photo_url);
+      const person  = getPersonForDate(row.date_key);
+      const logRow  = logMap[row.date_key];
+      const d       = new Date(row.date_key + 'T00:00:00');
+      return {
+        date_key:  row.date_key,
+        is_done:   row.is_done || false,
+        photos,
+        person:    logRow?.staf_name || person,
+        task_name: logRow?.task_name || 'Piket Harian',
+        created_at:logRow?.created_at || row.created_At || row.date_key,
+        date_obj:  d,
+        dow:       DAY_S[d.getDay()],
+        day:       d.getDate(),
+        mon:       MON_S[d.getMonth()],
+        mon_full:  MON_F[d.getMonth()],
+        year:      d.getFullYear(),
+        mon_key:   row.date_key.slice(0,7),
+      };
+    }).filter(e => e.person);
+
+    buildFilters();
+    renderSummary();
+    renderLog();
+
+  } catch (err) {
+    console.error('loadData:', err.message);
+    showToast('❌ Gagal memuat data');
+  } finally {
+    document.getElementById('loadingBox').style.display = 'none';
+    document.getElementById('logContainer').style.display = 'block';
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   BUILD FILTER BUTTONS
+════════════════════════════════════════════════════════ */
+function buildFilters() {
+  const bar  = document.getElementById('filterBar');
+  const existing = MEMBERS.filter(m => _allEntries.some(e => e.person === m));
+  bar.innerHTML = `<button class="filter-btn active" data-filter="all">Semua</button>`;
+  existing.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.filter = m;
+    btn.textContent = m;
+    bar.appendChild(btn);
+  });
+  bar.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _activeFilter = btn.dataset.filter;
+      renderLog();
+    });
+  });
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER SUMMARY CHIPS
+════════════════════════════════════════════════════════ */
+function renderSummary() {
+  const now = new Date();
+  const curMonKey = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const done   = _allEntries.filter(e => e.is_done).length;
+  const photo  = _allEntries.filter(e => e.photos.length > 0).length;
+  const bulan  = _allEntries.filter(e => e.mon_key === curMonKey).length;
+  document.getElementById('chipTotal').textContent = _allEntries.length;
+  document.getElementById('chipDone').textContent  = done;
+  document.getElementById('chipPhoto').textContent = photo;
+  document.getElementById('chipBulan').textContent = bulan;
+  document.getElementById('headerSub').textContent =
+    `${_allEntries.length} catatan · ${MON_F[now.getMonth()]} ${now.getFullYear()}`;
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER LOG LIST — dengan grouping per bulan
+════════════════════════════════════════════════════════ */
+function renderLog() {
+  const container = document.getElementById('logContainer');
+  const filtered  = _activeFilter === 'all'
+    ? _allEntries
+    : _allEntries.filter(e => e.person === _activeFilter);
+
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">Belum Ada Riwayat</div>
+        <div class="empty-sub">${_activeFilter !== 'all' ? `${_activeFilter} belum punya catatan piket` : 'Belum ada piket yang tercatat'}</div>
+      </div>`;
+    return;
+  }
+
+  /* Group by month */
+  const groups = {};
+  filtered.forEach(e => {
+    const key = e.mon_key;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(e);
+  });
+
+  let html = '';
+  let globalIdx = 0;
+
+  Object.keys(groups).forEach(mk => {
+    const [y,m] = mk.split('-').map(Number);
+    html += `<div class="month-divider">${MON_F[m-1]} ${y}</div>`;
+    html += `<div class="log-list">`;
+
+    groups[mk].forEach((e, idx) => {
+      const delay = (globalIdx * 0.035).toFixed(2);
+      globalIdx++;
+
+      const cls = e.is_done ? 'log-card is-done' : 'log-card is-miss';
+      const statusBadge = e.is_done
+        ? `<span class="log-status-badge badge-done">✓ Selesai</span>`
+        : `<span class="log-status-badge badge-miss">✗ Terlewat</span>`;
+
+      /* Thumbnails — max 3 + badge */
+      let thumbsHtml = '';
+      if (e.photos.length > 0) {
+        const show = e.photos.slice(0, 3);
+        const more = e.photos.length - 3;
+        thumbsHtml = `<div class="log-thumbs">
+          ${show.map(url => `<img class="log-thumb" src="${url}" alt="" onclick="openLightbox('${url}','${e.person} — ${e.day} ${e.mon} ${e.year}')">`).join('')}
+          ${more > 0 ? `<div class="log-more-badge">+${more}</div>` : ''}
+        </div>`;
+      }
+
+      const photoCountBadge = e.photos.length > 0
+        ? `<span class="log-status-badge badge-photo">📸 ${e.photos.length}</span>` : '';
+
+      const timeStr = e.created_at && e.created_at.includes('T')
+        ? fmtTime(e.created_at) : '';
+
+      html += `
+        <div class="${cls}" style="animation-delay:${delay}s">
+          <div class="log-date-col">
+            <div class="log-dow">${e.dow}</div>
+            <div class="log-day">${e.day}</div>
+            <div class="log-mon">${e.mon}</div>
+          </div>
+          <div class="log-body">
+            <div class="log-top">
+              <div class="log-person">
+                <div class="log-avatar">
+                  <img src="${MEMBER_PHOTOS[e.person] || ''}" alt="${e.person}" onerror="this.style.display='none'">
+                </div>
+                <div>
+                  <div class="log-name">${e.person}</div>
+                  <div class="log-task">
+                    <span class="log-task-tag">${e.task_name}</span>
+                    ${timeStr ? `· ${timeStr}` : ''}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="log-bottom">
+              ${statusBadge}
+              ${photoCountBadge}
+              ${thumbsHtml}
+            </div>
+          </div>
+        </div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+/* ════════════════════════════════════════════════════════
+   LIGHTBOX
+════════════════════════════════════════════════════════ */
+function openLightbox(src, caption) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxCaption').textContent = caption || '';
+  document.getElementById('lightbox').classList.add('show');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+}
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+/* ════════════════════════════════════════════════════════
+   REALTIME
+════════════════════════════════════════════════════════ */
+db.channel(`log-rt-${ROOM_ID}`)
+  .on('postgres_changes', { event:'INSERT', schema:'public', table:TABLE }, () => loadData())
+  .subscribe();
+
+/* ════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════ */
+loadData();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('Log SW: aktif'))
+      .catch(err => console.log('Log SW: gagal', err));
+  });
+}
+</script>
+</body>
+</html>
