@@ -59,7 +59,24 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
 .bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(160deg,rgba(5,7,14,.75) 0%,rgba(8,10,18,.68) 50%,rgba(5,7,14,.80) 100%);}
 .bg-glow{position:fixed;top:-250px;left:50%;transform:translateX(-50%);width:700px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(232,200,74,.06) 0%,transparent 65%);pointer-events:none;z-index:2;}
 
-.page{position:relative;z-index:3;max-width:600px;margin:0 auto;padding:0 0 6rem;}
+.page {
+    position: relative;
+    z-index: 3;
+    max-width: 600px;
+    margin: 0 auto;
+    /* Padding bawah ditambah (7rem) agar konten tidak tertutup menu nav */
+    /* Padding samping (1.2rem) agar teks tidak mepet ke pinggir layar HP */
+    padding: 0 1.2rem 7rem 1.2rem;
+    
+    /* Efek transisi halus saat pindah halaman */
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Tambahan animasi agar perpindahan halaman terasa smooth */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* HEADER */
 .header{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-bottom:1px solid var(--border2);padding:1rem 1.4rem .9rem;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 var(--border),0 4px 24px rgba(0,0,0,.3);}
@@ -334,6 +351,12 @@ html, body {
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
 </div>
 <div class="toast" id="toast"></div>
+
+</div> <nav style="position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); display: flex; justify-content: space-around; padding: 1rem; border-top: 1px solid var(--border); z-index: 100;">
+        <a href="index.html" style="color: var(--brand); text-decoration: none; font-size: 0.9rem;">🏠 Home</a>
+        <a href="log.html" style="color: var(--ink); text-decoration: none; font-size: 0.9rem;">📜 Log</a>
+        <a href="stats.html" style="color: var(--ink); text-decoration: none; font-size: 0.9rem;">📊 Stats</a>
+    </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -912,5 +935,6 @@ if (window.matchMedia('(display-mode: standalone)').matches) {
   if (installContainer) installContainer.style.display = 'none';
 }
 
-</script> </body>
+</script>
+ </body>
 </html>
