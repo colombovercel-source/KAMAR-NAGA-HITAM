@@ -4,7 +4,7 @@ const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  'https://i.imgur.com/mF88miV.png', // Ikon Naga
+  'https://i.imgur.com/iaQmyzv.png', // Ikon Naga
   'https://i.imgur.com/bfrp75y.png'  // Background (WAJIB dicache biar gak berat)
 ];
 
