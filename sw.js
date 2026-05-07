@@ -3,9 +3,11 @@ const CACHE_NAME = 'naga-hitam-v11'; // Ganti versi setiap kali update besar
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
+  '/log.html',
+  '/stats.html',
   '/manifest.json',
-  'https://i.imgur.com/iaQmyzv.png', // Ikon Naga
-  'https://i.imgur.com/bfrp75y.png'  // Background (WAJIB dicache biar gak berat)
+  'https://i.imgur.com/iaQmyzv.png',
+  'https://i.imgur.com/mF88miV.png'
 ];
 
 // 1. Install: Simpan aset ke cache
