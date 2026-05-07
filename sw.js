@@ -1,24 +1,34 @@
-const CACHE_NAME = 'naga-hitam-v1';
-const assets = [
+const CACHE_NAME = 'kamar naga hitam-v3';
+
+const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/stats.html',
-  '/style.css',
-  '/app.js'
+  '/manifest.json'
 ];
 
-self.addEventListener('install', evt => {
-  evt.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      cache.addAll(assets);
+// Install: simpan semua asset penting
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
     })
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', evt => {
-  evt.respondWith(
-    caches.match(evt.request).then(rec => {
-      return rec || fetch(evt.request);
-    })
+// Activate: hapus cache lama
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+// Fetch: coba network dulu, fallback ke cache
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });
