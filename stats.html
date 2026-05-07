@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Statistik & Leaderboard · Kamar Naga Hitam">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Naga Hitam">
+<meta name="theme-color" content="#0e1016">
+<title>Statistik · Kamar Naga Hitam</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="https://i.imgur.com/mF88miV.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DESIGN TOKENS — Luxury Dark Gold (identik dengan index.html)
+═══════════════════════════════════════════════════════════ */
+:root {
+  --brand:       #e8c84a;
+  --brand2:      #c9a82a;
+  --brand-dim:   rgba(232,200,74,0.12);
+  --brand-glow:  rgba(232,200,74,0.22);
+  --brand-glow2: rgba(232,200,74,0.08);
+  --surface:     rgba(14,16,22,0.92);
+  --surface2:    rgba(20,22,30,0.88);
+  --surface3:    rgba(28,30,42,0.90);
+  --glass:       rgba(10,12,18,0.72);
+  --border:      rgba(255,255,255,0.07);
+  --border2:     rgba(255,255,255,0.11);
+  --border3:     rgba(255,255,255,0.18);
+  --ink:         #f0f2f8;
+  --ink2:        #ffffff;
+  --ink3:        #e2e8f0;
+  --ink4:        #cbd5e1;
+  --ink5:        #94a3b8;
+  --ok:          #22c55e;
+  --ok-dim:      rgba(34,197,94,0.10);
+  --ok-b:        rgba(34,197,94,0.28);
+  --danger:      #ef4444;
+  --danger-dim:  rgba(239,68,68,0.10);
+  --danger-b:    rgba(239,68,68,0.28);
+  --font:        'Outfit', sans-serif;
+  --mono:        'JetBrains Mono', monospace;
+  --r:    10px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --blur: blur(20px) saturate(1.5);
+}
+
+/* ═══ RESET ═══ */
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+  background-color: #0e1016;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+}
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 15px;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* ═══ BACKGROUND LAYERS ═══ */
+.bg-layer   { position:fixed; inset:0; z-index:0; background-image:url('https://i.imgur.com/bfrp75y.png'); background-size:cover; background-position:center; filter:brightness(1.05) contrast(1.05); }
+.bg-overlay { position:fixed; inset:0; z-index:1; background:linear-gradient(160deg,rgba(5,7,14,.8) 0%,rgba(8,10,18,.72) 50%,rgba(5,7,14,.85) 100%); }
+.bg-glow    { position:fixed; top:-250px; left:50%; transform:translateX(-50%); width:700px; height:500px; border-radius:50%; background:radial-gradient(ellipse,rgba(232,200,74,.05) 0%,transparent 65%); pointer-events:none; z-index:2; }
+
+.page {
+  position: relative;
+  z-index: 3;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 0 7rem;
+  animation: pageIn .45s ease-in-out;
+}
+@keyframes pageIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes spin    { to{transform:rotate(360deg)} }
+@keyframes pulse   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.5)} }
+
+/* ═══ HEADER ═══ */
+.header {
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-bottom: 1px solid var(--border2);
+  padding: 1rem 1.4rem .9rem;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 1px 0 var(--border), 0 4px 24px rgba(0,0,0,.35);
+}
+.header-top { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+.brand      { display:flex; align-items:center; gap:12px; }
+.brand-logo {
+  width:48px; height:48px; border-radius:14px;
+  overflow:hidden; flex-shrink:0;
+  border:1.5px solid rgba(232,200,74,.3);
+  box-shadow:0 0 20px var(--brand-glow), 0 0 40px rgba(232,200,74,.08);
+  background:rgba(0,0,0,.4);
+}
+.brand-logo img  { width:100%; height:100%; object-fit:cover; display:block; }
+.brand-info      { display:flex; flex-direction:column; gap:4px; }
+.room-tag {
+  font-family: var(--mono);
+  font-size: .72rem; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+  color: #0a0b0f;
+  background: linear-gradient(135deg,var(--brand),var(--brand2));
+  border: 1px solid var(--brand);
+  padding: 3px 10px; border-radius:5px;
+  display: inline-block; width:fit-content;
+  box-shadow: 0 0 12px var(--brand-glow);
+}
+.brand-title { font-size:1.1rem; font-weight:800; color:var(--ink2); letter-spacing:-.3px; }
+.header-clock    { text-align:right; flex-shrink:0; }
+.live-date  { font-size:.62rem; font-weight:500; color:var(--ink4); white-space:nowrap; display:block; }
+.live-time  { font-family:var(--mono); font-size:.95rem; font-weight:600; color:var(--ink); display:block; text-align:right; letter-spacing:1px; }
+
+/* ═══ TAB NAV ═══ */
+.tab-nav {
+  display: flex;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-bottom: 1px solid var(--border2);
+  padding: .45rem .75rem 0;
+  position: sticky;
+  top: 80px;
+  z-index: 190;
+  box-shadow: 0 1px 0 var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: 2px;
+}
+.tab-nav::-webkit-scrollbar { display:none; }
+
+.tab-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: .5rem .9rem;
+  border: none;
+  background: none;
+  font-family: var(--font);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--ink5);
+  cursor: pointer;
+  border-radius: var(--r) var(--r) 0 0;
+  transition: all .18s;
+  white-space: nowrap;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1px;
+}
+.tab-btn:hover  { color:var(--brand); background:var(--brand-dim); }
+.tab-btn.active { color:var(--brand); border-bottom-color:var(--brand); }
+.tab-badge {
+  background: var(--danger); color: white;
+  font-family: var(--mono); font-size:.5rem; font-weight:800;
+  padding: 1px 5px; border-radius:99px; min-width:15px; text-align:center;
+}
+
+/* ═══ TAB PANELS ═══ */
+.tab-panel { display:none; padding: 1.1rem 1.4rem; }
+.tab-panel.active { display:block; animation: fadeUp .22s ease; }
+
+/* ═══ LOADING ═══ */
+.loading-box {
+  display: flex; align-items:center; justify-content:center;
+  gap: 10px; padding:4rem 1rem; color:var(--ink5); font-size:.85rem;
+}
+.spin { width:18px; height:18px; border:2px solid rgba(232,200,74,.2); border-top-color:var(--brand); border-radius:50%; animation:spin .7s linear infinite; }
+
+/* ═══ SECTION TITLE ═══ */
+.sec {
+  font-size: .57rem; font-weight:800; letter-spacing:3px; text-transform:uppercase;
+  color: var(--ink5);
+  display: flex; align-items:center; gap:10px;
+  margin-bottom: .85rem;
+}
+.sec::after { content:''; flex:1; height:1px; background:var(--border2); }
+
+/* ═══════════════════════════════════════════════════════════
+   KPI CARDS
+═══════════════════════════════════════════════════════════ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .55rem;
+  margin-bottom: 1.1rem;
+}
+.kpi-card {
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  padding: 1rem 1.05rem;
+  position: relative; overflow:hidden;
+  transition: border-color .2s, box-shadow .2s, transform .15s;
+  animation: fadeUp .3s ease both;
+}
+.kpi-card:hover { border-color:rgba(232,200,74,.22); box-shadow:0 4px 22px rgba(0,0,0,.45); transform:translateY(-1px); }
+.kpi-card::after {
+  content:''; position:absolute; top:-18px; right:-18px;
+  width:72px; height:72px; border-radius:50%;
+  background: rgba(232,200,74,.06); pointer-events:none;
+}
+.kpi-card.full { grid-column:1/-1; display:flex; align-items:center; gap:14px; }
+.kpi-card.full .kpi-body { flex:1; min-width:0; }
+.kpi-card.full .kpi-icon { font-size:1.9rem; flex-shrink:0; }
+
+.kpi-icon  { font-size:1.45rem; margin-bottom:.35rem; position:relative; z-index:1; }
+.kpi-val   {
+  font-family: var(--mono); font-size:1.9rem; font-weight:700; line-height:1;
+  color: var(--brand); margin-bottom:.12rem;
+  text-shadow: 0 0 20px var(--brand-glow);
+}
+.kpi-card.full .kpi-val { font-size:1.45rem; }
+.kpi-label { font-size:.67rem; font-weight:700; color:var(--ink4); }
+.kpi-sub   { font-size:.6rem; color:var(--ink5); margin-top:2px; }
+.kpi-badge {
+  font-family:var(--mono); font-size:.62rem; font-weight:700;
+  padding: 5px 12px; border-radius:99px; flex-shrink:0;
+  background: var(--ok-dim); color:var(--ok); border:1px solid var(--ok-b);
+}
+
+/* Progress bar kebersihan */
+.clean-wrap { margin-top:.6rem; height:7px; background:rgba(255,255,255,.06); border-radius:99px; overflow:hidden; }
+.clean-bar  { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--ok),#4ade80); transition:width .85s cubic-bezier(.4,0,.2,1); }
+
+/* ═══════════════════════════════════════════════════════════
+   CHART BULANAN
+═══════════════════════════════════════════════════════════ */
+.chart-card {
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.1rem;
+}
+.chart-title { font-size:.78rem; font-weight:800; color:var(--ink); margin-bottom:1rem; }
+.chart-bars  { display:flex; align-items:flex-end; gap:7px; height:90px; }
+.chart-col   { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.chart-bar-wrap { flex:1; width:100%; display:flex; align-items:flex-end; }
+.chart-bar {
+  width:100%; border-radius:4px 4px 0 0; min-height:4px;
+  background: linear-gradient(180deg,rgba(232,200,74,.85),rgba(232,200,74,.28));
+  transition: height .65s cubic-bezier(.4,0,.2,1);
+}
+.chart-bar.cur { background:linear-gradient(180deg,var(--ok),rgba(34,197,94,.28)); }
+.chart-lbl { font-family:var(--mono); font-size:.53rem; color:var(--ink5); white-space:nowrap; }
+.chart-cnt { font-family:var(--mono); font-size:.58rem; font-weight:600; color:var(--ink4); }
+
+/* ═══════════════════════════════════════════════════════════
+   LEADERBOARD HERO
+═══════════════════════════════════════════════════════════ */
+.lb-hero {
+  background: linear-gradient(135deg,rgba(30,22,0,.96),rgba(45,32,0,.93));
+  border: 1px solid rgba(232,200,74,.32);
+  border-radius: var(--r-lg);
+  padding: 1rem 1.2rem;
+  margin-bottom: .85rem;
+  display: flex; align-items:center; gap:12px;
+  box-shadow: 0 4px 28px rgba(232,200,74,.1);
+  position: relative; overflow:hidden;
+}
+.lb-hero::before {
+  content:''; position:absolute; top:-20px; right:-20px;
+  width:95px; height:95px; border-radius:50%;
+  background: rgba(232,200,74,.06);
+}
+.lb-hero::after {
+  content:''; position:absolute; bottom:-30px; left:20px;
+  width:60px; height:60px; border-radius:50%;
+  background: rgba(232,200,74,.04);
+}
+.lb-hero-icon  { font-size:2rem; position:relative; z-index:1; }
+.lb-hero-text  { flex:1; position:relative; z-index:1; }
+.lb-hero-title { font-size:.95rem; font-weight:900; color:var(--brand); text-shadow:0 0 15px var(--brand-glow); }
+.lb-hero-sub   { font-size:.64rem; color:rgba(232,200,74,.55); margin-top:1px; }
+.lb-pts-pills  { display:flex; flex-direction:column; gap:3px; position:relative; z-index:1; }
+.lb-pill {
+  font-family:var(--mono); font-size:.57rem; font-weight:600;
+  padding: 2px 9px; border-radius:5px; white-space:nowrap;
+  background: rgba(232,200,74,.11); color:rgba(232,200,74,.82);
+  border: 1px solid rgba(232,200,74,.18);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LEADERBOARD CARDS
+═══════════════════════════════════════════════════════════ */
+.lb-list { display:flex; flex-direction:column; gap:.55rem; }
+
+.lb-card {
+  display: flex; align-items:center; gap:11px;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  padding: .88rem 1rem;
+  box-shadow: 0 2px 14px rgba(0,0,0,.3);
+  transition: all .2s;
+  animation: fadeUp .3s ease both;
+  cursor: pointer;
+  position: relative; overflow:hidden;
+}
+.lb-card:hover { border-color:var(--border3); box-shadow:0 5px 24px rgba(0,0,0,.5); transform:translateY(-1px); }
+
+/* Rank glow strip */
+.lb-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; border-radius:0 2px 2px 0;
+  background: var(--border3);
+}
+.lb-card.r1::before { background:var(--brand); box-shadow:0 0 10px var(--brand-glow); }
+.lb-card.r2::before { background:#94a3b8; }
+.lb-card.r3::before { background:#d97706; }
+
+/* Rank card backgrounds */
+.lb-card.r1 { border-color:rgba(232,200,74,.4); background:linear-gradient(135deg,rgba(40,28,0,.95),var(--surface)); box-shadow:0 0 0 1px rgba(232,200,74,.15), 0 4px 24px rgba(0,0,0,.4); }
+.lb-card.r2 { border-color:rgba(148,163,184,.2); background:linear-gradient(135deg,rgba(22,25,35,.95),var(--surface)); }
+.lb-card.r3 { border-color:rgba(180,100,20,.3); background:linear-gradient(135deg,rgba(35,22,5,.95),var(--surface)); }
+
+.lb-rank { font-family:var(--mono); font-size:1.05rem; font-weight:800; width:28px; text-align:center; flex-shrink:0; }
+.lb-card.r1 .lb-rank { color:var(--brand); text-shadow:0 0 10px var(--brand-glow); }
+.lb-card.r2 .lb-rank { color:#94a3b8; }
+.lb-card.r3 .lb-rank { color:#d97706; }
+
+.lb-av {
+  width:46px; height:46px; border-radius:50%;
+  overflow:hidden; flex-shrink:0;
+  border:2px solid rgba(232,200,74,.22);
+  background: rgba(0,0,0,.4);
+}
+.lb-av img { width:100%; height:100%; object-fit:cover; }
+
+.lb-info { flex:1; min-width:0; }
+.lb-name { font-size:.9rem; font-weight:800; color:var(--ink2); }
+.lb-detail { font-size:.63rem; color:var(--ink5); margin-top:2px; }
+.lb-detail span { margin-right:6px; }
+.lb-bar-wrap { height:4px; background:rgba(255,255,255,.06); border-radius:99px; overflow:hidden; margin-top:6px; }
+.lb-bar { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--brand),var(--brand2)); transition:width .75s cubic-bezier(.4,0,.2,1); }
+.lb-card.r1 .lb-bar { background:linear-gradient(90deg,var(--brand),#fde68a); }
+.lb-card.r2 .lb-bar { background:linear-gradient(90deg,#94a3b8,#cbd5e1); }
+.lb-card.r3 .lb-bar { background:linear-gradient(90deg,#d97706,#fbbf24); }
+
+.lb-score-col  { text-align:right; flex-shrink:0; }
+.lb-score      { font-family:var(--mono); font-size:1.35rem; font-weight:700; color:var(--brand); line-height:1; text-shadow:0 0 12px var(--brand-glow); }
+.lb-score-lbl  { font-size:.58rem; color:var(--ink5); }
+.lb-hint       { font-size:.55rem; color:rgba(232,200,74,.4); margin-top:2px; }
+
+/* ═══════════════════════════════════════════════════════════
+   MEMBER ACTIVITY LIST (TAB RINGKASAN)
+═══════════════════════════════════════════════════════════ */
+.ma-list { display:flex; flex-direction:column; gap:.55rem; }
+.ma-card {
+  display: flex; align-items:center; gap:11px;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  padding: .82rem .95rem;
+  transition: all .2s;
+  animation: fadeUp .3s ease both;
+}
+.ma-card:hover { border-color:rgba(232,200,74,.2); transform:translateY(-1px); box-shadow:0 4px 18px rgba(0,0,0,.4); }
+.ma-av { width:42px; height:42px; border-radius:50%; overflow:hidden; flex-shrink:0; border:1.5px solid rgba(232,200,74,.2); background:rgba(0,0,0,.4); }
+.ma-av img { width:100%; height:100%; object-fit:cover; }
+.ma-info  { flex:1; min-width:0; }
+.ma-name  { font-size:.88rem; font-weight:800; color:var(--ink2); }
+.ma-detail { font-size:.63rem; color:var(--ink5); margin-top:1px; }
+.ma-bar-wrap { height:4px; background:rgba(255,255,255,.06); border-radius:99px; overflow:hidden; margin-top:6px; }
+.ma-bar { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--brand),var(--brand2)); transition:width .75s cubic-bezier(.4,0,.2,1); }
+.ma-right    { text-align:right; flex-shrink:0; }
+.ma-pts      { font-family:var(--mono); font-size:1.15rem; font-weight:700; color:var(--brand); line-height:1; text-shadow:0 0 10px var(--brand-glow); }
+.ma-pts-lbl  { font-size:.57rem; color:var(--ink5); }
+.ma-mon-badge {
+  display:inline-flex; align-items:center;
+  background:var(--ok-dim); color:var(--ok); border:1px solid var(--ok-b);
+  font-size:.56rem; font-weight:700; padding:2px 7px; border-radius:4px; margin-top:3px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DENDA PANEL
+═══════════════════════════════════════════════════════════ */
+.denda-hero {
+  background: linear-gradient(135deg,rgba(50,8,8,.97),rgba(35,5,5,.95));
+  border: 1px solid rgba(239,68,68,.32);
+  border-radius: var(--r-lg);
+  padding: 1.1rem 1.2rem;
+  margin-bottom: .85rem;
+  box-shadow: 0 4px 28px rgba(239,68,68,.14);
+  position: relative; overflow:hidden;
+}
+.denda-hero::before { content:''; position:absolute; top:-25%; right:-5%; width:110px; height:110px; border-radius:50%; background:rgba(239,68,68,.06); }
+.denda-hero::after  { content:''; position:absolute; bottom:-35%; left:30%; width:80px; height:80px; border-radius:50%; background:rgba(239,68,68,.04); }
+
+.dh-top   { display:flex; align-items:flex-start; gap:12px; position:relative; z-index:1; }
+.dh-icon  { font-size:2.1rem; flex-shrink:0; }
+.dh-info  { flex:1; }
+.dh-label { font-size:.58rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(239,68,68,.6); margin-bottom:3px; }
+.dh-amt-row { display:flex; align-items:baseline; gap:6px; }
+.dh-num  { font-family:var(--mono); font-size:2.2rem; font-weight:700; color:var(--danger); line-height:1; }
+.dh-unit { font-size:.78rem; color:rgba(239,68,68,.6); font-weight:600; }
+.dh-note { font-size:.62rem; color:rgba(239,68,68,.45); margin-top:3px; }
+
+.denda-chips {
+  display: flex; gap:.5rem; flex-wrap:wrap;
+  margin-top: .9rem; position:relative; z-index:1;
+}
+.d-chip {
+  display: flex; align-items:center; gap:5px;
+  background: rgba(0,0,0,.35); border:1px solid rgba(239,68,68,.18);
+  border-radius:9px; padding:5px 10px; flex:1; min-width:100px;
+}
+.d-chip-ico  { font-size:.85rem; flex-shrink:0; }
+.d-chip-body { display:flex; flex-direction:column; gap:0; }
+.d-chip-lbl  { font-size:.5rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:rgba(239,68,68,.4); }
+.d-chip-val  { font-family:var(--mono); font-size:.68rem; font-weight:600; color:rgba(239,68,68,.82); }
+
+.denda-note-txt {
+  font-size:.62rem; color:rgba(239,68,68,.45);
+  margin-top:.75rem; padding-top:.7rem;
+  border-top: 1px solid rgba(239,68,68,.12);
+  position: relative; z-index:1;
+}
+
+/* Denda list rows */
+.denda-list { display:flex; flex-direction:column; gap:.5rem; }
+.denda-row {
+  display: flex; align-items:center; gap:10px;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  padding: .72rem .9rem;
+  transition: all .15s;
+  animation: fadeUp .3s ease both;
+}
+.denda-row.has-denda { border-color:rgba(239,68,68,.28); background:rgba(25,6,6,.92); }
+.denda-row.is-paid   { border-color:var(--ok-b); background:rgba(4,18,8,.92); }
+.denda-row.is-clean  { border-color:rgba(34,197,94,.15); background:rgba(4,18,8,.75); }
+.dr-av   { width:34px; height:34px; border-radius:50%; overflow:hidden; flex-shrink:0; border:1.5px solid rgba(255,255,255,.12); }
+.dr-av img { width:100%; height:100%; object-fit:cover; }
+.dr-info  { flex:1; min-width:0; }
+.dr-name  { font-size:.84rem; font-weight:800; color:var(--ink); }
+.dr-days  { font-size:.62rem; color:var(--ink5); }
+.dr-right { display:flex; align-items:center; gap:7px; flex-shrink:0; }
+.dr-amt         { font-family:var(--mono); font-size:.82rem; font-weight:700; color:var(--danger); }
+.dr-amt.paid    { color:var(--ok); text-decoration:line-through; opacity:.6; }
+.dr-amt.zero    { color:var(--ok); }
+.dr-badge {
+  display:inline-flex; align-items:center;
+  background:var(--ok-dim); color:var(--ok); border:1px solid var(--ok-b);
+  font-size:.54rem; font-weight:800; letter-spacing:.8px; text-transform:uppercase;
+  padding:2px 8px; border-radius:5px;
+}
+.dr-reset-btn {
+  display:flex; align-items:center; gap:3px;
+  background:rgba(239,68,68,.1); color:var(--danger);
+  border:1px solid rgba(239,68,68,.25); border-radius:7px;
+  padding:4px 10px; font-size:.6rem; font-weight:700;
+  cursor:pointer; transition:all .15s; font-family:var(--font);
+}
+.dr-reset-btn:hover { background:var(--ok); color:white; border-color:var(--ok); }
+
+/* Empty denda */
+.denda-clean-note {
+  text-align:center; padding:2rem 1rem;
+  color:var(--ink5); font-size:.82rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROFILE MODAL (bottom sheet)
+═══════════════════════════════════════════════════════════ */
+.modal-overlay {
+  display:none; position:fixed; inset:0; z-index:500;
+  background: rgba(0,0,0,.75); backdrop-filter:blur(8px);
+  align-items:flex-end; justify-content:center;
+}
+.modal-overlay.show { display:flex; animation:fadeUp .22s ease; }
+.profile-sheet {
+  background: linear-gradient(180deg,rgba(20,22,32,.99),rgba(12,14,20,.99));
+  border: 1px solid rgba(232,200,74,.15);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  padding: 1.5rem 1.4rem 2.5rem;
+  width:100%; max-width:600px;
+  box-shadow: 0 -8px 52px rgba(0,0,0,.65);
+  position: relative;
+}
+.prof-handle { width:42px; height:4px; border-radius:2px; background:rgba(255,255,255,.12); margin:0 auto 1.4rem; }
+.prof-close {
+  position:absolute; top:1rem; right:1.4rem;
+  background:rgba(255,255,255,.06); border:1px solid var(--border2);
+  color:var(--ink5); width:32px; height:32px; border-radius:8px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:.85rem; transition:all .15s;
+}
+.prof-close:hover { background:var(--danger-dim); color:var(--danger); border-color:var(--danger-b); }
+
+.prof-hero { display:flex; align-items:center; gap:1.1rem; margin-bottom:1.3rem; }
+.prof-av {
+  width:74px; height:74px; border-radius:50%;
+  overflow:hidden; flex-shrink:0;
+  border:2.5px solid rgba(232,200,74,.45);
+  box-shadow:0 0 22px var(--brand-glow);
+  background:rgba(0,0,0,.4);
+}
+.prof-av img { width:100%; height:100%; object-fit:cover; }
+.prof-name { font-size:1.45rem; font-weight:900; color:var(--ink2); letter-spacing:-.5px; }
+.prof-role { font-size:.7rem; color:var(--ink5); margin-top:2px; }
+.prof-rank-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  background:var(--brand-dim); color:var(--brand);
+  border:1px solid rgba(232,200,74,.28);
+  font-size:.64rem; font-weight:800;
+  padding:3px 10px; border-radius:6px; margin-top:5px;
+}
+
+.prof-stats {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:.55rem; margin-bottom:1.1rem;
+}
+.pstat {
+  background:rgba(255,255,255,.04); border:1px solid var(--border2);
+  border-radius:var(--r-lg); padding:.75rem .6rem; text-align:center;
+}
+.pstat-val { font-family:var(--mono); font-size:1.35rem; font-weight:700; color:var(--brand); line-height:1; text-shadow:0 0 12px var(--brand-glow); }
+.pstat-lbl { font-size:.57rem; font-weight:600; color:var(--ink5); margin-top:3px; letter-spacing:.3px; }
+
+.prof-sec { font-size:.58rem; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--ink5); margin-bottom:.6rem; }
+
+.prof-month-bar {
+  background:rgba(255,255,255,.04); border:1px solid var(--border2);
+  border-radius:var(--r-lg); padding:.82rem .95rem; margin-bottom:.85rem;
+}
+.pmb-top { display:flex; justify-content:space-between; font-size:.68rem; font-weight:600; color:var(--ink4); margin-bottom:.45rem; }
+.pmb-pct { font-family:var(--mono); font-weight:800; color:var(--brand); }
+.pmb-bar-wrap { height:9px; background:rgba(255,255,255,.06); border-radius:99px; overflow:hidden; }
+.pmb-bar { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--brand),var(--brand2)); transition:width .85s cubic-bezier(.4,0,.2,1); }
+.pmb-sub { font-size:.6rem; color:var(--ink5); margin-top:.4rem; }
+
+.prof-denda-box {
+  border-radius:var(--r-lg); padding:.92rem 1rem;
+  display:flex; align-items:center; gap:12px; border:1.5px solid;
+}
+.pdb-red   { background:rgba(30,5,5,.96); border-color:rgba(239,68,68,.38); }
+.pdb-green { background:rgba(4,20,8,.95); border-color:rgba(34,197,94,.3); }
+.pdb-paid  { background:rgba(4,20,8,.95); border-color:rgba(34,197,94,.28); }
+.pdb-icon  { font-size:1.65rem; flex-shrink:0; }
+.pdb-info  { flex:1; }
+.pdb-lbl   { font-size:.65rem; font-weight:700; color:var(--ink4); }
+.pdb-amt   { font-family:var(--mono); font-size:1.45rem; font-weight:700; line-height:1; }
+.pdb-red   .pdb-amt { color:var(--danger); }
+.pdb-green .pdb-amt,.pdb-paid .pdb-amt { color:var(--ok); }
+.pdb-sub   { font-size:.6rem; color:var(--ink5); margin-top:2px; }
+.pdb-action { flex-shrink:0; }
+.pdb-reset-btn {
+  background:var(--ok); color:white; border:none; border-radius:9px;
+  padding:8px 13px; font-size:.68rem; font-weight:800; cursor:pointer;
+  font-family:var(--font); transition:all .15s;
+}
+.pdb-reset-btn:hover { background:#16a34a; box-shadow:0 2px 14px rgba(34,197,94,.3); }
+.pdb-paid-badge {
+  display:inline-flex; align-items:center;
+  background:var(--ok-dim); color:var(--ok); border:1px solid var(--ok-b);
+  font-size:.58rem; font-weight:800; letter-spacing:.8px; text-transform:uppercase;
+  padding:4px 11px; border-radius:6px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIRM MODAL
+═══════════════════════════════════════════════════════════ */
+.confirm-overlay {
+  display:none; position:fixed; inset:0; z-index:800;
+  background:rgba(0,0,0,.78); backdrop-filter:blur(9px);
+  align-items:center; justify-content:center; padding:1.4rem;
+}
+.confirm-overlay.show { display:flex; animation:fadeUp .2s ease; }
+.confirm-box {
+  background:linear-gradient(180deg,rgba(20,22,30,.99),rgba(12,14,20,.99));
+  border:1px solid var(--border2); border-radius:var(--r-xl);
+  padding:1.6rem 1.4rem; width:100%; max-width:300px;
+  box-shadow:0 16px 60px rgba(0,0,0,.75);
+  display:flex; flex-direction:column; gap:.8rem;
+}
+.confirm-icon  { font-size:2.6rem; text-align:center; }
+.confirm-title { font-size:1rem; font-weight:900; color:var(--ink2); text-align:center; }
+.confirm-sub   { font-size:.76rem; color:var(--ink4); text-align:center; line-height:1.6; }
+.confirm-name  { font-weight:900; color:var(--brand); }
+.confirm-actions { display:flex; gap:.6rem; margin-top:.2rem; }
+.confirm-yes {
+  flex:1; padding:12px; border-radius:var(--r-lg); border:none;
+  background:var(--ok); color:white;
+  font-family:var(--font); font-size:.85rem; font-weight:800; cursor:pointer; transition:all .15s;
+}
+.confirm-yes:hover { background:#16a34a; box-shadow:0 4px 14px rgba(34,197,94,.3); }
+.confirm-no {
+  padding:12px 16px; border-radius:var(--r-lg);
+  border:1px solid var(--border3); background:rgba(255,255,255,.05);
+  color:var(--ink4); font-family:var(--font); font-size:.85rem; font-weight:600; cursor:pointer; transition:all .15s;
+}
+.confirm-no:hover { background:rgba(255,255,255,.09); color:var(--ink); }
+
+/* ═══════════════════════════════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════════════════════════════ */
+.bottom-nav {
+  position:fixed; bottom:0; left:0; right:0;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  display:flex; justify-content:space-around; align-items:stretch;
+  border-top:1px solid var(--border2);
+  padding:.5rem .5rem calc(.5rem + env(safe-area-inset-bottom));
+  z-index:300;
+  box-shadow:0 -4px 28px rgba(0,0,0,.45);
+}
+.nav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  gap:3px; padding:.42rem .25rem; text-decoration:none;
+  border-radius:var(--r); transition:all .15s; color:var(--ink5);
+}
+.nav-btn:hover { background:var(--brand-dim); color:var(--brand); }
+.nav-btn.active { color:var(--brand); }
+.nav-btn.active .nav-icon { background:var(--brand-dim); transform:translateY(-2px); box-shadow:0 4px 14px rgba(232,200,74,.12); }
+.nav-icon  { width:36px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.92rem; transition:all .2s; }
+.nav-label { font-size:.6rem; font-weight:700; letter-spacing:.3px; }
+
+/* ═══ TOAST ═══ */
+.toast {
+  position:fixed; bottom:5.5rem; left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--surface3); color:var(--ink);
+  font-size:.78rem; font-weight:600;
+  padding:.62rem 1.3rem; border-radius:50px;
+  opacity:0; transition:all .28s ease;
+  pointer-events:none; white-space:nowrap; z-index:9999;
+  box-shadow:0 12px 40px rgba(0,0,0,.55);
+  border:1px solid var(--border3); backdrop-filter:blur(12px);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:440px){
+  .tab-panel { padding:.9rem 1rem; }
+  .kpi-grid  { gap:.45rem; }
+  .denda-chips { flex-direction:column; }
+  .prof-stats  { grid-template-columns:repeat(3,1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-overlay"></div>
+<div class="bg-glow"></div>
+
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <header class="header">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="https://i.imgur.com/mF88miV.png" alt="Logo Naga Hitam">
+        </div>
+        <div class="brand-info">
+          <span class="room-tag">Naga Hitam</span>
+          <div class="brand-title">📊 Statistik Piket</div>
+        </div>
+      </div>
+      <div class="header-clock">
+        <span class="live-date" id="liveDate">—</span>
+        <span class="live-time" id="liveTime">—</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ TAB NAVIGATION ══ -->
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="ringkasan">📋 Ringkasan</button>
+    <button class="tab-btn" data-tab="leaderboard">🏆 Leaderboard</button>
+    <button class="tab-btn" data-tab="denda">
+      💸 Denda
+      <span class="tab-badge" id="dendaBadge" style="display:none">!</span>
+    </button>
+  </nav>
+
+  <!-- ══ LOADING ══ -->
+  <div class="loading-box" id="loadingBox">
+    <div class="spin"></div>
+    Memuat data dari Supabase...
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 1: RINGKASAN
+  ══════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-ringkasan" style="display:none">
+
+    <div class="sec">Ikhtisar Keseluruhan</div>
+    <div class="kpi-grid">
+      <div class="kpi-card" style="animation-delay:.04s">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-val"  id="kpiTotal">—</div>
+        <div class="kpi-label">Total Piket Selesai</div>
+        <div class="kpi-sub">Semua waktu</div>
+      </div>
+      <div class="kpi-card" style="animation-delay:.07s">
+        <div class="kpi-icon">📸</div>
+        <div class="kpi-val"  id="kpiPhotos">—</div>
+        <div class="kpi-label">Foto Bukti</div>
+        <div class="kpi-sub">Total semua anggota</div>
+      </div>
+      <div class="kpi-card" style="animation-delay:.10s">
+        <div class="kpi-icon">🗓️</div>
+        <div class="kpi-val"  id="kpiMonth">—</div>
+        <div class="kpi-label">Piket Bulan Ini</div>
+        <div class="kpi-sub"  id="kpiMonthSub">—</div>
+      </div>
+      <div class="kpi-card" style="animation-delay:.13s">
+        <div class="kpi-icon">🔥</div>
+        <div class="kpi-val"  id="kpiStreak">—</div>
+        <div class="kpi-label">Berkas Terdokumentasi</div>
+        <div class="kpi-sub">Piket + ada foto</div>
+      </div>
+      <!-- Full width: kebersihan -->
+      <div class="kpi-card full" style="animation-delay:.16s">
+        <div class="kpi-icon">🏠</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Tingkat Kebersihan Bulan Ini</div>
+          <div class="kpi-val" id="kpiClean">—</div>
+          <div class="clean-wrap"><div class="clean-bar" id="cleanBar" style="width:0%"></div></div>
+          <div class="kpi-sub" id="kpiCleanSub">—</div>
+        </div>
+        <div class="kpi-badge" id="kpiCleanBadge">—</div>
+      </div>
+    </div>
+
+    <div class="sec">Grafik 6 Bulan Terakhir</div>
+    <div class="chart-card">
+      <div class="chart-title">📈 Piket Berhasil per Bulan</div>
+      <div class="chart-bars" id="chartBars"></div>
+    </div>
+
+    <div class="sec">Semua Anggota</div>
+    <div class="ma-list" id="maList"></div>
+
+  </div><!-- /panel-ringkasan -->
+
+  <!-- ══════════════════════════════════════
+       TAB 2: LEADERBOARD
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-leaderboard" style="display:none">
+
+    <div class="lb-hero">
+      <div class="lb-hero-icon">🏆</div>
+      <div class="lb-hero-text">
+        <div class="lb-hero-title">Ranking Kerajinan</div>
+        <div class="lb-hero-sub">Klik nama anggota untuk melihat profil lengkap</div>
+      </div>
+      <div class="lb-pts-pills">
+        <span class="lb-pill">✓ Selesai = +10 poin</span>
+        <span class="lb-pill">📸 Foto = +5 poin</span>
+      </div>
+    </div>
+
+    <div class="lb-list" id="lbList"></div>
+
+  </div><!-- /panel-leaderboard -->
+
+  <!-- ══════════════════════════════════════
+       TAB 3: DENDA KUMULATIF
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-denda" style="display:none">
+
+    <div class="denda-hero">
+      <div class="dh-top">
+        <div class="dh-icon">⚠️</div>
+        <div class="dh-info">
+          <div class="dh-label">Total Denda Bulan Ini</div>
+          <div class="dh-amt-row">
+            <span class="dh-num" id="dendaTotal">0</span>
+            <span class="dh-unit">LKR</span>
+          </div>
+          <div class="dh-note" id="dendaResetInfo">Reset otomatis tiap awal bulan</div>
+        </div>
+      </div>
+      <div class="denda-chips">
+        <div class="d-chip">
+          <div class="d-chip-ico">📅</div>
+          <div class="d-chip-body">
+            <span class="d-chip-lbl">Periode</span>
+            <span class="d-chip-val" id="dendaPeriode">—</span>
+          </div>
+        </div>
+        <div class="d-chip">
+          <div class="d-chip-ico">🔔</div>
+          <div class="d-chip-body">
+            <span class="d-chip-lbl">Efektif Sejak</span>
+            <span class="d-chip-val" id="dendaEfektif">—</span>
+          </div>
+        </div>
+        <div class="d-chip">
+          <div class="d-chip-ico">⚡</div>
+          <div class="d-chip-body">
+            <span class="d-chip-lbl">Tarif / Hari</span>
+            <span class="d-chip-val">5.000 LKR</span>
+          </div>
+        </div>
+      </div>
+      <div class="denda-note-txt">
+        Hanya hari kerja (Senin–Sabtu) yang terlewat tanpa piket · Klik ✓ Lunas setelah pembayaran tunai untuk mereset tampilan
+      </div>
+    </div>
+
+    <div class="sec">Rincian Per Anggota</div>
+    <div class="denda-list" id="dendaList"></div>
+
+  </div><!-- /panel-denda -->
+
+</div><!-- /.page -->
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <a class="nav-btn" href="index.html">
+    <div class="nav-icon">🏠</div>
+    <span class="nav-label">Home</span>
+  </a>
+  <a class="nav-btn" href="log.html">
+    <div class="nav-icon">📜</div>
+    <span class="nav-label">Log</span>
+  </a>
+  <a class="nav-btn active" href="stats.html">
+    <div class="nav-icon">📊</div>
+    <span class="nav-label">Stats</span>
+  </a>
+</nav>
+
+<!-- ══ PROFILE MODAL ══ -->
+<div class="modal-overlay" id="profileModal">
+  <div class="profile-sheet">
+    <div class="prof-handle"></div>
+    <button class="prof-close" onclick="closeProfile()">✕</button>
+
+    <div class="prof-hero">
+      <div class="prof-av"><img id="profImg" src="" alt=""></div>
+      <div>
+        <div class="prof-name"  id="profName">—</div>
+        <div class="prof-role">Penghuni Kamar Naga Hitam</div>
+        <div class="prof-rank-badge" id="profRank">—</div>
+      </div>
+    </div>
+
+    <div class="prof-stats">
+      <div class="pstat"><div class="pstat-val" id="profDone">—</div><div class="pstat-lbl">Total Piket</div></div>
+      <div class="pstat"><div class="pstat-val" id="profPts">—</div><div class="pstat-lbl">Total Poin</div></div>
+      <div class="pstat"><div class="pstat-val" id="profPhotos">—</div><div class="pstat-lbl">Foto Bukti</div></div>
+    </div>
+
+    <div class="prof-sec">Kebersihan Bulan Ini</div>
+    <div class="prof-month-bar">
+      <div class="pmb-top">
+        <span id="profMonLabel">—</span>
+        <span class="pmb-pct" id="profPct">—%</span>
+      </div>
+      <div class="pmb-bar-wrap"><div class="pmb-bar" id="profBar" style="width:0%"></div></div>
+      <div class="pmb-sub" id="profMonSub">—</div>
+    </div>
+
+    <div class="prof-sec">Status Denda Bulan Ini</div>
+    <div class="prof-denda-box" id="profDendaBox">
+      <div class="pdb-icon"   id="profDendaIcon">💸</div>
+      <div class="pdb-info">
+        <div class="pdb-lbl">Nominal Denda</div>
+        <div class="pdb-amt"  id="profDendaAmt">0 LKR</div>
+        <div class="pdb-sub"  id="profDendaSub">—</div>
+      </div>
+      <div class="pdb-action" id="profDendaAction"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONFIRM MODAL ══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">💸</div>
+    <div class="confirm-title">Konfirmasi Pelunasan</div>
+    <div class="confirm-sub">
+      Tandai denda <span class="confirm-name" id="confirmName">—</span> bulan ini sebagai
+      <strong style="color:var(--ok)">LUNAS</strong>?
+      <br><small style="opacity:.55">Data ini tersimpan di browser. Akan aktif kembali bulan depan jika masih ada yang terlewat.</small>
+    </div>
+    <div class="confirm-actions">
+      <button class="confirm-no"  onclick="closeConfirm()">Batal</button>
+      <button class="confirm-yes" onclick="doReset()">✓ Ya, Lunas!</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══ SUPABASE CDN ══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   KONFIGURASI — Edit bagian ini sesuai setup kamu
+═══════════════════════════════════════════════════════════════════ */
+const SUPABASE_URL = 'https://lzjmyilduranngskrcyo.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6am15aWxkdXJhbm5nc2tyY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzU1NjUsImV4cCI6MjA4NjgxMTU2NX0.ybyZTOLYGMOjM_SucsfpsVU3WaL8qVY4m-1XYdK2J7Q';
+
+/* Tabel utama piket (harus sama dengan index.html) */
+const TABLE   = 'KAMAR-NAGA-PUTIH';
+const ROOM_ID = 'naga-hitam';
+
+/* ── Tanggal mulai siklus rotasi (sama dengan index.html) ── */
+const ANCHOR = new Date('2026-04-25');
+ANCHOR.setHours(0,0,0,0);
+
+/* ── Data anggota & foto (sama dengan index.html) ── */
+const GROUPS = [
+  { name:'SASWIN',   photo:'https://i.imgur.com/KxLtKEp.png' },
+  { name:'RIZKI',    photo:'https://i.imgur.com/gxVjB5j.png' },
+  { name:'RIZKY',    photo:'https://i.imgur.com/fcNEXqP.png' },
+  { name:'AZIS',     photo:'https://i.imgur.com/OA7m8pc.png' },
+  { name:'TIYAS',    photo:'https://i.imgur.com/bGy94d6.png' },
+  { name:'DERMAWAN', photo:'https://i.imgur.com/THQftbr.png' },
+];
+
+/*
+ * ── SISTEM DENDA ──────────────────────────────────────────────
+ *  DENDA_MULAI : Tanggal pertama yang boleh kena denda (inklusif).
+ *                Semua jadwal SEBELUM tanggal ini bebas denda.
+ *                "Efektif besok dari 3 Mei 2026" → 4 Mei 2026
+ *
+ *  DENDA_PER_HARI : Nominal denda per hari kerja yang terlewat.
+ *
+ *  Reset otomatis terjadi karena key localStorage menyertakan bulan,
+ *  sehingga secara otomatis tidak berlaku di bulan berikutnya.
+ * ─────────────────────────────────────────────────────────────
+ */
+const DENDA_MULAI    = new Date('2026-05-04');
+DENDA_MULAI.setHours(0,0,0,0);
+const DENDA_PER_HARI = 5000;  // LKR
+
+/* Poin */
+const PTS_DONE  = 10;
+const PTS_PHOTO =  5;
+
+/* ── Konstanta waktu & label ── */
+const MON_S = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const MON_F = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const DAY_F = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const RANK_EMOJI = ['🥇','🥈','🥉'];
+
+/* ═══ TODAY (jam di-freeze ke 00:00:00 untuk konsistensi perbandingan) ═══ */
+const today = new Date();
+today.setHours(0,0,0,0);
+const NOW_M = today.getMonth();
+const NOW_Y = today.getFullYear();
+
+/* ═══ STATE ═══ */
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let _data          = null;   // hasil computeAll
+let _pendingReset  = null;   // nama yang akan direset dendanya
+let _profilePerson = null;   // nama yang profil-nya sedang dibuka
+
+/* ════════════════════════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════════════════════════ */
+function dateKey(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+/** Hitung siapa giliran piket untuk tanggal tertentu */
+function getPersonForDate(dateOrStr) {
+  const d = typeof dateOrStr === 'string'
+    ? new Date(dateOrStr+'T00:00:00')
+    : new Date(dateOrStr);
+  d.setHours(0,0,0,0);
+  const diff = Math.floor((d - ANCHOR) / 86400000);
+  if (diff < 0) return null;
+  return GROUPS[diff % GROUPS.length].name;
+}
+
+/** Parse photo_url (bisa JSON array atau URL tunggal) → string[] */
+function parsePhotos(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try { const p = JSON.parse(raw); return Array.isArray(p) ? p : (p ? [p] : []); }
+  catch { return raw ? [raw] : []; }
+}
+
+/** Key bulan ini untuk localStorage */
+function curMonKey() {
+  return NOW_Y+'-'+String(NOW_M+1).padStart(2,'0');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 2700);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   DENDA RESET — disimpan di localStorage per-orang per-bulan
+   Key format: "nh_denda_NAMA_2026-05"
+   → Secara otomatis kedaluwarsa bulan depan karena key berbeda
+════════════════════════════════════════════════════════════════════ */
+function getDendaResets() {
+  try { return JSON.parse(localStorage.getItem('nh_denda_resets') || '{}'); }
+  catch { return {}; }
+}
+function saveDendaResets(obj) {
+  localStorage.setItem('nh_denda_resets', JSON.stringify(obj));
+}
+function isReset(person) {
+  return getDendaResets()[person + '_' + curMonKey()] === true;
+}
+function markReset(person) {
+  const r = getDendaResets();
+  r[person + '_' + curMonKey()] = true;
+  saveDendaResets(r);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   calculateFines(doneMap)
+   ──────────────────────────────────────────────────────────────────
+   Aturan:
+   ① Hanya bulan berjalan (reset otomatis tiap bulan baru via localStorage key)
+   ② Titik mulai = max(awal_bulan_ini, DENDA_MULAI)
+   ③ Hanya hari kerja (Senin–Sabtu) yang sudah lewat (< today)
+   ④ Jika seseorang di-reset manual → denda mereka = 0
+   ⑤ Jika jadwal belum masuk (today belum > DENDA_MULAI) → tidak ada denda
+════════════════════════════════════════════════════════════════════ */
+function calculateFines(doneMap) {
+  const firstOfMonth = new Date(NOW_Y, NOW_M, 1);
+  firstOfMonth.setHours(0,0,0,0);
+
+  /* Titik awal denda: mana yang lebih akhir */
+  const dendaStart = firstOfMonth >= DENDA_MULAI
+    ? new Date(firstOfMonth) : new Date(DENDA_MULAI);
+
+  /* Inisialisasi result kosong */
+  const emptyResult = { byPerson:{}, byDays:{}, total:0, dendaStart, firstOfMonth };
+  GROUPS.forEach(g => { emptyResult.byPerson[g.name] = 0; emptyResult.byDays[g.name] = 0; });
+
+  /* Jika tanggal efektif belum tercapai, tidak ada denda */
+  if (dendaStart >= today) return emptyResult;
+
+  /* Hitung hari kerja yang terlewat */
+  const byDays = {};
+  GROUPS.forEach(g => { byDays[g.name] = 0; });
+
+  const walker = new Date(dendaStart);
+  while (walker < today) {
+    /* Skip Minggu (getDay() === 0) */
+    if (walker.getDay() !== 0) {
+      const dk     = dateKey(walker);
+      const row    = doneMap[dk];
+      const person = getPersonForDate(walker);
+      if (person && !row?.is_done) byDays[person]++;
+    }
+    walker.setDate(walker.getDate() + 1);
+  }
+
+  /* Terapkan reset manual dari localStorage */
+  GROUPS.forEach(g => { if (isReset(g.name)) byDays[g.name] = 0; });
+
+  /* Konversi ke LKR */
+  const byPerson = {};
+  GROUPS.forEach(g => { byPerson[g.name] = byDays[g.name] * DENDA_PER_HARI; });
+  const total = Object.values(byPerson).reduce((a, b) => a + b, 0);
+
+  return { byPerson, byDays, total, dendaStart, firstOfMonth };
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   computeAll(doneMap) — kalkulasi semua metrik sekaligus
+════════════════════════════════════════════════════════════════════ */
+function computeAll(doneMap) {
+  /* Inisialisasi skor per orang */
+  const scores = {};
+  GROUPS.forEach(g => {
+    scores[g.name] = { person:g.name, done:0, photos:0, pts:0, doneThisMonth:0 };
+  });
+
+  /* Bulanan chart (6 bulan terakhir) */
+  const monthCounts = {};
+  for (let i = 5; i >= 0; i--) {
+    const d   = new Date(NOW_Y, NOW_M - i, 1);
+    const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    monthCounts[key] = 0;
+  }
+  const thisMonKey = NOW_Y+'-'+String(NOW_M+1).padStart(2,'0');
+
+  /* Walk seluruh entri doneMap */
+  Object.entries(doneMap).forEach(([dk, row]) => {
+    if (!row.is_done) return;
+    const d      = new Date(dk+'T00:00:00');
+    const person = getPersonForDate(d);
+    if (!person || !scores[person]) return;
+
+    scores[person].done++;
+    scores[person].pts += PTS_DONE;
+
+    const photos = parsePhotos(row.photo_url);
+    if (photos.length > 0) {
+      scores[person].photos += photos.length;
+      scores[person].pts    += PTS_PHOTO;
+    }
+
+    /* Chart */
+    const mk = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    if (monthCounts[mk] !== undefined) monthCounts[mk]++;
+
+    /* Bulan ini */
+    if (d.getMonth() === NOW_M && d.getFullYear() === NOW_Y) {
+      scores[person].doneThisMonth++;
+    }
+  });
+
+  /* Hari kerja bulan ini yang sudah berlalu (untuk % kebersihan) */
+  const firstOfMonth = new Date(NOW_Y, NOW_M, 1);
+  let workDaysPassed = 0;
+  const wk = new Date(firstOfMonth);
+  while (wk < today) {
+    if (wk.getDay() !== 0) workDaysPassed++;
+    wk.setDate(wk.getDate() + 1);
+  }
+
+  const thisMonCount = monthCounts[thisMonKey] || 0;
+  const cleanliness  = workDaysPassed > 0
+    ? Math.round((thisMonCount / workDaysPassed) * 100) : 0;
+
+  /* Foto total & ranking */
+  let totalPhotos = 0;
+  Object.values(scores).forEach(s => { totalPhotos += s.photos; });
+
+  const ranked = Object.values(scores).sort((a, b) =>
+    b.pts !== a.pts ? b.pts - a.pts : b.done - a.done
+  );
+
+  /* Denda */
+  const fines = calculateFines(doneMap);
+
+  return {
+    scores, ranked, monthCounts, thisMonKey,
+    thisMonCount, workDaysPassed, cleanliness,
+    totalPhotos, fines
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   LOAD DATA dari Supabase
+════════════════════════════════════════════════════════════════════ */
+async function loadData() {
+  try {
+    const { data, error } = await db
+      .from(TABLE)
+      .select('date_key, is_done, photo_url')
+      .eq('room_id', ROOM_ID)
+      .order('date_key', { ascending: true });
+
+    if (error) throw error;
+
+    const doneMap = {};
+    (data || []).forEach(row => {
+      doneMap[row.date_key] = {
+        is_done:   row.is_done || false,
+        photo_url: row.photo_url,
+      };
+    });
+
+    _data = computeAll(doneMap);
+    renderAll();
+
+  } catch (err) {
+    console.error('loadData error:', err.message);
+    showToast('❌ Gagal memuat data dari Supabase');
+  } finally {
+    document.getElementById('loadingBox').style.display = 'none';
+    /* Tampilkan panel yang aktif */
+    document.querySelectorAll('.tab-panel.active').forEach(p => {
+      p.style.display = 'block';
+    });
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   RENDER ALL — memanggil semua sub-render
+════════════════════════════════════════════════════════════════════ */
+function renderAll() {
+  if (!_data) return;
+  renderRingkasan();
+  renderLeaderboard();
+  renderDenda();
+  /* Refresh profil jika sedang terbuka */
+  if (_profilePerson) openProfile(_profilePerson);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   RENDER: TAB RINGKASAN
+──────────────────────────────────────────────────────────────────── */
+function renderRingkasan() {
+  const d        = _data;
+  const totalDone = d.ranked.reduce((a, s) => a + s.done, 0);
+  const withPhoto = d.ranked.reduce((a, s) => a + (s.photos > 0 ? 1 : 0), 0);
+
+  /* KPI */
+  document.getElementById('kpiTotal').textContent   = totalDone;
+  document.getElementById('kpiPhotos').textContent  = d.totalPhotos;
+  document.getElementById('kpiMonth').textContent   = d.thisMonCount;
+  document.getElementById('kpiMonthSub').textContent = MON_F[NOW_M]+' '+NOW_Y;
+  document.getElementById('kpiStreak').textContent  = d.ranked.filter(s => s.photos > 0).length * 1 + totalDone;
+
+  /* Kebersihan */
+  document.getElementById('kpiClean').textContent    = d.cleanliness+'%';
+  document.getElementById('kpiCleanSub').textContent =
+    `${d.thisMonCount} dari ${d.workDaysPassed} hari kerja yang berlalu`;
+  setTimeout(() => {
+    document.getElementById('cleanBar').style.width = d.cleanliness+'%';
+  }, 200);
+
+  const badge = document.getElementById('kpiCleanBadge');
+  if      (d.cleanliness >= 90) { badge.textContent='🌟 Luar Biasa!'; badge.style.cssText='background:rgba(34,197,94,.12);color:var(--ok);border-color:var(--ok-b)'; }
+  else if (d.cleanliness >= 70) { badge.textContent='👍 Bagus!';      badge.style.cssText='background:var(--brand-dim);color:var(--brand);border-color:rgba(232,200,74,.25)'; }
+  else if (d.cleanliness >= 50) { badge.textContent='😐 Cukup';       badge.style.cssText='background:rgba(245,158,11,.1);color:#f59e0b;border-color:rgba(245,158,11,.25)'; }
+  else                          { badge.textContent='❌ Perlu Naik';   badge.style.cssText='background:var(--danger-dim);color:var(--danger);border-color:var(--danger-b)'; }
+
+  /* Chart */
+  const keys = Object.keys(d.monthCounts);
+  const maxV = Math.max(...Object.values(d.monthCounts), 1);
+  document.getElementById('chartBars').innerHTML = keys.map(k => {
+    const [,m] = k.split('-').map(Number);
+    const pct  = Math.round((d.monthCounts[k] / maxV) * 100);
+    return `<div class="chart-col">
+      <div class="chart-cnt">${d.monthCounts[k] || ''}</div>
+      <div class="chart-bar-wrap">
+        <div class="chart-bar ${k === d.thisMonKey ? 'cur' : ''}" style="height:${Math.max(pct,4)}%"></div>
+      </div>
+      <div class="chart-lbl">${MON_S[m-1]}</div>
+    </div>`;
+  }).join('');
+
+  /* Member activity list */
+  const maxDone = Math.max(...d.ranked.map(r => r.done), 1);
+  document.getElementById('maList').innerHTML = d.ranked.map((r, i) => {
+    const pct  = Math.round((r.done / maxDone) * 100);
+    const mp   = d.workDaysPassed > 0
+      ? Math.round((r.doneThisMonth / d.workDaysPassed) * 100) : 0;
+    const rk   = i < 3 ? RANK_EMOJI[i] : `#${i+1}`;
+    const g    = GROUPS.find(gg => gg.name === r.person);
+    return `<div class="ma-card" style="animation-delay:${i*.05}s">
+      <div class="ma-av"><img src="${g?.photo||''}" alt="${r.person}" onerror="this.style.display='none'"></div>
+      <div class="ma-info">
+        <div class="ma-name">${rk} ${r.person}</div>
+        <div class="ma-detail">✓ ${r.done}x piket &nbsp;·&nbsp; 📸 ${r.photos} foto &nbsp;·&nbsp; bln ini: ${r.doneThisMonth}x</div>
+        <div class="ma-bar-wrap"><div class="ma-bar" style="width:${pct}%"></div></div>
+      </div>
+      <div class="ma-right">
+        <div class="ma-pts">${r.pts}</div>
+        <div class="ma-pts-lbl">poin</div>
+        <div><span class="ma-mon-badge">${mp}% bln ini</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   RENDER: TAB LEADERBOARD
+──────────────────────────────────────────────────────────────────── */
+function renderLeaderboard() {
+  const maxPts = _data.ranked[0]?.pts || 1;
+  document.getElementById('lbList').innerHTML = _data.ranked.map((r, i) => {
+    const pct     = Math.round((r.pts / maxPts) * 100);
+    const rankCls = i < 3 ? ` r${i+1}` : '';
+    const rank    = i < 3 ? RANK_EMOJI[i] : `#${i+1}`;
+    const g       = GROUPS.find(gg => gg.name === r.person);
+    return `<div class="lb-card${rankCls}" style="animation-delay:${i*.06}s" onclick="openProfile('${r.person}')">
+      <div class="lb-rank">${rank}</div>
+      <div class="lb-av"><img src="${g?.photo||''}" alt="${r.person}" onerror="this.style.display='none'"></div>
+      <div class="lb-info">
+        <div class="lb-name">${r.person}</div>
+        <div class="lb-detail">
+          <span>✓ ${r.done}x selesai</span>
+          <span>📸 ${r.photos} foto</span>
+          <span>🗓️ ${r.doneThisMonth}x bln ini</span>
+        </div>
+        <div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>
+      </div>
+      <div class="lb-score-col">
+        <div class="lb-score">${r.pts}</div>
+        <div class="lb-score-lbl">poin</div>
+        <div class="lb-hint">👆 profil</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   RENDER: TAB DENDA
+──────────────────────────────────────────────────────────────────── */
+function renderDenda() {
+  const f = _data.fines;
+
+  /* Update hero */
+  document.getElementById('dendaTotal').textContent    = f.total.toLocaleString('id-ID');
+  document.getElementById('dendaPeriode').textContent  = MON_F[NOW_M]+' '+NOW_Y;
+  document.getElementById('dendaResetInfo').textContent =
+    'Reset otomatis tiap awal bulan · '+MON_F[NOW_M]+' '+NOW_Y;
+
+  const efektifSameMonth =
+    DENDA_MULAI.getMonth() === NOW_M && DENDA_MULAI.getFullYear() === NOW_Y;
+  document.getElementById('dendaEfektif').textContent = efektifSameMonth
+    ? DENDA_MULAI.getDate()+' '+MON_S[DENDA_MULAI.getMonth()]+' '+DENDA_MULAI.getFullYear()
+    : 'Awal Bulan Ini';
+
+  /* Badge di tab */
+  const badge = document.getElementById('dendaBadge');
+  badge.style.display = f.total > 0 ? 'inline' : 'none';
+
+  /* Denda rows */
+  const hasDendaRows = GROUPS.some(g => f.byPerson[g.name] > 0 || isReset(g.name));
+  if (!hasDendaRows) {
+    document.getElementById('dendaList').innerHTML = `
+      <div class="denda-clean-note">
+        🎉 Tidak ada denda bulan ini — semua anggota tertib!
+      </div>`;
+    return;
+  }
+
+  /* Sort: yg punya denda terbesar dulu → paid → bersih */
+  const sorted = [
+    ...GROUPS.filter(g => f.byPerson[g.name] > 0 && !isReset(g.name))
+             .sort((a, b) => f.byPerson[b.name] - f.byPerson[a.name]),
+    ...GROUPS.filter(g => isReset(g.name)),
+    ...GROUPS.filter(g => f.byPerson[g.name] === 0 && !isReset(g.name)),
+  ];
+  /* De-duplicate */
+  const seen    = new Set();
+  const ordered = sorted.filter(g => { if (seen.has(g.name)) return false; seen.add(g.name); return true; });
+
+  document.getElementById('dendaList').innerHTML = ordered.map((g, i) => {
+    const amt  = f.byPerson[g.name] || 0;
+    const days = f.byDays[g.name]   || 0;
+    const paid = isReset(g.name);
+
+    /* Hanya tampilkan jika ada denda atau sudah paid */
+    if (amt === 0 && !paid) return '';
+
+    const rowCls = paid ? 'denda-row is-paid'
+                 : amt > 0 ? 'denda-row has-denda'
+                 : 'denda-row is-clean';
+
+    return `<div class="${rowCls}" style="animation-delay:${i*.05}s">
+      <div class="dr-av"><img src="${g.photo}" alt="${g.name}" onerror="this.style.display='none'"></div>
+      <div class="dr-info">
+        <div class="dr-name">${g.name}</div>
+        <div class="dr-days">${paid ? 'Sudah lunas bulan ini' : `${days} hari kerja terlewat`}</div>
+      </div>
+      <div class="dr-right">
+        <div class="dr-amt ${paid ? 'paid' : ''}">${amt.toLocaleString('id-ID')} LKR</div>
+        ${paid
+          ? `<span class="dr-badge">✓ Lunas</span>`
+          : `<button class="dr-reset-btn" onclick="openConfirm('${g.name}')">✓ Lunas</button>`
+        }
+      </div>
+    </div>`;
+  }).filter(Boolean).join('') || `<div class="denda-clean-note">🎉 Semua anggota tertib bulan ini!</div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   PROFILE MODAL
+════════════════════════════════════════════════════════════════════ */
+function openProfile(person) {
+  if (!_data) return;
+  _profilePerson = person;
+
+  const s   = _data.scores[person];
+  const idx = _data.ranked.findIndex(r => r.person === person);
+  const g   = GROUPS.find(gg => gg.name === person);
+  const f   = _data.fines;
+
+  /* Avatar & nama */
+  document.getElementById('profImg').src  = g?.photo || '';
+  document.getElementById('profName').textContent = person;
+  document.getElementById('profRank').textContent =
+    idx < 3 ? RANK_EMOJI[idx]+' Peringkat '+(idx+1) : 'Peringkat #'+(idx+1);
+
+  /* Stats */
+  document.getElementById('profDone').textContent   = s.done;
+  document.getElementById('profPts').textContent    = s.pts;
+  document.getElementById('profPhotos').textContent = s.photos;
+
+  /* Kebersihan bulan ini */
+  const mp = _data.workDaysPassed > 0
+    ? Math.round((s.doneThisMonth / _data.workDaysPassed) * 100) : 0;
+  document.getElementById('profMonLabel').textContent =
+    MON_F[NOW_M]+' '+NOW_Y;
+  document.getElementById('profPct').textContent    = mp+'%';
+  document.getElementById('profMonSub').textContent =
+    `${s.doneThisMonth} piket dari ${_data.workDaysPassed} hari kerja yang sudah berlalu`;
+  setTimeout(() => {
+    document.getElementById('profBar').style.width = mp+'%';
+  }, 80);
+
+  /* Denda */
+  const amt  = f.byPerson[person] || 0;
+  const days = f.byDays[person]   || 0;
+  const paid = isReset(person);
+
+  const box = document.getElementById('profDendaBox');
+  box.className = 'prof-denda-box '+(paid ? 'pdb-paid' : amt > 0 ? 'pdb-red' : 'pdb-green');
+
+  document.getElementById('profDendaIcon').textContent = paid ? '✅' : amt > 0 ? '💸' : '🎉';
+  document.getElementById('profDendaAmt').textContent  = (paid ? '0' : amt.toLocaleString('id-ID'))+' LKR';
+  document.getElementById('profDendaSub').textContent  = paid
+    ? 'Sudah lunas bulan ini ✓'
+    : amt > 0 ? `${days} hari × 5.000 LKR`
+    : 'Tidak ada denda! Anggota tertib 🎉';
+
+  const action = document.getElementById('profDendaAction');
+  if (paid) {
+    action.innerHTML = `<span class="pdb-paid-badge">✓ LUNAS</span>`;
+  } else if (amt > 0) {
+    action.innerHTML = `<button class="pdb-reset-btn" onclick="openConfirmFromProfile('${person}')">✓ Tandai Lunas</button>`;
+  } else {
+    action.innerHTML = '';
+  }
+
+  document.getElementById('profileModal').classList.add('show');
+}
+
+function closeProfile() {
+  document.getElementById('profileModal').classList.remove('show');
+  _profilePerson = null;
+  /* Reset progress bar agar animasi jalan lagi saat dibuka berikutnya */
+  document.getElementById('profBar').style.width = '0%';
+}
+
+document.getElementById('profileModal').addEventListener('click', function(e) {
+  if (e.target === this) closeProfile();
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   CONFIRM MODAL — reset denda
+════════════════════════════════════════════════════════════════════ */
+function openConfirm(person) {
+  _pendingReset = person;
+  document.getElementById('confirmName').textContent = person;
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function openConfirmFromProfile(person) {
+  closeProfile();
+  /* Tunggu animasi close selesai sebelum buka confirm */
+  setTimeout(() => openConfirm(person), 220);
+}
+
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  _pendingReset = null;
+}
+
+function doReset() {
+  if (!_pendingReset) return;
+  markReset(_pendingReset);
+  const name = _pendingReset;
+  closeConfirm();
+  showToast(`✅ Denda ${name} bulan ini ditandai LUNAS!`);
+  /* Re-render tanpa reload dari Supabase */
+  renderDenda();
+}
+
+/**
+ * resetUserFine(personName)
+ * ──────────────────────────────────────────────────────────
+ * Fungsi publik — bisa dipanggil langsung dari console browser
+ * tanpa perlu klik tombol UI.
+ *
+ * Contoh:
+ *   resetUserFine('SASWIN')
+ *   resetUserFine('TIYAS')
+ *
+ * @param {string} personName — nama anggota dalam HURUF BESAR
+ */
+function resetUserFine(personName) {
+  const upper = personName.toUpperCase();
+  if (!GROUPS.find(g => g.name === upper)) {
+    console.warn('[Naga Hitam] Nama tidak ditemukan dalam roster:', personName);
+    console.info('Roster tersedia:', GROUPS.map(g => g.name).join(', '));
+    return;
+  }
+  openConfirm(upper);
+}
+
+document.getElementById('confirmOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeConfirm();
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════════════════════════════════ */
+document.getElementById('tabNav').addEventListener('click', function(e) {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+
+  const tab = btn.dataset.tab;
+
+  /* Update button states */
+  this.querySelectorAll('.tab-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === tab)
+  );
+
+  /* Update panel visibility */
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    const on = p.id === 'panel-' + tab;
+    p.classList.toggle('active', on);
+    p.style.display = on ? 'block' : 'none';
+  });
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   JAM REALTIME
+════════════════════════════════════════════════════════════════════ */
+function updateClock() {
+  const n = new Date();
+  const dEl = document.getElementById('liveDate');
+  const tEl = document.getElementById('liveTime');
+  if (dEl) dEl.textContent = DAY_F[n.getDay()]+', '+n.getDate()+' '+MON_F[n.getMonth()]+' '+n.getFullYear();
+  if (tEl) tEl.textContent = String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   REALTIME SUPABASE — sinkron otomatis jika ada perubahan
+════════════════════════════════════════════════════════════════════ */
+db.channel(`stats-rt-${ROOM_ID}`)
+  .on(
+    'postgres_changes',
+    { event:'*', schema:'public', table:TABLE },
+    (payload) => {
+      /* Filter hanya event milik kamar ini */
+      const row = payload.new || {};
+      if (row.room_id === ROOM_ID || !row.room_id) {
+        loadData();
+      }
+    }
+  )
+  .subscribe();
+
+/* ════════════════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════════════════ */
+setInterval(updateClock, 1000);
+updateClock();
+loadData();
+
+/* ── Service Worker (PWA) ── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('Stats SW: aktif', reg.scope))
+      .catch(err => console.log('Stats SW: gagal', err));
+  });
+}
+</script>
+</body>
+</html>
