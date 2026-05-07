@@ -248,7 +248,6 @@ body{font-family:var(--font);color:var(--ink);min-height:100vh;overflow-x:hidden
     </button>
   </div>
 
-  <div class="denda-wrap">
     <!-- ... kode denda banner ... -->
 
   <div class="denda-wrap">
@@ -841,15 +840,19 @@ document.getElementById('btn-prev').onclick  = () => { weekOffset--; renderSched
 document.getElementById('btn-next').onclick  = () => { weekOffset++; renderSchedule(); };
 document.getElementById('btn-today').onclick = () => { weekOffset = 0; renderSchedule(); showToast('↩ Kembali ke minggu ini'); };
 
+/* ... (kode-kode fungsi loadData, uploadPhotos, dll di atasnya) ... */
+
 /* ════════════════════════════════════════════════════════════════
-   INIT
+   INIT & PWA LOGIC (Taruh di paling bawah script)
 ════════════════════════════════════════════════════════════════ */
+
+// Jalankan fungsi dasar
 setInterval(updateClock, 1000);
 updateClock();
 loadData();
 listenRealtime();
 
-// 1. Registrasi Service Worker agar aplikasi bisa diinstall dan jalan offline
+// 1. Registrasi Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
@@ -858,29 +861,23 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// 2. Logika Tombol Install PWA (TAMBAHKAN INI)
+// 2. Logika Tombol Install PWA
 let deferredPrompt;
 const installContainer = document.getElementById('installContainer');
 const installBtn = document.getElementById('installBtn');
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Mencegah browser menampilkan prompt otomatis
   e.preventDefault();
-  // Simpan event supaya bisa dipicu lewat tombol kita
   deferredPrompt = e;
-  // Tampilkan tombol download kita
   if (installContainer) installContainer.style.display = 'block';
 });
 
 if (installBtn) {
   installBtn.addEventListener('click', async () => {
     if (deferredPrompt) {
-      // Munculkan prompt instalasi browser
       deferredPrompt.prompt();
-      // Tunggu pilihan user
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
-        console.log('User menginstal aplikasi Naga Hitam');
         if (installContainer) installContainer.style.display = 'none';
       }
       deferredPrompt = null;
@@ -888,11 +885,10 @@ if (installBtn) {
   });
 }
 
-// Sembunyikan tombol jika aplikasi sudah terinstal (Standalone mode)
+// Sembunyikan tombol jika sudah dalam mode aplikasi (standalone)
 if (window.matchMedia('(display-mode: standalone)').matches) {
   if (installContainer) installContainer.style.display = 'none';
 }
 
-</script>
-</body>
+</script> </body>
 </html>
